@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{A96B94C9-E568-455A-B0D9-5032B0D77BDE}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>nullptrrecode</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;NULLPTRRECODE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:strictStrings- %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <Optimization>MaxSpeed</Optimization>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>true</EnableUAC>
+      <AdditionalOptions>/FORCE:MULTIPLE /ignore:4221,4006 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;NULLPTRRECODE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level1</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;NULLPTRRECODE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/Zc:strictStrings %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalOptions>/FORCE:MULTIPLE /ignore:4221,4006 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;NULLPTRRECODE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\notify\notify.cpp" />
+    <ClCompile Include="functions\visuals\background.cpp" />
+    <ClCompile Include="functions\visuals\visuals.cpp" />
+    <ClCompile Include="gui\imgui\imgui.cpp" />
+    <ClCompile Include="gui\imgui\imgui_demo.cpp" />
+    <ClCompile Include="gui\imgui\imgui_draw.cpp" />
+    <ClCompile Include="gui\imgui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="gui\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="gui\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="gui\menu\menu.cpp" />
+    <ClCompile Include="gui\nullptr_gui.cpp" />
+    <ClCompile Include="helpers\input.cpp" />
+    <ClCompile Include="helpers\math\math.cpp" />
+    <ClCompile Include="helpers\netvars.cpp" />
+    <ClCompile Include="hooks\hooks.cpp" />
+    <ClCompile Include="hooks\hooks\end_scene.cpp" />
+    <ClCompile Include="hooks\hooks\wndproc.cpp" />
+    <ClCompile Include="hooks\vfunc.cpp" />
+    <ClCompile Include="render\render.cpp" />
+    <ClCompile Include="sdk\interfaces\convar_sys.cpp" />
+    <ClCompile Include="sdk\misc\characterset.cpp" />
+    <ClCompile Include="sdk\misc\checksum_crc.cpp" />
+    <ClCompile Include="sdk\misc\checksum_md5.cpp" />
+    <ClCompile Include="sdk\misc\utl_buffer.cpp" />
+    <ClCompile Include="sdk\misc\utl_string.cpp" />
+    <ClCompile Include="sdk\sdk.cpp" />
+    <ClCompile Include="sdk\structures\structures.cpp" />
+    <ClCompile Include="utils\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="functions\notify\notify.h" />
+    <ClInclude Include="functions\visuals\background.h" />
+    <ClInclude Include="functions\visuals\visuals.h" />
+    <ClInclude Include="gui\imgui\imconfig.h" />
+    <ClInclude Include="gui\imgui\imgui.h" />
+    <ClInclude Include="gui\imgui\imgui_impl_dx9.h" />
+    <ClInclude Include="gui\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="gui\imgui\imgui_internal.h" />
+    <ClInclude Include="gui\imgui\imstb_rectpack.h" />
+    <ClInclude Include="gui\imgui\imstb_textedit.h" />
+    <ClInclude Include="gui\imgui\imstb_truetype.h" />
+    <ClInclude Include="gui\menu\menu.h" />
+    <ClInclude Include="gui\nullptr_gui.h" />
+    <ClInclude Include="helpers\color.h" />
+    <ClInclude Include="helpers\helpers.h" />
+    <ClInclude Include="helpers\input.h" />
+    <ClInclude Include="helpers\math\math.h" />
+    <ClInclude Include="helpers\math\matrix.h" />
+    <ClInclude Include="helpers\math\qangle.h" />
+    <ClInclude Include="helpers\math\vector.h" />
+    <ClInclude Include="helpers\netvars.h" />
+    <ClInclude Include="hooks\hooks.h" />
+    <ClInclude Include="hooks\vfunc.h" />
+    <ClInclude Include="render\fonts\fonts.h" />
+    <ClInclude Include="render\render.h" />
+    <ClInclude Include="sdk\interfaces\app_system.h" />
+    <ClInclude Include="sdk\interfaces\base_client_dll.h" />
+    <ClInclude Include="sdk\interfaces\base_file_system.h" />
+    <ClInclude Include="sdk\interfaces\base_handle.h" />
+    <ClInclude Include="sdk\interfaces\client_class.h" />
+    <ClInclude Include="sdk\interfaces\client_entity.h" />
+    <ClInclude Include="sdk\interfaces\client_entity_list.h" />
+    <ClInclude Include="sdk\interfaces\client_mode.h" />
+    <ClInclude Include="sdk\interfaces\client_networkable.h" />
+    <ClInclude Include="sdk\interfaces\client_renderable.h" />
+    <ClInclude Include="sdk\interfaces\client_state.h" />
+    <ClInclude Include="sdk\interfaces\client_thinkable.h" />
+    <ClInclude Include="sdk\interfaces\client_unknown.h" />
+    <ClInclude Include="sdk\interfaces\collideable.h" />
+    <ClInclude Include="sdk\interfaces\convar.h" />
+    <ClInclude Include="sdk\interfaces\convar_sys.h" />
+    <ClInclude Include="sdk\interfaces\cvar.h" />
+    <ClInclude Include="sdk\interfaces\debug_overlay.h" />
+    <ClInclude Include="sdk\interfaces\engine_client.h" />
+    <ClInclude Include="sdk\interfaces\engine_sound.h" />
+    <ClInclude Include="sdk\interfaces\engine_trace.h" />
+    <ClInclude Include="sdk\interfaces\e_handle.h" />
+    <ClInclude Include="sdk\interfaces\game_event_manager.h" />
+    <ClInclude Include="sdk\interfaces\global_vars.h" />
+    <ClInclude Include="sdk\interfaces\glow_outline_effect.h" />
+    <ClInclude Include="sdk\interfaces\handle_entity.h" />
+    <ClInclude Include="sdk\interfaces\input.h" />
+    <ClInclude Include="sdk\interfaces\input_system.h" />
+    <ClInclude Include="sdk\interfaces\localize.h" />
+    <ClInclude Include="sdk\interfaces\material_system.h" />
+    <ClInclude Include="sdk\interfaces\mdl_cache.h" />
+    <ClInclude Include="sdk\interfaces\memalloc.h" />
+    <ClInclude Include="sdk\interfaces\model_info_client.h" />
+    <ClInclude Include="sdk\interfaces\model_render.h" />
+    <ClInclude Include="sdk\interfaces\move_helper.h" />
+    <ClInclude Include="sdk\interfaces\panel.h" />
+    <ClInclude Include="sdk\interfaces\physics.h" />
+    <ClInclude Include="sdk\interfaces\prediction.h" />
+    <ClInclude Include="sdk\interfaces\ref_counted.h" />
+    <ClInclude Include="sdk\interfaces\render_view.h" />
+    <ClInclude Include="sdk\interfaces\steam.h" />
+    <ClInclude Include="sdk\interfaces\studio.h" />
+    <ClInclude Include="sdk\interfaces\studio_render.h" />
+    <ClInclude Include="sdk\interfaces\surface.h" />
+    <ClInclude Include="sdk\interfaces\user_cmd.h" />
+    <ClInclude Include="sdk\interfaces\view_render.h" />
+    <ClInclude Include="sdk\interfaces\view_render_beams.h" />
+    <ClInclude Include="sdk\misc\characterset.h" />
+    <ClInclude Include="sdk\misc\checksum_crc.h" />
+    <ClInclude Include="sdk\misc\checksum_md5.h" />
+    <ClInclude Include="sdk\misc\datamap.h" />
+    <ClInclude Include="sdk\misc\enums.h" />
+    <ClInclude Include="sdk\misc\platform.h" />
+    <ClInclude Include="sdk\misc\recv.h" />
+    <ClInclude Include="sdk\misc\utl_buffer.h" />
+    <ClInclude Include="sdk\misc\utl_memory.h" />
+    <ClInclude Include="sdk\misc\utl_string.h" />
+    <ClInclude Include="sdk\misc\utl_vector.h" />
+    <ClInclude Include="sdk\misc\vfunc.h" />
+    <ClInclude Include="sdk\sdk.h" />
+    <ClInclude Include="sdk\structures\structures.h" />
+    <ClInclude Include="settings\globals.h" />
+    <ClInclude Include="settings\settings.h" />
+    <ClInclude Include="utils\utils.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

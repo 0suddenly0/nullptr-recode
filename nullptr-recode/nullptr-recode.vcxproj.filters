@@ -1,0 +1,421 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="sources\utils">
+      <UniqueIdentifier>{e7f0ea14-c608-4344-9a9d-19ca9fabec43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\settings">
+      <UniqueIdentifier>{96c17a6b-4603-44ef-bdf4-cc2f79a14e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\hooks">
+      <UniqueIdentifier>{5ffac760-4bed-4903-b9b0-8a57eb70657a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\hooks\hooks">
+      <UniqueIdentifier>{c099a3c1-0c8f-46d0-ad8d-c321b26b4fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui">
+      <UniqueIdentifier>{10e6497f-aaca-4133-bf6c-f9d4f20d7dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui\imgui">
+      <UniqueIdentifier>{afc4f849-a5c4-4cc7-a453-bf43fb86fe84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\sdk">
+      <UniqueIdentifier>{b0281690-0fb5-4160-a6fd-39d61ebe4220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui\menu">
+      <UniqueIdentifier>{4f78a8e8-32ae-419a-b462-01b1ac952cc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\helpers">
+      <UniqueIdentifier>{0dbdc76b-32b3-43a7-ae80-1b5cee4a5ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\helpers\math">
+      <UniqueIdentifier>{76b92ad8-0358-4f01-8c8a-a628f75c5d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\renders">
+      <UniqueIdentifier>{de95196c-b99a-4ea0-be6d-b77a0e1b80b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\renders\fonts">
+      <UniqueIdentifier>{980583a9-6665-40e8-a48b-ee7e698b54f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions">
+      <UniqueIdentifier>{9e689b00-7d0b-4d6e-9c09-2b569b0d1172}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\visuals">
+      <UniqueIdentifier>{3fb7c6e5-00c4-4710-89a4-cb870202c063}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\notify">
+      <UniqueIdentifier>{914c086c-9ffe-47b3-97c9-878a118272f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\sdk\interfaces">
+      <UniqueIdentifier>{9642cf6c-2246-44bb-8241-fb490c2ee750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\sdk\misc">
+      <UniqueIdentifier>{c4beec24-f5be-4463-9d1c-57625780ea9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\sdk\structures">
+      <UniqueIdentifier>{5cb0f7b8-c652-4b08-9ba6-d7dd16f1f605}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\utils.cpp">
+      <Filter>sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks.cpp">
+      <Filter>sources\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\vfunc.cpp">
+      <Filter>sources\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui_demo.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui_draw.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui_impl_dx9.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui_impl_win32.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\imgui\imgui_widgets.cpp">
+      <Filter>sources\gui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\nullptr_gui.cpp">
+      <Filter>sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\sdk.cpp">
+      <Filter>sources\sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\wndproc.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\menu.cpp">
+      <Filter>sources\gui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="render\render.cpp">
+      <Filter>sources\renders</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers\input.cpp">
+      <Filter>sources\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\visuals\background.cpp">
+      <Filter>sources\functions\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers\math\math.cpp">
+      <Filter>sources\helpers\math</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\notify\notify.cpp">
+      <Filter>sources\functions\notify</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\visuals\visuals.cpp">
+      <Filter>sources\functions\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\interfaces\convar_sys.cpp">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\misc\characterset.cpp">
+      <Filter>sources\sdk\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\misc\checksum_crc.cpp">
+      <Filter>sources\sdk\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\misc\checksum_md5.cpp">
+      <Filter>sources\sdk\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\misc\utl_buffer.cpp">
+      <Filter>sources\sdk\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\misc\utl_string.cpp">
+      <Filter>sources\sdk\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\end_scene.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\structures\structures.cpp">
+      <Filter>sources\sdk\structures</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers\netvars.cpp">
+      <Filter>sources\helpers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="utils\utils.h">
+      <Filter>sources\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="settings\globals.h">
+      <Filter>sources\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="settings\settings.h">
+      <Filter>sources\settings</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\hooks.h">
+      <Filter>sources\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="hooks\vfunc.h">
+      <Filter>sources\hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imgui.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imgui_impl_dx9.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imgui_impl_win32.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imgui_internal.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imstb_rectpack.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imstb_textedit.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imstb_truetype.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\nullptr_gui.h">
+      <Filter>sources\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\imgui\imconfig.h">
+      <Filter>sources\gui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\sdk.h">
+      <Filter>sources\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\menu\menu.h">
+      <Filter>sources\gui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\helpers.h">
+      <Filter>sources\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="render\render.h">
+      <Filter>sources\renders</Filter>
+    </ClInclude>
+    <ClInclude Include="render\fonts\fonts.h">
+      <Filter>sources\renders\fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\color.h">
+      <Filter>sources\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\input.h">
+      <Filter>sources\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\math\vector.h">
+      <Filter>sources\helpers\math</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\visuals\background.h">
+      <Filter>sources\functions\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\math\math.h">
+      <Filter>sources\helpers\math</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\notify\notify.h">
+      <Filter>sources\functions\notify</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\visuals\visuals.h">
+      <Filter>sources\functions\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\app_system.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\base_file_system.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_entity.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_entity_list.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_mode.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_networkable.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_renderable.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_state.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_thinkable.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_unknown.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\collideable.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\convar.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\cvar.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\debug_overlay.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\engine_client.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\engine_sound.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\engine_trace.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\game_event_manager.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\input.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\input_system.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\localize.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\material_system.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\mdl_cache.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\memalloc.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\model_info_client.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\model_render.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\move_helper.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\panel.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\physics.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\prediction.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\ref_counted.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\render_view.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\steam.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\studio_render.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\surface.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\view_render.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\view_render_beams.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\base_client_dll.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\convar_sys.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\client_class.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\base_handle.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\handle_entity.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\user_cmd.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\studio.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\global_vars.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\e_handle.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\characterset.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\checksum_crc.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\checksum_md5.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\glow_outline_effect.h">
+      <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\math\matrix.h">
+      <Filter>sources\helpers\math</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\math\qangle.h">
+      <Filter>sources\helpers\math</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\datamap.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\enums.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\platform.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\recv.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\utl_buffer.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\utl_memory.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\utl_string.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\utl_vector.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\misc\vfunc.h">
+      <Filter>sources\sdk\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\structures.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\netvars.h">
+      <Filter>sources\helpers</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
