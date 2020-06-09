@@ -67,6 +67,7 @@ void render_tabs2(char* (&names)[N], int& activetab, float w, float h, bool Keyb
 namespace null_gui {
     int get_framerate();
     void set_cursor_pos(vec2 pos);
+    void set_next_window_pos(vec2 pos);
     void set_menu_color(color clr);
 
     void text(const char* text, ...);
@@ -86,7 +87,7 @@ namespace null_gui {
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values);
     void tooltip_items(const char* text, std::function<void()> func);
     void tooltip(const char* text, ...);
-    void line();
+    void line(float size = 0.f);
     bool begin_list_box(const char* text, vec2 size = vec2(0, 0));
     bool selectable(const char* text, bool selected);
     void end_list_box();
@@ -98,6 +99,7 @@ namespace null_gui {
 
     void same_line(float x = 0.f);
     void create_columns(int count);
+    void set_column_width(int idx, float size);
     void next_column();
 
     void push_font(ImFont* font);

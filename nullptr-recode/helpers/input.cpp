@@ -33,6 +33,10 @@ bool mouse_key(int vk, bool down) {
 
 namespace input {
 
+	void create_binds() {
+		create_bind("watermark", settings::misc::watermark, &settings::misc::watermark_bind, bind_info_flags_standart);
+	}
+
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (uMsg) {
 		case WM_MBUTTONDBLCLK:
@@ -152,5 +156,84 @@ namespace input {
 
 	void remove_hotkey(std::uint32_t vk) {
 		hot_keys[vk] = nullptr;
+	}
+
+	bind_info* find_bind_info(std::string name) {
+		for (int i = 0; i < binds.size(); i++) {
+			if (binds[i]->name == name) {
+				return binds[i];
+			}
+		}
+		return NULL;
+	}
+
+	bind_info* create_bind_info(std::string name, bool state, bind_info_flags flag) {
+		bind_info* bind_find = find_bind_info(name);
+
+		if (bind_find != NULL) {
+			bind_find->enable = state;
+			return bind_find;
+		}
+
+		bind_info* bind_inf = new bind_info{ name, state, flag };
+
+		binds.push_back(bind_inf);
+
+		return bind_inf;
+	}
+
+	void delete_bind_info(std::string name) {
+		for (int i = 0; i < binds.size(); i++) {
+			if (binds[i]->name == name) {
+				binds.erase(binds.begin() + i);
+			}
+		}
+	}
+	
+	void create_bind(std::string name, bool enable, key_bind_t* bind, bind_info_flags flag) {
+		if (enable) {
+			bind_info* bindinfo = create_bind_info(name, bind->enable, flag);
+
+			if (bind->bind_type == key_bind_type::always) {
+				bind->enable = true;
+			} else if (bind->bind_type == key_bind_type::toggle) {
+				if (was_key_pressed(bind->key_id)) {
+					bind->enable = !bind->enable;
+				}
+			}
+			else if (bind->bind_type == key_bind_type::press) {
+				if (is_key_down(bind->key_id)) {
+					bind->enable = true;
+				} else if (!is_key_down(bind->key_id)) {
+					bind->enable = false;
+				}
+			} else if (bind->bind_type == key_bind_type::press_invers) {
+				if (is_key_down(bind->key_id)) {
+					bind->enable = false;
+				} else if (!is_key_down(bind->key_id)) {
+					bind->enable = true;
+				}
+			}
+
+			if (bind->key_id == 0 && bind->bind_type != key_bind_type::always) bind->enable = false;
+		} else if (!enable) {
+			delete_bind_info(name);
+			bind->enable = false;
+		}
+	}
+
+	void create_bind(std::string name, bool enable, key_bind_t* bind, float* side, bind_info_flags flag) {
+		if (enable) {
+			bind_info* bindinfo = create_bind_info(name, bind->enable, flag);
+
+			if (was_key_pressed(bind->key_id)) {
+				bind->enable = !bind->enable;
+
+				*side = -*side;
+			}
+
+		} else if (!enable) {
+			delete_bind_info(name);
+		}
 	}
 }

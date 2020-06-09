@@ -4,11 +4,49 @@ char* tabs[] = { "legit aim", "visuals", "misc", "skins", "profile", "configs", 
 int current_tab = 0;
 
 namespace menu {
-	void draw() {
+	void draw_bind_window() {
+		input::create_binds();
 
+		if (input::binds.size() <= 0 || !settings::misc::bind_window) return;
+
+		null_gui::begin_window("bind's", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
+
+			null_gui::create_columns(2); {
+				null_gui::text_no_space("bind name");
+				null_gui::set_column_width(-1, 130);
+				null_gui::next_column();
+				null_gui::text_no_space("state");
+			}
+			null_gui::create_columns(1);
+			null_gui::line(185.f);
+
+			null_gui::create_columns(2); {
+				for (int i = 0; i < input::binds.size(); i++) {
+					auto& cur_bind = input::binds[i];
+
+					null_gui::text_no_space(cur_bind->name.c_str());
+
+					null_gui::next_column();
+
+					if (cur_bind->flag & bind_info_flags_standart)
+						null_gui::text_no_space(cur_bind->enable ? "enable" : "disable");
+					if (cur_bind->flag & bind_info_flags_side)
+						null_gui::text_no_space(cur_bind->enable ? "left" : "right");
+
+					null_gui::next_column();
+				}
+			}
+			null_gui::create_columns(1);
+
+			null_gui::end_window();
+		}
+	}
+	void draw_main_window() {
 		if (!globals::show_menu) return;
 
 		null_gui::set_menu_color(globals::menu_color);
+
+		null_gui::set_next_window_pos((utils::get_screen_size() / 2) - vec2(600 / 2, 500 / 2));
 
 		null_gui::begin_window("##nullptr", (bool)0, vec2(600, 500), ImGuiWindowFlags_NoScrollbar); {
 
@@ -32,8 +70,8 @@ namespace menu {
 			}
 			null_gui::end_group();
 
-			switch (current_tab)
-			{
+			switch (current_tab) {
+
 			case 0: menu::legit_tab(); break;
 			case 1: menu::visuals_tab(); break;
 			case 2: menu::misc_tab(); break;
@@ -41,140 +79,8 @@ namespace menu {
 			case 4: menu::profile_tab(); break;
 			case 5: menu::configs_tab(); break;
 			case 6: menu::scripts_tab(); break;
+
 			}
-			/*
-			null_gui::create_columns(2);
-
-			null_gui::begin_group("test salsmalekym", vec2(0, 200)); {
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				if (null_gui::button("test button")) {
-					sdk::cvar->console_dprintf("[ ");
-					sdk::cvar->console_color_printf(globals::menu_color, "salam");
-					sdk::cvar->console_dprintf(" ] ");
-					sdk::cvar->console_color_printf(color(255, 255, 255, 255), "nullptr recod");
-					sdk::cvar->console_dprintf("\n");
-					notify::add("debug", "test notify standart");
-					notify::add("test notify big");
-				}
-				null_gui::tooltip_items("test tooltip", []() {
-					null_gui::check_box("salamalekym", &globals::show_menu);
-					});
-				null_gui::text(text_string.c_str());
-				null_gui::check_box("watermark", &settings::misc::watermark);
-				null_gui::key_bind("##testbind", &test_bind, true);
-				null_gui::tooltip_items("##test tooltip 1", []() {
-					null_gui::check_box("test checkbox##2", &globals::show_menu);
-					});
-				null_gui::key_bind("testbind", &test_bind);
-				null_gui::int_input("test input", &test_int);
-				null_gui::tooltip("test tooltip 2");
-				null_gui::slider_int("test slidetint", &test_int, 0, 10);
-				null_gui::color_edit("test coloreditor", &globals::menu_color);
-				null_gui::text_input("test inputtext", &text_string);
-				null_gui::combo("test combo", &test_int, std::vector<std::string>{"salam", "ayf"});
-				null_gui::multi_combo("test combo", test_items_multi_s, &test_items_multi_b);
-			}
-			null_gui::end_group();
-
-			null_gui::begin_group("test salsmalekym 2", vec2(0, 200)); {
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				if (null_gui::button("test button")) {
-					sdk::cvar->console_dprintf("[ ");
-					sdk::cvar->console_color_printf(globals::menu_color, "salam");
-					sdk::cvar->console_dprintf(" ] ");
-					sdk::cvar->console_color_printf(color(255, 255, 255, 255), "nullptr recod");
-					sdk::cvar->console_dprintf("\n");
-					notify::add("debug", "test notify standart");
-					notify::add("test notify big");
-				}
-				null_gui::tooltip_items("test tooltip", []() {
-					null_gui::check_box("salamalekym", &globals::show_menu);
-					});
-				null_gui::text(text_string.c_str());
-				null_gui::check_box("watermark", &settings::misc::watermark);
-				null_gui::key_bind("##testbind", &test_bind, true);
-				null_gui::tooltip_items("##test tooltip 1", []() {
-					null_gui::check_box("test checkbox##2", &globals::show_menu);
-					});
-				null_gui::key_bind("testbind", &test_bind);
-				null_gui::int_input("test input", &test_int);
-				null_gui::tooltip("test tooltip 2");
-				null_gui::slider_int("test slidetint", &test_int, 0, 10);
-				null_gui::color_edit("test coloreditor", &globals::menu_color);
-				null_gui::text_input("test inputtext", &text_string);
-				null_gui::combo("test combo", &test_int, std::vector<std::string>{"salam", "ayf"});
-				null_gui::multi_combo("test combo", test_items_multi_s, &test_items_multi_b);
-			}
-			null_gui::end_group();
-
-			null_gui::next_column();
-
-			null_gui::begin_group("test salsmalekym 4", vec2(0, 200)); {
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				if (null_gui::button("test button")) {
-					sdk::cvar->console_dprintf("[ ");
-					sdk::cvar->console_color_printf(globals::menu_color, "salam");
-					sdk::cvar->console_dprintf(" ] ");
-					sdk::cvar->console_color_printf(color(255, 255, 255, 255), "nullptr recod");
-					sdk::cvar->console_dprintf("\n");
-					notify::add("debug", "test notify standart");
-					notify::add("test notify big");
-				}
-				null_gui::tooltip_items("test tooltip", []() {
-					null_gui::check_box("salamalekym", &globals::show_menu);
-					});
-				null_gui::text(text_string.c_str());
-				null_gui::check_box("watermark", &settings::misc::watermark);
-				null_gui::key_bind("##testbind", &test_bind, true);
-				null_gui::tooltip_items("##test tooltip 1", []() {
-					null_gui::check_box("test checkbox##2", &globals::show_menu);
-					});
-				null_gui::key_bind("testbind", &test_bind);
-				null_gui::int_input("test input", &test_int);
-				null_gui::tooltip("test tooltip 2");
-				null_gui::slider_int("test slidetint", &test_int, 0, 10);
-				null_gui::color_edit("test coloreditor", &globals::menu_color);
-				null_gui::text_input("test inputtext", &text_string);
-				null_gui::combo("test combo", &test_int, std::vector<std::string>{"salam", "ayf"});
-				null_gui::multi_combo("test combo", test_items_multi_s, &test_items_multi_b);
-			}
-			null_gui::end_group();
-
-			null_gui::begin_group("test salsmalekym 3", vec2(0, 200)); {
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				null_gui::text(std::to_string(utils::get_screen_size().x).c_str());
-				if (null_gui::button("test button")) {
-					sdk::cvar->console_dprintf("[ ");
-					sdk::cvar->console_color_printf(globals::menu_color, "salam");
-					sdk::cvar->console_dprintf(" ] ");
-					sdk::cvar->console_color_printf(color(255, 255, 255, 255), "nullptr recod");
-					sdk::cvar->console_dprintf("\n");
-					notify::add("debug", "test notify standart");
-					notify::add("test notify big");
-				}
-				null_gui::tooltip_items("test tooltip", []() {
-					null_gui::check_box("salamalekym", &globals::show_menu);
-					});
-				null_gui::text(text_string.c_str());
-				null_gui::check_box("watermark", &settings::misc::watermark);
-				null_gui::key_bind("##testbind", &test_bind, true);
-				null_gui::tooltip_items("##test tooltip 1", []() {
-					null_gui::check_box("test checkbox##2", &globals::show_menu);
-					});
-				null_gui::key_bind("testbind", &test_bind);
-				null_gui::int_input("test input", &test_int);
-				null_gui::tooltip("test tooltip 2");
-				null_gui::slider_int("test slidetint", &test_int, 0, 10);
-				null_gui::color_edit("test coloreditor", &globals::menu_color);
-				null_gui::text_input("test inputtext", &text_string);
-				null_gui::combo("test combo", &test_int, std::vector<std::string>{"salam", "ayf"});
-				null_gui::multi_combo("test combo", test_items_multi_s, &test_items_multi_b);
-			}
-			null_gui::end_group();*/
-
 		}	
 		null_gui::end_window();
 	}

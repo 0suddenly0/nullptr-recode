@@ -730,7 +730,7 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
     ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
     ImVec2 key_size = ImGui::CalcTextSize(text_display.c_str(), NULL, true);
     ImVec2 plus_size = ImGui::CalcTextSize("+");
-    ImVec2 button_tooltip_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x * 2.0f, plus_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 button_tooltip_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x, plus_size.y + style.FramePadding.y * 2.0f);
 
     ImGuiKeyBind* keybind = findkeybind(label);
     if (keybind != NULL)
@@ -750,8 +750,8 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
     const ImRect frame_bb(window->DC.CursorPos + global_offset, ImVec2(pos_wind.x + (size_wind_max.x - key_size.x - 31 - 4 - offset_scroll), window->DC.CursorPos.y + size.y));
 
     ImVec2 pos_max = ImVec2(pos_wind.x + size_wind_max.x - offset_scroll, pos_wind.y);
-    ImVec2 pos_end = ImVec2(pos_wind.x + (window->Size.x - (offset_x * 2) + 17.f - offset_scroll) - (flags & ImGuiKeyBindFlags_OnTooltip ? button_tooltip_size.x + 6 : 0), window->DC.CursorPos.y);
-    ImRect hober_bb(ImVec2(pos_end.x - key_size.x - 8.f, window->DC.CursorPos.y), ImVec2(pos_end.x - 2, window->DC.CursorPos.y + key_size.y + 6.f));
+    ImVec2 pos_end = ImVec2(pos_wind.x + (window->Size.x - (offset_x * 2) + 15.f - offset_scroll) - (flags & ImGuiKeyBindFlags_OnTooltip ? button_tooltip_size.x + 6 : 0), window->DC.CursorPos.y);
+    ImRect hober_bb(ImVec2(pos_end.x - key_size.x - 8, window->DC.CursorPos.y), ImVec2(pos_end.x, window->DC.CursorPos.y + key_size.y + 6.f));
 
     const ImRect total_bb(window->DC.CursorPos + global_offset, !(flags & ImGuiKeyBindFlags_OnItem) ? ImVec2(hober_bb.Max.x, hober_bb.Max.y) : window->DC.CursorPos);
 
@@ -876,13 +876,13 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
         keybind->key = text_new;
     }
     ImVec2 position_button = ImVec2(pos_end.x - key_size.x - 8.f, frame_bb.Min.y);
-    ImVec2 size_button = CalcItemSize(ImVec2(0, 0), key_size.x + style.FramePadding.x * 2.0f, key_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 size_button = CalcItemSize(ImVec2(0, 0), key_size.x + style.FramePadding.x, key_size.y + style.FramePadding.y * 2.0f);
 
     window->DrawList->AddRectFilled(position_button, position_button + size_button, GetColorU32(hovered ? ImGuiCol_nullptr_color : ImGuiCol_Button), style.FrameRounding);
 
     ImRect bb(position_button, position_button + size_button);
 
-    RenderTextClipped(bb.Min + style.FramePadding - ImVec2(0, 1.f), bb.Max - style.FramePadding, text_display.c_str(), NULL, &key_size, style.ButtonTextAlign, &bb);
+    RenderTextClipped(bb.Min, bb.Max, text_display.c_str(), NULL, &key_size, style.ButtonTextAlign, &bb);
 
     if (label_size.x > 0 && (!(flags & ImGuiKeyBindFlags_OnItem)))
         ImGui::RenderText(ImVec2(total_bb.Min.x, frame_bb.Min.y + 3.f), label);
@@ -1574,7 +1574,7 @@ void ImGui::AlignTextToFramePadding()
 }
 
 // Horizontal/vertical separating line
-void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
+void ImGui::SeparatorEx(float size, ImGuiSeparatorFlags flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -1614,15 +1614,14 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
 
         // We don't provide our width to the layout so that it doesn't get feed back into AutoFit
         const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thickness_draw));
-        ItemSize(ImVec2(0.0f, thickness_layout));
-        const bool item_visible = ItemAdd(bb, 0);
-        if (item_visible)
-        {
-            // Draw
-            window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), GetColorU32(ImGuiCol_Separator));
-            if (g.LogEnabled)
-                LogRenderedText(&bb.Min, "--------------------------------");
-        }
+        ItemSize(ImVec2(size, thickness_layout));
+        if (!ItemAdd(bb, 0)) return;
+
+        // Draw
+        window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), GetColorU32(ImGuiCol_Separator));
+        if (g.LogEnabled)
+            LogRenderedText(&bb.Min, "--------------------------------");
+
         if (columns)
         {
             PopColumnsBackground();
@@ -1631,7 +1630,7 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
     }
 }
 
-void ImGui::Separator()
+void ImGui::Separator(float size)
 {
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
@@ -1641,7 +1640,7 @@ void ImGui::Separator()
     // Those flags should eventually be overridable by the user
     ImGuiSeparatorFlags flags = (window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
     flags |= ImGuiSeparatorFlags_SpanAllColumns;
-    SeparatorEx(flags);
+    SeparatorEx(size, flags);
 }
 
 // Using 'hover_visibility_delay' allows us to hide the highlight and mouse cursor for a short time, which can be convenient to reduce visual noise.
@@ -1955,7 +1954,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     float offset_x = 19 + style.ItemInnerSpacing.x;
     ImVec2 offset = ImVec2(offset_x, 0.f);
 
-    ImVec2 pos_end = ImVec2(window->DC.CursorPos.x + (window->Size.x - (offset_x * 2) - 1.f - offset_scroll) + 7.f, window->DC.CursorPos.y);
+    ImVec2 pos_end = ImVec2(window->DC.CursorPos.x + (window->Size.x - (offset_x * 2) - offset_scroll) + 7.f, window->DC.CursorPos.y);
 
     const ImVec2 Global_offset = ImVec2(offset_x, /*local*/label_size.y + 2);
 

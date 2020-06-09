@@ -6,7 +6,8 @@
 #include "../../functions/notify/notify.h"
 
 namespace menu {
-	void draw();
+	void draw_bind_window();
+	void draw_main_window();
 
 	void legit_tab();
 	void visuals_tab();

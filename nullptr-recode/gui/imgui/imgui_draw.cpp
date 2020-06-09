@@ -185,7 +185,7 @@ void ImGui::set_nullptr_styles(ImGuiStyle* dst)
     ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
     ImVec4* colors = style->Colors;
 
-    style->WindowPadding            = ImVec2(8, 5);
+    style->WindowPadding            = ImVec2(8, 8); // 8, 5
     style->FramePadding             = ImVec2(8, 3);
     style->ItemSpacing              = ImVec2(3, 6);
     style->WindowRounding           = 4;
@@ -199,7 +199,7 @@ void ImGui::set_nullptr_styles(ImGuiStyle* dst)
     style->WindowBorderSize         = 0;
     style->WindowMenuButtonPosition = -1;
 
-    colors[ImGuiCol_nullptr_color]          = convert(80, 107, 255, 255);
+    colors[ImGuiCol_nullptr_color]          = convert(43, 90, 255, 255);
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
     colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 1.f);

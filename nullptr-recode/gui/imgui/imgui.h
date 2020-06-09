@@ -404,13 +404,6 @@ const char* const KeyNames[] = {
     "LALT",
     "RALT"
 };
-enum Key_bind_type
-{
-    always = 0,
-    press = 1,
-    press_invers = 2,
-    toggle = 3
-};
 
 namespace ImGui
 {
@@ -557,7 +550,7 @@ namespace ImGui
     IMGUI_API bool          ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0); // 1 - left; 2 - right
     IMGUI_API bool          ToggleButtonSelect(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0, bool KeyBind = false); // 1 - left; 2 - right
     IMGUI_API bool          ToggleButton(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0); // 1 - left; 2 - right
-    IMGUI_API void          Separator();                                                    // separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.
+    IMGUI_API void          Separator(float size = 0.f);                                                    // separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.
     IMGUI_API void          SameLine(float offset_from_start_x=0.0f, float spacing=-1.0f);  // call between widgets or groups to layout them horizontally. X position given in window coordinates.
     IMGUI_API void          NewLine();                                                      // undo a SameLine() or force a new line when in an horizontal-layout context.
     IMGUI_API void          Spacing();                                                      // add vertical spacing.

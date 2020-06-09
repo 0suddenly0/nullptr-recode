@@ -6,7 +6,7 @@
 #define proc_name L"ActionSquad.exe"
 
 namespace globals {
-	color menu_color = color(255, 255, 255, 255);
+	color menu_color = color(43, 90, 255, 255);
 	bool unloading = false;
 	bool show_menu = true;
 }

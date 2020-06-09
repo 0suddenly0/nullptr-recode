@@ -16,7 +16,8 @@ namespace hooks {
 
 		ImGui::GetIO().MouseDrawCursor = globals::show_menu;
 
-		menu::draw();
+		menu::draw_bind_window();
+		menu::draw_main_window();
 		render::begin_render();
 
 		ImGui::Render();

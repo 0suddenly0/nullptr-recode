@@ -7949,7 +7949,7 @@ void ImGui::TooltipSettings(const char* text, std::function<void()> func)
     const ImVec2 offset = ImVec2(19 + style.ItemInnerSpacing.x, 0);
     bool is_on_item = text_size.x == 0.f;
     if (is_on_item) SameLine();
-    ImVec2 button_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x * 2.0f, plus_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 button_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x, plus_size.y + style.FramePadding.y * 2.0f);
 
     ImVec2 end_position = ImVec2(window_position.x + (window_size.x - (offset.x * 2) + 15.f - offset_scroll), window->DC.CursorPos.y + button_size.y);
     ImVec2 start_position = is_on_item ? ImVec2(end_position.x - button_size.x, window->DC.CursorPos.y) : ImVec2(window->DC.CursorPos.x + offset.x, window->DC.CursorPos.y);
@@ -7977,7 +7977,7 @@ void ImGui::TooltipSettings(const char* text, std::function<void()> func)
     }
 
     window->DrawList->AddRectFilled(hovered_size.Min, hovered_size.Max, GetColorU32(hovered ? ImGuiCol_nullptr_color : ImGuiCol_Button), style.FrameRounding);
-    RenderTextClipped(hovered_size.Min + style.FramePadding - ImVec2(0, 1.f), hovered_size.Max - style.FramePadding, "+", NULL, &plus_size, style.ButtonTextAlign, &hovered_size);
+    RenderTextClipped(hovered_size.Min, hovered_size.Max, "+", NULL, &plus_size, style.ButtonTextAlign, &hovered_size);
 
     if (!is_on_item)
         ImGui::RenderText(ImVec2(all_item_size.Min.x, all_item_size.Min.y + 3.f), text);
