@@ -175,6 +175,13 @@
     <ClCompile Include="gui\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="gui\imgui\imgui_widgets.cpp" />
     <ClCompile Include="gui\menu\menu.cpp" />
+    <ClCompile Include="gui\menu\tabs\configs_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\legit_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\misc_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\profile_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\scripts_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\skins_tab.cpp" />
+    <ClCompile Include="gui\menu\tabs\visuals_tab.cpp" />
     <ClCompile Include="gui\nullptr_gui.cpp" />
     <ClCompile Include="helpers\input.cpp" />
     <ClCompile Include="helpers\math\math.cpp" />

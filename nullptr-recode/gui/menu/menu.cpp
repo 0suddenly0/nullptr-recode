@@ -1,12 +1,7 @@
 #include "menu.h"
 
 char* tabs[] = { "legit aim", "visuals", "misc", "skins", "profile", "configs", "scripts"};
-const char* test_items[] = { "salam", "nizar", "A Y F", "A Y F", "A Y F", "A Y F", "A Y F", "A Y F", "A Y F", "A Y F" };
-std::vector<std::string> test_items_multi_s = { "aim", "wh", "skins" };
-std::vector<bool> test_items_multi_b = { true, true, true };
-key_bind_t test_bind = key_bind_t{ 0, 0, false };
-std::string text_string;
-int test_int = 0;
+int current_tab = 0;
 
 namespace menu {
 	void draw() {
@@ -19,7 +14,7 @@ namespace menu {
 
 			null_gui::set_cursor_pos(vec2(0, 0));
 
-			null_gui::begin_group("##body", vec2(600, 41));{
+			null_gui::begin_group("##body", vec2(600, 40));{
 				null_gui::set_cursor_pos(vec2(8, 9));
 
 				null_gui::push_font(render::menu_big_font);{
@@ -29,12 +24,25 @@ namespace menu {
 
 				null_gui::same_line(0);
 
-				null_gui::horizontal(test_int, tabs);
+				null_gui::horizontal(current_tab, tabs);
+
+				null_gui::set_cursor_pos(vec2(0, 39));
 
 				ImGui::Separator();
 			}
 			null_gui::end_group();
 
+			switch (current_tab)
+			{
+			case 0: menu::legit_tab(); break;
+			case 1: menu::visuals_tab(); break;
+			case 2: menu::misc_tab(); break;
+			case 3: menu::skins_tab(); break;
+			case 4: menu::profile_tab(); break;
+			case 5: menu::configs_tab(); break;
+			case 6: menu::scripts_tab(); break;
+			}
+			/*
 			null_gui::create_columns(2);
 
 			null_gui::begin_group("test salsmalekym", vec2(0, 200)); {
@@ -165,7 +173,7 @@ namespace menu {
 				null_gui::combo("test combo", &test_int, std::vector<std::string>{"salam", "ayf"});
 				null_gui::multi_combo("test combo", test_items_multi_s, &test_items_multi_b);
 			}
-			null_gui::end_group();
+			null_gui::end_group();*/
 
 		}	
 		null_gui::end_window();

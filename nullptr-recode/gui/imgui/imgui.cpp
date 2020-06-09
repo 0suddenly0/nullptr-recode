@@ -3454,7 +3454,7 @@ void ImGui::UpdateMouseMovingWindowEndFrame()
                 }
                 else if((g.HoveredRootWindow->Flags & ImGuiWindowFlags_NoTitleBar) && (g.HoveredRootWindow->Flags & ImGuiWindowFlags_TitleBarLine))
                 {
-                    if (!ImRect(g.HoveredRootWindow->TitleBarRect().Min, g.HoveredRootWindow->TitleBarRect().Max + ImVec2(0, 37)).Contains(g.IO.MouseClickedPos[0]))
+                    if (!ImRect(g.HoveredRootWindow->TitleBarRect().Min, g.HoveredRootWindow->TitleBarRect().Max + ImVec2(0, 36)).Contains(g.IO.MouseClickedPos[0]))
                         g.MovingWindow = NULL;
                 }
             }

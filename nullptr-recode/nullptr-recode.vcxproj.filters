@@ -59,6 +59,9 @@
     <Filter Include="sources\sdk\structures">
       <UniqueIdentifier>{5cb0f7b8-c652-4b08-9ba6-d7dd16f1f605}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\gui\menu\tabs">
+      <UniqueIdentifier>{73466a8e-4589-4f3f-b28f-110e5b63c38e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -147,6 +150,27 @@
     </ClCompile>
     <ClCompile Include="helpers\netvars.cpp">
       <Filter>sources\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\visuals_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\skins_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\scripts_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\profile_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\misc_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\configs_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\menu\tabs\legit_tab.cpp">
+      <Filter>sources\gui\menu\tabs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

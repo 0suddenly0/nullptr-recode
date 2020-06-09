@@ -7,4 +7,12 @@
 
 namespace menu {
 	void draw();
+
+	void legit_tab();
+	void visuals_tab();
+	void misc_tab();
+	void skins_tab();
+	void profile_tab();
+	void configs_tab();
+	void scripts_tab();
 }
