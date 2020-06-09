@@ -8,6 +8,10 @@ namespace null_gui {
        return (int)ImGui::GetIO().Framerate;
     }
 
+    void set_cursor_pos(vec2 pos) {
+        ImGui::SetCursorPos(ImVec2(pos.x, pos.y));
+    }
+
     void set_menu_color(color clr) {
         ImGui::GetStyle().Colors[ImGuiCol_nullptr_color] = render::get_vec4(clr);
     }
@@ -97,6 +101,10 @@ namespace null_gui {
         }
     }
 
+    void line() {
+        ImGui::Separator();
+    }
+
     bool begin_list_box(const char* text, vec2 size) {
         bool ret = ImGui::ListBoxHeader(text, ImVec2(size.x, size.y));
         if (ret) {
@@ -150,5 +158,13 @@ namespace null_gui {
 
     void next_column() {
         ImGui::NextColumn();
+    }
+
+    void push_font(ImFont* font) {
+        ImGui::PushFont(font);
+    }
+
+    void pop_font() {
+        ImGui::PopFont();
     }
 }
