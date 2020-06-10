@@ -157,6 +157,7 @@ public:
     }
 private:
 
+    //meme: 3 colors. Maybe fix later
     unsigned char color_char[4];
     int color_int[4];
     float color_float[4];

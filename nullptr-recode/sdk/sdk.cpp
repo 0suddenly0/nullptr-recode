@@ -194,6 +194,7 @@ namespace sdk {
 		PRINT_INTERFACE(steam_friends);
 		PRINT_INTERFACE(player_resource);
 		PRINT_INTERFACE(game_rules);
+		PRINT_INTERFACE(local_player);
 	}
 }
 

@@ -198,7 +198,6 @@
     <ClCompile Include="sdk\misc\utl_buffer.cpp" />
     <ClCompile Include="sdk\misc\utl_string.cpp" />
     <ClCompile Include="sdk\sdk.cpp" />
-    <ClCompile Include="sdk\structures\structures.cpp" />
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -287,6 +286,19 @@
     <ClInclude Include="sdk\misc\utl_vector.h" />
     <ClInclude Include="sdk\misc\vfunc.h" />
     <ClInclude Include="sdk\sdk.h" />
+    <ClInclude Include="sdk\structures\c_animation_layer.h" />
+    <ClInclude Include="sdk\structures\c_base_attributable_item.h" />
+    <ClInclude Include="sdk\structures\c_base_combat_weapon.h" />
+    <ClInclude Include="sdk\structures\c_base_entity.h" />
+    <ClInclude Include="sdk\structures\c_base_player.h" />
+    <ClInclude Include="sdk\structures\c_base_view_model.h" />
+    <ClInclude Include="sdk\structures\c_base_weapon_world_model.h" />
+    <ClInclude Include="sdk\structures\c_csgo_player_animstate.h" />
+    <ClInclude Include="sdk\structures\c_econ_item_view.h" />
+    <ClInclude Include="sdk\structures\c_game_rules.h" />
+    <ClInclude Include="sdk\structures\c_hud_texture.h" />
+    <ClInclude Include="sdk\structures\c_planted_c4.h" />
+    <ClInclude Include="sdk\structures\c_player_resource.h" />
     <ClInclude Include="sdk\structures\structures.h" />
     <ClInclude Include="settings\globals.h" />
     <ClInclude Include="settings\settings.h" />

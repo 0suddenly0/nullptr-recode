@@ -145,9 +145,6 @@
     <ClCompile Include="hooks\hooks\end_scene.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="sdk\structures\structures.cpp">
-      <Filter>sources\sdk\structures</Filter>
-    </ClCompile>
     <ClCompile Include="helpers\netvars.cpp">
       <Filter>sources\helpers</Filter>
     </ClCompile>
@@ -440,6 +437,45 @@
     </ClInclude>
     <ClInclude Include="helpers\netvars.h">
       <Filter>sources\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_animation_layer.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_attributable_item.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_combat_weapon.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_entity.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_player.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_view_model.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_base_weapon_world_model.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_csgo_player_animstate.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_econ_item_view.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_game_rules.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_hud_texture.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_planted_c4.h">
+      <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\structures\c_player_resource.h">
+      <Filter>sources\sdk\structures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
