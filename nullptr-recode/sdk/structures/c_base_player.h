@@ -52,6 +52,9 @@ public:
 	PNETVAR(c_handle<c_base_combat_weapon>, my_weapons, "DT_BaseCombatCharacter", "m_hMyWeapons");
 	PNETVAR(c_handle<c_base_attributable_item>, my_wearables, "DT_BaseCombatCharacter", "m_hMyWearables");
 
+	bool is_on_ground() {
+		return m_flags() & FL_ONGROUND;
+	}
 
 	int get_fov() {
 		if (fov() != 0) return fov();

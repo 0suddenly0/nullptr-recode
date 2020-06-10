@@ -4100,8 +4100,8 @@ static void AddDrawListToDrawData(ImVector<ImDrawList*>* out_list, ImDrawList* d
 
     // Draw list sanity check. Detect mismatch between PrimReserve() calls and incrementing _VtxCurrentIdx, _VtxWritePtr etc.
     // May trigger for you if you are using PrimXXX functions incorrectly.
-    IM_ASSERT(draw_list->VtxBuffer.Size == 0 || draw_list->_VtxWritePtr == draw_list->VtxBuffer.Data + draw_list->VtxBuffer.Size);
-    IM_ASSERT(draw_list->IdxBuffer.Size == 0 || draw_list->_IdxWritePtr == draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size);
+    //IM_ASSERT(draw_list->VtxBuffer.Size == 0 || draw_list->_VtxWritePtr == draw_list->VtxBuffer.Data + draw_list->VtxBuffer.Size);
+    //IM_ASSERT(draw_list->IdxBuffer.Size == 0 || draw_list->_IdxWritePtr == draw_list->IdxBuffer.Data + draw_list->IdxBuffer.Size);
     if (!(draw_list->Flags & ImDrawListFlags_AllowVtxOffset))
         IM_ASSERT((int)draw_list->_VtxCurrentIdx == draw_list->VtxBuffer.Size);
 
@@ -4276,7 +4276,7 @@ void ImGui::EndFrame()
     memset(g.IO.NavInputs, 0, sizeof(g.IO.NavInputs));
 }
 
-void ImGui::Render()
+void ImGui::Render(ImDrawList* our_list)
 {
     ImGuiContext& g = *GImGui;
     IM_ASSERT(g.Initialized);
@@ -4286,6 +4286,10 @@ void ImGui::Render()
     g.FrameCountRendered = g.FrameCount;
     g.IO.MetricsRenderWindows = 0;
     g.DrawDataBuilder.Clear();
+
+    // Adding our custom drawlist to imgui's drawdata
+    if (our_list && !our_list->VtxBuffer.empty())
+        AddDrawListToDrawData(&g.DrawDataBuilder.Layers[0], our_list);
 
     // Add background ImDrawList
     if (!g.BackgroundDrawList.VtxBuffer.empty())
@@ -5267,9 +5271,7 @@ static inline void ClampWindowRect(ImGuiWindow* window, const ImRect& rect, cons
 
     //ImMin(rect.Max - padding, ImMax(window->Pos + size_for_clamping, rect.Min + padding) - size_for_clamping);
 
-    window->Pos.x = std::clamp(window->Pos.x, 0.f, rect.Max.x - window->Size.x);
-    window->Pos.y = std::clamp(window->Pos.y, 0.f, rect.Max.y - window->Size.y);
-
+    window->Pos = ImClamp(window->Pos, ImVec2(0, 0), ImVec2(rect.Max.x - window->Size.x, rect.Max.y - window->Size.y));
 }
 
 static void ImGui::RenderWindowOuterBorders(ImGuiWindow* window)

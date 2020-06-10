@@ -2,6 +2,8 @@
 #include <cmath>
 #include "math.h"
 
+#define deg(a) a * 57.295779513082f
+
 class vec2 {
 public:
 	vec2() {
@@ -306,8 +308,36 @@ public:
 	float length() {
 		return (float)sqrt(x * x + y * y + z * z);
 	}
+
 	float length_sqr(void) {
 		return (float)(x * x + y * y + z * z);
+	}
+
+	void cross_product(const vec3& a, const vec3& b, vec3& result)
+	{
+		result.x = a.y * b.z - a.z * b.y;
+		result.y = a.z * b.x - a.x * b.z;
+		result.z = a.x * b.y - a.y * b.x;
+	}
+
+	vec3 cross(const vec3& vOther)
+	{
+		vec3 res;
+		cross_product(*this, vOther, res);
+		return res;
+	}
+
+	vec3 angle(vec3* up = 0) {
+		if (!x && !y) return vec3(0, 0, 0);
+
+		float roll = 0;
+
+		if (up) {
+			vec3 left = (*up).cross(*this);
+			roll = deg(atan2f(left.z, (left.y * x) - (left.x * y)));
+		}
+
+		return vec3(deg(atan2f(-z, sqrtf(x * x + y * y))), deg(atan2f(y, x)), roll);
 	}
 
 	float x, y, z;

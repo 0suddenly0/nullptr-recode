@@ -127,7 +127,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
 
     // Backup the DX9 state
     IDirect3DStateBlock9* d3d9_state_block = NULL;
-    if (g_pd3dDevice->CreateStateBlock(D3DSBT_ALL, &d3d9_state_block) < 0)
+    if (g_pd3dDevice->CreateStateBlock(D3DSBT_PIXELSTATE, &d3d9_state_block) < 0)
         return;
 
     // Backup the DX9 transform (DX9 documentation suggests that it is included in the StateBlock but it doesn't appear to)
@@ -237,7 +237,7 @@ void ImGui_ImplDX9_Shutdown()
 static bool ImGui_ImplDX9_CreateFontsTexture()
 {
     // Build texture atlas
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();   
     unsigned char* pixels;
     int width, height, bytes_per_pixel;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);

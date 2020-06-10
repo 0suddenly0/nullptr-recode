@@ -1,10 +1,177 @@
 #include "math.h"
 #include <cmath>
+#include "../../sdk/structures/structures.h"
+#include "../../sdk/sdk.h"
 
 namespace math {
-	bool world2screen(const vec2& in, vec2& out) {
-		return true;
+	void angle_vector(const qangle& angles, vec3& forward) {
+		float	sp, sy, cp, cy;
+
+		DirectX::XMScalarSinCos(&sp, &cp, DEG2RAD(angles[0]));
+		DirectX::XMScalarSinCos(&sy, &cy, DEG2RAD(angles[1]));
+
+		forward.x = cp * cy;
+		forward.y = cp * sy;
+		forward.z = -sp;
 	}
+
+	void angle_vectors(const qangle& angles, vec3& forward, vec3& right, vec3& up) {
+		float sr, sp, sy, cr, cp, cy;
+
+		DirectX::XMScalarSinCos(&sp, &cp, DEG2RAD(angles[0]));
+		DirectX::XMScalarSinCos(&sy, &cy, DEG2RAD(angles[1]));
+		DirectX::XMScalarSinCos(&sr, &cr, DEG2RAD(angles[2]));
+
+		forward.x = (cp * cy);
+		forward.y = (cp * sy);
+		forward.z = (-sp);
+		right.x = (-1 * sr * sp * cy + -1 * cr * -sy);
+		right.y = (-1 * sr * sp * sy + -1 * cr * cy);
+		right.z = (-1 * sr * cp);
+		up.x = (cr * sp * cy + -sr * -sy);
+		up.y = (cr * sp * sy + -sr * cy);
+		up.z = (cr * cp);
+	}
+
+	void movement_fix(c_user_cmd* m_Cmd, qangle wish_angle, qangle old_angles) {
+		if (old_angles.pitch != wish_angle.pitch || old_angles.yaw != wish_angle.yaw || old_angles.roll != wish_angle.roll) {
+			vec3 wish_forward, wish_right, wish_up, cmd_forward, cmd_right, cmd_up;
+
+			auto viewangles = old_angles;
+			auto movedata = vec3(m_Cmd->forwardmove, m_Cmd->sidemove, m_Cmd->upmove);
+			viewangles.Normalize();
+
+			if (!(sdk::local_player->m_flags() & FL_ONGROUND) && viewangles.roll != 0.f) movedata.y = 0.f;
+
+			angle_vectors(wish_angle, wish_forward, wish_right, wish_up);
+			angle_vectors(viewangles, cmd_forward, cmd_right, cmd_up);
+
+			auto v8 = sqrt(wish_forward.x * wish_forward.x + wish_forward.y * wish_forward.y), v10 = sqrt(wish_right.x * wish_right.x + wish_right.y * wish_right.y), v12 = sqrt(wish_up.z * wish_up.z);
+
+			vec3 wish_forward_norm(1.0f / v8 * wish_forward.x, 1.0f / v8 * wish_forward.y, 0.f),
+				wish_right_norm(1.0f / v10 * wish_right.x, 1.0f / v10 * wish_right.y, 0.f),
+				wish_up_norm(0.f, 0.f, 1.0f / v12 * wish_up.z);
+
+			auto v14 = sqrt(cmd_forward.x * cmd_forward.x + cmd_forward.y * cmd_forward.y), v16 = sqrt(cmd_right.x * cmd_right.x + cmd_right.y * cmd_right.y), v18 = sqrt(cmd_up.z * cmd_up.z);
+
+			vec3 cmd_forward_norm(1.0f / v14 * cmd_forward.x, 1.0f / v14 * cmd_forward.y, 1.0f / v14 * 0.0f),
+				cmd_right_norm(1.0f / v16 * cmd_right.x, 1.0f / v16 * cmd_right.y, 1.0f / v16 * 0.0f),
+				cmd_up_norm(0.f, 0.f, 1.0f / v18 * cmd_up.z);
+
+			auto v22 = wish_forward_norm.x * movedata.x, v26 = wish_forward_norm.y * movedata.x, v28 = wish_forward_norm.z * movedata.x, v24 = wish_right_norm.x * movedata.y, v23 = wish_right_norm.y * movedata.y, v25 = wish_right_norm.z * movedata.y, v30 = wish_up_norm.x * movedata.z, v27 = wish_up_norm.z * movedata.z, v29 = wish_up_norm.y * movedata.z;
+
+			vec3 correct_movement;
+			correct_movement.x = cmd_forward_norm.x * v24 + cmd_forward_norm.y * v23 + cmd_forward_norm.z * v25 + (cmd_forward_norm.x * v22 + cmd_forward_norm.y * v26 + cmd_forward_norm.z * v28) + (cmd_forward_norm.y * v30 + cmd_forward_norm.x * v29 + cmd_forward_norm.z * v27);
+			correct_movement.y = cmd_right_norm.x * v24 + cmd_right_norm.y * v23 + cmd_right_norm.z * v25 + (cmd_right_norm.x * v22 + cmd_right_norm.y * v26 + cmd_right_norm.z * v28) + (cmd_right_norm.x * v29 + cmd_right_norm.y * v30 + cmd_right_norm.z * v27);
+			correct_movement.z = cmd_up_norm.x * v23 + cmd_up_norm.y * v24 + cmd_up_norm.z * v25 + (cmd_up_norm.x * v26 + cmd_up_norm.y * v22 + cmd_up_norm.z * v28) + (cmd_up_norm.x * v30 + cmd_up_norm.y * v29 + cmd_up_norm.z * v27);
+
+			correct_movement.x = std::clamp(correct_movement.x, -450.f, 450.f);
+			correct_movement.y = std::clamp(correct_movement.y, -450.f, 450.f);
+			correct_movement.z = std::clamp(correct_movement.z, -320.f, 320.f);
+
+			m_Cmd->forwardmove = correct_movement.x;
+			m_Cmd->sidemove = correct_movement.y;
+			m_Cmd->upmove = correct_movement.z;
+
+			m_Cmd->buttons &= ~(IN_MOVERIGHT | IN_MOVELEFT | IN_BACK | IN_FORWARD);
+
+			if (m_Cmd->sidemove != 0.0) {
+				if (m_Cmd->sidemove <= 0.0) m_Cmd->buttons |= IN_MOVELEFT;
+				else m_Cmd->buttons |= IN_MOVERIGHT;
+			}
+
+			if (m_Cmd->forwardmove != 0.0) {
+				if (m_Cmd->forwardmove <= 0.0) m_Cmd->buttons |= IN_BACK;
+				else m_Cmd->buttons |= IN_FORWARD;
+			}
+		}
+	}
+
+	void vector_angles(const vec3& forward, qangle& angles) {
+		float tmp, yaw, pitch;
+
+		if (forward[1] == 0 && forward[0] == 0) {
+			yaw = 0;
+			if (forward[2] > 0) pitch = 270;
+			else pitch = 90;
+		} else {
+			yaw = (atan2(forward[1], forward[0]) * 180 / DirectX::XM_PI);
+			if (yaw < 0) yaw += 360;
+
+			tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
+			pitch = (atan2(-forward[2], tmp) * 180 / DirectX::XM_PI);
+			if (pitch < 0) pitch += 360;
+		}
+
+		angles[0] = pitch;
+		angles[1] = yaw;
+		angles[2] = 0;
+	}
+
+	void vector_angles(const vec3& forward, vec3& angles) {
+		float	tmp, yaw, pitch;
+
+		if (forward[1] == 0 && forward[0] == 0) {
+			yaw = 0;
+			if (forward[2] > 0) pitch = 270;
+			else pitch = 90;
+		}
+		else {
+			yaw = (atan2(forward[1], forward[0]) * 180 / DirectX::XM_PI);
+			if (yaw < 0) yaw += 360;
+
+			tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
+			pitch = (atan2(-forward[2], tmp) * 180 / DirectX::XM_PI);
+			if (pitch < 0) pitch += 360;
+		}
+
+		angles[0] = pitch;
+		angles[1] = yaw;
+		angles[2] = 0;
+	}
+
+	float normalize_yaw(float yaw) {
+		if (yaw > 180) yaw -= (round(yaw / 360) * 360.f);
+		else if (yaw < -180) yaw += (round(yaw / 360) * -360.f);
+		return yaw;
+	}
+
+	bool screen_transform(const vec3& in, vec2& out) {
+		static auto& w2sMatrix = sdk::engine_client->world_to_screen_matrix();
+		out.x = w2sMatrix.m[0][0] * in.x + w2sMatrix.m[0][1] * in.y + w2sMatrix.m[0][2] * in.z + w2sMatrix.m[0][3];
+		out.y = w2sMatrix.m[1][0] * in.x + w2sMatrix.m[1][1] * in.y + w2sMatrix.m[1][2] * in.z + w2sMatrix.m[1][3];
+
+		float w = w2sMatrix.m[3][0] * in.x + w2sMatrix.m[3][1] * in.y + w2sMatrix.m[3][2] * in.z + w2sMatrix.m[3][3];
+
+		if (w < 0.001f) {
+			out.x *= 100000;
+			out.y *= 100000;
+			return true;
+		}
+
+		float invw = 1.f / w;
+		out.x *= invw;
+		out.y *= invw;
+
+		return false;
+	}
+
+
+	bool world2screen(const vec3& in, vec2& out) {
+		if (!screen_transform(in, out)) {
+			vec2 size = utils::get_screen_size();
+
+			out.x = (size.x / 2.0f) + (out.x * size.x) / 2.0f;
+			out.y = (size.y / 2.0f) - (out.y * size.y) / 2.0f;
+
+			auto xOk = size.x > out.x > 0.0f;
+			auto yOk = size.y > out.y > 0.0f;
+
+			return xOk && yOk;
+		}
+		return false;
+	}
+
 	void vector_transform(const vec3& in1, const matrix3x4& in2, vec3& out) {
 		out[0] = in1.dot(vec3(in2[0][0], in2[0][1], in2[0][2])) + in2[0][3];
 		out[1] = in1.dot(vec3(in2[1][0], in2[1][1], in2[1][2])) + in2[1][3];

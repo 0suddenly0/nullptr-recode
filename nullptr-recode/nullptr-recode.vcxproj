@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableUAC>true</EnableUAC>
+      <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/FORCE:MULTIPLE /ignore:4221,4006 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\misc\misc.cpp" />
     <ClCompile Include="functions\notify\notify.cpp" />
     <ClCompile Include="functions\visuals\background.cpp" />
     <ClCompile Include="functions\visuals\visuals.cpp" />
@@ -187,7 +188,11 @@
     <ClCompile Include="helpers\math\math.cpp" />
     <ClCompile Include="helpers\netvars.cpp" />
     <ClCompile Include="hooks\hooks.cpp" />
+    <ClCompile Include="hooks\hooks\create_move.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
+    <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
+    <ClCompile Include="hooks\hooks\paint_traverse.cpp" />
+    <ClCompile Include="hooks\hooks\reset.cpp" />
     <ClCompile Include="hooks\hooks\wndproc.cpp" />
     <ClCompile Include="hooks\vfunc.cpp" />
     <ClCompile Include="render\render.cpp" />
@@ -201,6 +206,7 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions\misc\misc.h" />
     <ClInclude Include="functions\notify\notify.h" />
     <ClInclude Include="functions\visuals\background.h" />
     <ClInclude Include="functions\visuals\visuals.h" />

@@ -7,8 +7,8 @@ namespace hooks {
 	LRESULT __stdcall wndproc::hook(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		input::process_message(uMsg, wParam, lParam);
 
-		if (globals::show_menu && ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) == 0) return true;
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam) && globals::show_menu) return true;
 
-		return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+		return CallWindowProc(o_wnd_proc, hWnd, uMsg, wParam, lParam);
 	}
 }

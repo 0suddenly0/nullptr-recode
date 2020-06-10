@@ -1,6 +1,11 @@
+#include <mutex>
 #include "render.h"
 #include "../functions/visuals/background.h"
 #include "../settings/globals.h"
+
+ImDrawList* draw_list_act = nullptr;
+ImDrawList* draw_list_for_render = nullptr;
+std::mutex render_mutex;
 
 namespace render {
 	ImFont* menu_big_font = nullptr;
@@ -17,12 +22,15 @@ namespace render {
 		io.ConfigWindowsMoveFromTitleBarOnly = true;
 		ImGui::set_nullptr_styles();
 
-		draw_list = ImGui::GetBackgroundDrawList();
+		draw_list = new ImDrawList(ImGui::GetDrawListSharedData());
+		draw_list_act = new ImDrawList(ImGui::GetDrawListSharedData());
+		draw_list_for_render = new ImDrawList(ImGui::GetDrawListSharedData());
 
 		initialize_fonts();
 	}
 
 	void begin_render() {
+		clear_main_list();
 
 		if (globals::show_menu) {
 			draw_box_filled(0.f, 0.f, utils::get_screen_size().x, utils::get_screen_size().y, color(0, 0, 0, 100));
@@ -31,6 +39,8 @@ namespace render {
 		notify::render();
 		visuals::render();
 		backdrop::render();
+
+		move_to_act();
 	}
 
 	void initialize_fonts() {
@@ -61,6 +71,26 @@ namespace render {
 		ImGui_ImplDX9_Shutdown();
 		ImGui_ImplWin32_Shutdown();
 		ImGui::DestroyContext();
+	}
+
+	void clear_main_list() {
+		draw_list->Clear();
+		draw_list->PushClipRectFullScreen();
+	}
+
+	void move_to_act() {
+		render_mutex.lock();
+		*draw_list_act = *draw_list;
+		render_mutex.unlock();
+	}
+
+	ImDrawList* get_list_for_render() {
+		if (render_mutex.try_lock()) {
+			*draw_list_for_render = *draw_list_act;
+			render_mutex.unlock();
+		}
+
+		return draw_list_for_render;
 	}
 
 	void draw_text(std::string text, vec2 pos, color clr, bool outline, bool center, int size) {

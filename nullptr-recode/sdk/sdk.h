@@ -53,6 +53,9 @@
 #include "interfaces/view_render.h"
 #include "interfaces/view_render_beams.h"
 
+#include "../helpers/math/math.h"
+#include "../hooks/hooks.h"
+
 class c_player_resource;
 class c_game_rules;
 class c_local_player

@@ -19,8 +19,7 @@ public:
 		return call_vfunction<void(__thiscall*)(void*, int)>(this, 75)(this, modelIndex);
 	}
 
-	void set_odel_index(const int index)
-	{
+	void set_model_index(const int index) {
 		return call_vfunction<void(__thiscall*)(c_base_entity*, int)>(this, 75)(this, index);
 	}
 

@@ -62,6 +62,9 @@
     <Filter Include="sources\gui\menu\tabs">
       <UniqueIdentifier>{73466a8e-4589-4f3f-b28f-110e5b63c38e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\functions\misc">
+      <UniqueIdentifier>{b18ba37a-841d-4ef8-8fcf-ea23dd2bf654}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -168,6 +171,21 @@
     </ClCompile>
     <ClCompile Include="gui\menu\tabs\legit_tab.cpp">
       <Filter>sources\gui\menu\tabs</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\create_move.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\lock_cursor.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\reset.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\paint_traverse.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\misc\misc.cpp">
+      <Filter>sources\functions\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,6 +494,9 @@
     </ClInclude>
     <ClInclude Include="sdk\structures\c_player_resource.h">
       <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\misc\misc.h">
+      <Filter>sources\functions\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

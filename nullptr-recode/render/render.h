@@ -16,6 +16,10 @@ namespace render {
 	void initialize_fonts();
 	void destroy();
 
+	void clear_main_list();
+	void move_to_act();
+	ImDrawList* get_list_for_render();
+
 	ImVec4 get_vec4(color clr) {
 		return ImVec4(clr.get<float>(return_color::r), clr.get<float>(return_color::g), clr.get<float>(return_color::b), clr.get<float>(return_color::a));
 	}

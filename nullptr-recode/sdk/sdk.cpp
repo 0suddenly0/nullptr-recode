@@ -1,5 +1,4 @@
 #include "sdk.h"
-#include "../hooks/hooks.h"
 
 create_interface_fn get_module_factory(HMODULE module) {
 	return reinterpret_cast<create_interface_fn>(GetProcAddress(module, "CreateInterface"));

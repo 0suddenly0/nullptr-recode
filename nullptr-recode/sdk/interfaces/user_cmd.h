@@ -1,8 +1,6 @@
 #pragma once
-
 #include "../misc/checksum_crc.h"
 #include "../misc/checksum_md5.h"
-#include "../../helpers/helpers.h"
 
 #define IN_ATTACK  (1 << 0)
 #define IN_JUMP   (1 << 1)

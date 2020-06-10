@@ -56,6 +56,8 @@ enum cs_weapon_type
 };
 
 struct datamap_t;
+class c_econ_item_view;
+class c_base_attributable_item;
 class c_animation_layer;
 class c_base_combat_weapon;
 class c_base_attributable_item;
@@ -65,8 +67,8 @@ class c_base_player_animstate;
 class c_base_entity;
 
 #include "c_animation_layer.h"
-#include "c_base_attributable_item.h"
 #include "c_base_entity.h"
+#include "c_base_attributable_item.h"
 #include "c_base_player.h"
 #include "c_base_view_model.h"
 #include "c_base_weapon_world_model.h"

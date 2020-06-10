@@ -1,9 +1,11 @@
-﻿#include <windows.h>
+﻿#define NOMINMAX
+#define _CRT_SECURE_NO_WARNINGS
+#include <windows.h>
 #include "utils/utils.h"
 #include "sdk/sdk.h"
 #include "settings/globals.h"
 #include "hooks/hooks.h"
-#define _CRT_SECURE_NO_WARNINGS
+#include "helpers/netvars.h"
 
 DWORD WINAPI attach(LPVOID base) {
 
@@ -15,35 +17,54 @@ DWORD WINAPI attach(LPVOID base) {
 	utils::attach_console();
 #endif
 
-	utils::console_print("[-] injected\n");
+	try
+	{
 
-	utils::console_print("[-] initialization sdk...\n");
-	sdk::initialize();
-	sdk::print();
-	utils::console_print("[-] sdk initialized\n");
+		utils::console_print("[-] injected\n");
 
-	utils::console_print("[-] initialization render...\n");
-	render::initialize();
-	utils::console_print("[-] render initialized\n");
+		utils::console_print("[-] initialization sdk...\n");
+		sdk::initialize();
+		sdk::print();
+		utils::console_print("[-] sdk initialized\n");
 
-	utils::console_print("[-] waiting hooks...\n");
-	hooks::initialize();
-	utils::console_print("[-] all func hooked\n");
+		utils::console_print("[-] initialization netvars...\n");
+		netvar::initialize();
+		utils::console_print("[-] netvars initialized\n");
+
+		utils::console_print("[-] initialization render...\n");
+		render::initialize();
+		utils::console_print("[-] render initialized\n");
+
+		utils::console_print("[-] waiting hooks...\n");
+		hooks::initialize();
+		utils::console_print("[-] all func hooked\n");
 
 #ifdef _DEBUG
-	input::register_hotkey(VK_END, [base]() {
-		globals::unloading = true;
-		});
+		input::register_hotkey(VK_END, [base]() {
+			globals::unloading = true;
+			});
 #endif
 
-	input::register_hotkey(VK_INSERT, [base]() {
-		globals::show_menu = !globals::show_menu;
-		});
+		input::register_hotkey(VK_INSERT, [base]() {
+			globals::show_menu = !globals::show_menu;
+			});
 
 
-	while (!globals::unloading) Sleep(1000);
+		while (!globals::unloading) Sleep(1000);
 
-	FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+		FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+	}
+
+	catch (const std::exception & ex)
+	{
+		utils::console_print("[-] an error occured during initialization:\n");
+		utils::console_print("[-] %s\n", ex.what());
+		utils::console_print("[-] Press any key to exit.\n");
+		utils::console_read_key();
+		utils::detach_console();
+
+		FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+	}
 }
 
 BOOL WINAPI detach() {
