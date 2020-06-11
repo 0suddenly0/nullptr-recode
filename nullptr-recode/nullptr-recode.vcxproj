@@ -190,9 +190,12 @@
     <ClCompile Include="hooks\hooks.cpp" />
     <ClCompile Include="hooks\hooks\create_move.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
+    <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
     <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
     <ClCompile Include="hooks\hooks\paint_traverse.cpp" />
     <ClCompile Include="hooks\hooks\reset.cpp" />
+    <ClCompile Include="hooks\hooks\send_datagram.cpp" />
+    <ClCompile Include="hooks\hooks\send_net_msg.cpp" />
     <ClCompile Include="hooks\hooks\wndproc.cpp" />
     <ClCompile Include="hooks\vfunc.cpp" />
     <ClCompile Include="render\render.cpp" />
@@ -267,6 +270,7 @@
     <ClInclude Include="sdk\interfaces\model_info_client.h" />
     <ClInclude Include="sdk\interfaces\model_render.h" />
     <ClInclude Include="sdk\interfaces\move_helper.h" />
+    <ClInclude Include="sdk\interfaces\net_message.h" />
     <ClInclude Include="sdk\interfaces\panel.h" />
     <ClInclude Include="sdk\interfaces\physics.h" />
     <ClInclude Include="sdk\interfaces\prediction.h" />

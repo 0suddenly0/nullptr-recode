@@ -6,6 +6,11 @@
 #include "misc/vfunc.h"
 #include "misc/enums.h"
 
+#include "../helpers/math/vector.h"
+#include "../helpers/math/qangle.h"
+#include "../helpers/math/matrix.h"
+
+#include "interfaces/net_message.h"
 #include "interfaces/app_system.h"
 #include "interfaces/base_client_dll.h"
 #include "interfaces/base_file_system.h"
@@ -53,7 +58,6 @@
 #include "interfaces/view_render.h"
 #include "interfaces/view_render_beams.h"
 
-#include "../helpers/math/math.h"
 #include "../hooks/hooks.h"
 
 class c_player_resource;

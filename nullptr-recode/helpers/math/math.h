@@ -4,15 +4,15 @@
 #include "vector.h"
 #include "qangle.h"
 #include "matrix.h"
+#include "../../sdk/sdk.h"
 
 #define RAD2DEG(x) DirectX::XMConvertToDegrees(x)
 #define DEG2RAD(x) DirectX::XMConvertToRadians(x)
 
-class c_user_cmd;
-class vec2;
+/*class vec2;
 class vec3;
 class qangle;
-class matrix3x4;
+class matrix3x4;*/
 
 namespace math {
 	void angle_vector(const qangle& angles, vec3& forward);

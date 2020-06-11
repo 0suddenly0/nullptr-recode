@@ -14,5 +14,10 @@ namespace settings {
 			bool enable = false;
 			int strafe_type = 0;
 		}
+
+		namespace fake_latency {
+			bool enable = false;
+			int amount = 0;
+		}
 	}
 }

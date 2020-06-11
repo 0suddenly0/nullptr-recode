@@ -7,11 +7,17 @@ namespace menu {
 		null_gui::begin_group("misc", vec2(0, 300)); {
 
 			null_gui::color_edit("menu color", &globals::menu_color);
+
 			null_gui::check_box("watermark", &settings::misc::watermark);
 			null_gui::key_bind("##watermark", &settings::misc::watermark_bind);
+
 			null_gui::check_box("obs bypass", &settings::misc::obs_bypass);
-			null_gui::check_box("bhop", &settings::misc::bhop::enable);
+
+			null_gui::check_box("bhop", &settings::misc::bhop::enable);	
 			null_gui::combo("auto strafe type", &settings::misc::bhop::strafe_type, std::vector<std::string>{"none", "legt", "pseudo wasd"});
+
+			null_gui::check_box("fake latency", &settings::misc::fake_latency::enable);
+			null_gui::slider_int("amont##fake latency", &settings::misc::fake_latency::amount, 0, 1000);
 
 			null_gui::end_group();
 		}

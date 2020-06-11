@@ -1,4 +1,5 @@
 #pragma once
+#include "../../helpers/math/math.h"
 #include "../sdk.h"
 #include <array>
 #include "../../utils/utils.h"

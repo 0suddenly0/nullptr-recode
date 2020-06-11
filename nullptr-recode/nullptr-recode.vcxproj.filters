@@ -187,6 +187,15 @@
     <ClCompile Include="functions\misc\misc.cpp">
       <Filter>sources\functions\misc</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\send_datagram.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\frame_stage_notify.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\send_net_msg.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">
@@ -497,6 +506,9 @@
     </ClInclude>
     <ClInclude Include="functions\misc\misc.h">
       <Filter>sources\functions\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\net_message.h">
+      <Filter>sources\sdk\interfaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,13 +13,18 @@ namespace hooks {
 	extern vfunc_hook d3d9device_vhook;
 	extern vfunc_hook panel_vhook;
 	extern vfunc_hook surface_vhook;
-	extern vfunc_hook client_mode_vhook;
+	extern vfunc_hook client_hook;
+	extern vfunc_hook net_channel_vhook;
+	extern vfunc_hook client_vhook;
 
 	namespace indexes {
+		int send_net_msg = 40;
+		int frame_stage_notify = 37;
+		int send_datagram = 46;
 		int end_scene = 42;
 		int reset = 16;
 		int paint_traverse = 41;
-		int create_move = 24;
+		int create_move = 22;
 		int lock_cursor = 67;
 	}
 
@@ -42,13 +47,28 @@ namespace hooks {
 	}
 
 	namespace create_move {
-		using fn = bool(__thiscall*)(c_client_mode*, float, c_user_cmd*);
-		bool __stdcall hook(float input_sample_frametime, c_user_cmd* cmd);
+		using fn = void(__fastcall*)(void*, int, int, float, bool);
+		void __stdcall hook(int sequence_number, float input_sample_frametime, bool active, bool& send_packet);
 	}
 
 	namespace lock_cursor {
 		using fn = void(__thiscall*)(c_surface*);
 		void __stdcall hook();
+	}
+
+	namespace send_datagram {
+		using fn = int(__thiscall*)(void*, void*);
+		int __fastcall hook(void* net_channel, void*, void* datagram);
+	}
+
+	namespace send_net_msg {
+		using fn = bool(__thiscall*)(c_net_channel * pNetChan, c_net_message & msg, bool bForceReliable, bool bVoice);
+		bool __fastcall hook(c_net_channel* pNetChan, void* edx, c_net_message& msg, bool bForceReliable, bool bVoice);
+	}
+
+	namespace frame_stage_notify {
+		using fn = void(__thiscall*)(c_base_client_dll*, frame_stage_t);
+		void __stdcall hook(frame_stage_t framestage);
 	}
 
 	namespace wndproc {

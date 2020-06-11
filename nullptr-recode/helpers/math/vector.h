@@ -1,6 +1,5 @@
 #pragma once
 #include <cmath>
-#include "math.h"
 
 #define deg(a) a * 57.295779513082f
 
