@@ -7,6 +7,7 @@
 #include "../functions/visuals/visuals.h"
 
 namespace render {
+	extern ImFont* menu_bar_font;
 	extern ImFont* menu_big_font;
 	extern ImFont* default_font;
 	extern ImDrawList* draw_list;

@@ -1,8 +1,9 @@
-#pragma once
+	#pragma once
 #include <string>
 #include <deque>
 #include "../../settings/globals.h"
 #include "../../sdk/sdk.h"
+#include "../../utils/utils.h"
 #include "../../render/render.h"
 
 enum log_type {

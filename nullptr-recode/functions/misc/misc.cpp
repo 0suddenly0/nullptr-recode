@@ -7,11 +7,386 @@
 #include "../../helpers/math/math.h"
 
 namespace misc {
-	namespace bhop {
-		void on_create_move(c_user_cmd* cmd)
+
+	void prepare_revolver(c_user_cmd* cmd) {
+		if (!sdk::local_player || !sdk::engine_client->is_connected() || !sdk::local_player->active_weapon() || !sdk::local_player->is_alive()) return;
+
+		float revolver_prepare_time = 0.234375f;
+
+		static float ready_time;
+		if (settings::misc::prepare_revolver::bind.enable) {
+			c_base_combat_weapon* active_weapon = sdk::local_player->active_weapon();
+			if (active_weapon && active_weapon->get_item_definition_index() == item_definition_index::revolver) {
+				if (!ready_time) ready_time = utils::get_curtime(cmd) + revolver_prepare_time;
+
+				auto ticks_to_ready = TIME_TO_TICKS(ready_time - utils::get_curtime(cmd) - sdk::engine_client->get_net_channel_info()->get_latency(FLOW_OUTGOING));
+				if (ticks_to_ready > 0 && ticks_to_ready <= TIME_TO_TICKS(revolver_prepare_time))
+					cmd->buttons |= IN_ATTACK;
+				else
+					ready_time = 0.0f;
+			}
+		}
+	}
+
+	void moon_walk(c_user_cmd* cmd)
+	{
+		if (settings::misc::moon_walk)
 		{
-			if (!settings::misc::bhop::enable)
-				return;
+			if (sdk::local_player->move_type() == move_type::noclip) return;
+			if (sdk::local_player->move_type() == move_type::ladder) return;
+			if (!(sdk::local_player->m_flags() & entity_flags::on_ground)) return;
+
+			if (cmd->buttons & IN_FORWARD){
+				cmd->forwardmove = 450;
+				cmd->buttons &= ~IN_FORWARD;
+				cmd->buttons |= IN_BACK;
+			} else if (cmd->buttons & IN_BACK) {
+				cmd->forwardmove = -450;
+				cmd->buttons &= ~IN_BACK;
+				cmd->buttons |= IN_FORWARD;
+			}
+
+			if (cmd->buttons & IN_MOVELEFT) {
+				cmd->sidemove = -450;
+				cmd->buttons &= ~IN_MOVELEFT;
+				cmd->buttons |= IN_MOVERIGHT;
+			} else if (cmd->buttons & IN_MOVERIGHT) {
+				cmd->sidemove = 450;
+				cmd->buttons &= ~IN_MOVERIGHT;
+				cmd->buttons |= IN_MOVELEFT;
+			}
+		}
+	}
+	void block_bot(c_user_cmd* cmd) {
+		if (!settings::misc::block_bot::bind.enable) return;
+
+		int bestdist = settings::misc::block_bot::max_dist;
+
+		int index = -1;
+
+		for (int i = 1; i < 64; i++) {
+			c_base_player* entity = (c_base_player*)sdk::entity_list->get_client_entity(i);
+
+			if (!entity) continue;
+			if (!entity->is_alive() || entity->is_dormant() || entity == sdk::local_player) continue;
+
+			float dist = sdk::local_player->get_abs_origin().dist_to(entity->get_abs_origin());
+
+			if (dist < bestdist)
+			{
+				bestdist = dist;
+				index = i;
+			}
+		}
+
+		if (index == -1) return;
+
+		c_base_player* target = (c_base_player*)sdk::entity_list->get_client_entity(index);
+
+		if (!target) return;
+
+		qangle angles = math::calc_angle(sdk::local_player->get_abs_origin(), target->get_abs_origin());
+
+		qangle shit;
+
+		sdk::engine_client->get_view_angles(&shit);
+
+		angles.yaw -= shit.yaw;
+		math::fix_angles(angles);
+
+		if (angles.yaw < 0.20f) cmd->sidemove = 450.f;
+		else if (angles.yaw > 0.20f) cmd->sidemove = -450.f;
+	}
+
+	void fast_duck(c_user_cmd* cmd) {
+		if (settings::misc::fast_duck)
+			cmd->buttons |= IN_BULLRUSH;
+	}
+
+	void edge_jump(c_user_cmd* cmd, int old_flags) {
+		static bool jumped = false;
+
+		if (!sdk::engine_client->is_connected()) return;
+		if (!sdk::local_player || !sdk::local_player->is_alive()) return;
+
+		if (settings::misc::edge_jump::enable) {
+
+			if (settings::misc::edge_jump::bind.enable) {
+				if ((old_flags & entity_flags::on_ground) && !(sdk::local_player->m_flags() & entity_flags::on_ground) && !(cmd->buttons & IN_JUMP)) {
+					cmd->buttons |= IN_JUMP;
+					jumped = true;
+				}
+			}
+
+			if (settings::misc::edge_jump::auto_duck && jumped) cmd->buttons |= IN_DUCK;
+			if ((old_flags & entity_flags::on_ground) && (sdk::local_player->m_flags() & entity_flags::on_ground)) jumped = false;
+		}
+	}
+
+	void fog() {
+		static auto fog_enable = sdk::cvar->find_var("fog_enable");
+		static auto fog_override = sdk::cvar->find_var("fog_override");
+		static auto fog_color = sdk::cvar->find_var("fog_color");
+		static auto fog_start = sdk::cvar->find_var("fog_start");
+		static auto fog_end = sdk::cvar->find_var("fog_end");
+		static auto fog_destiny = sdk::cvar->find_var("fog_maxdensity");
+
+		static auto r_modelAmbientMin = sdk::cvar->find_var("r_modelAmbientMin");
+		static auto mat_bloomscale = sdk::cvar->find_var("mat_bloomscale");
+		static auto mat_bloom_scalefactor_scalar = sdk::cvar->find_var("mat_bloom_scalefactor_scalar");
+
+		static const auto fog_enable_bec = fog_enable->get_bool();
+		static const auto fog_override_bec = fog_override->get_bool();
+		static const auto fog_color_bec = fog_color->get_string();
+		static const auto fog_start_bec = fog_start->get_float();
+		static const auto fog_end_bec = fog_end->get_float();
+		static const auto fog_destiny_bec = fog_destiny->get_float();
+
+		if (settings::misc::fog::enable && !globals::unloading) {
+			fog_enable->m_fnChangeCallbacks.m_Size = 0;
+			fog_override->m_fnChangeCallbacks.m_Size = 0;
+			fog_color->m_fnChangeCallbacks.m_Size = 0;
+			fog_start->m_fnChangeCallbacks.m_Size = 0;
+			fog_end->m_fnChangeCallbacks.m_Size = 0;
+			fog_destiny->m_fnChangeCallbacks.m_Size = 0;
+
+			color clr = settings::misc::fog::clr;
+
+			fog_enable->set_value(settings::misc::fog::enable);
+			fog_override->set_value(settings::misc::fog::enable);
+			fog_color->set_value(utils::snprintf("%d %d %d", clr.get<int>(return_color::r), clr.get<int>(return_color::g), clr.get<int>(return_color::b)).c_str()); //fog color
+			fog_start->set_value(settings::misc::fog::start_dist);
+			fog_end->set_value(settings::misc::fog::end_dist);
+			fog_destiny->set_value(settings::misc::fog::clr.get<int>(return_color::a));
+		} else if (globals::unloading || !settings::misc::fog::enable) {
+			fog_enable->m_fnChangeCallbacks.m_Size = 0;
+			fog_override->m_fnChangeCallbacks.m_Size = 0;
+			fog_color->m_fnChangeCallbacks.m_Size = 0;
+			fog_start->m_fnChangeCallbacks.m_Size = 0;
+			fog_end->m_fnChangeCallbacks.m_Size = 0;
+			fog_destiny->m_fnChangeCallbacks.m_Size = 0;
+
+			fog_enable->set_value(fog_enable_bec);
+			fog_override->set_value(fog_override_bec);
+			fog_color->set_value(fog_color_bec);
+			fog_start->set_value(fog_start_bec);
+			fog_end->set_value(fog_end_bec);
+			fog_destiny->set_value(fog_destiny_bec);
+		}
+	}
+
+	void no_smoke() {
+		static DWORD smoke_count;
+		static uint8_t* offset;
+
+		if (!offset) offset = utils::pattern_scan(GetModuleHandleW(L"client.dll"), "55 8B EC 83 EC 08 8B 15 ? ? ? ? 0F 57 C0");
+
+		if (!smoke_count) smoke_count = *reinterpret_cast<DWORD*>(offset + 0x8);
+
+		if (settings::misc::disable_smoke) *reinterpret_cast<int*>(smoke_count) = 0;
+
+		static bool set = true;
+		static std::vector<const char*> smoke_materials = {
+			"particle/vistasmokev1/vistasmokev1_fire",
+			"particle/vistasmokev1/vistasmokev1_smokegrenade",
+			"particle/vistasmokev1/vistasmokev1_emods",
+			"particle/vistasmokev1/vistasmokev1_emods_impactdust",
+		};
+
+		if (!settings::misc::disable_smoke || globals::unloading) {
+			if (set) {
+				for (auto material_name : smoke_materials) {
+					c_material* mat = sdk::mat_system->find_material(material_name, TEXTURE_GROUP_OTHER);
+					mat->set_material_var_flag(MATERIAL_VAR_WIREFRAME, false);
+				}
+				set = false;
+			}
+			return;
+		}
+
+		set = true;
+		for (auto material_name : smoke_materials) {
+			c_material* mat = sdk::mat_system->find_material(material_name, TEXTURE_GROUP_OTHER);
+			mat->set_material_var_flag(MATERIAL_VAR_WIREFRAME, true);
+		}
+	}
+
+	void disable_flash_alpha() {
+		if (settings::misc::disable_flash) sdk::local_player->flash_max_alpha() = settings::misc::flash_alpha;
+		else sdk::local_player->flash_max_alpha() = 255.f;
+	}
+
+	namespace clan_tag {
+		int user_index;
+
+		size_t pos = 0;
+		std::string clantag;
+		float last_time = 0;
+
+		void init() {
+			if (!settings::misc::clantag::enable || !sdk::local_player) return;
+
+			int tick = int(sdk::global_vars->curtime * 2.4f);
+
+			static std::string local_tag;
+
+			if (settings::misc::clantag::clantag_type == 0) {
+				switch (settings::misc::clantag::animation_type) {
+				case 0:
+					switch (tick % 26) {
+					case 0:	 utils::set_clantag(u8"|nullptr|"); break;
+					case 1:	 utils::set_clantag(u8"|nullpt| "); break;
+					case 2:  utils::set_clantag(u8"|nullp|  "); break;
+					case 3:	 utils::set_clantag(u8"|null|   "); break;
+					case 5:	 utils::set_clantag(u8"|nul|    "); break;
+					case 6:  utils::set_clantag(u8"|nu|     "); break;
+					case 7:  utils::set_clantag(u8"|n|      "); break;
+					case 8:	 utils::set_clantag(u8"||       "); break;
+					case 9:  utils::set_clantag(u8" ||      "); break;
+					case 10: utils::set_clantag(u8"  ||     "); break;
+					case 11: utils::set_clantag(u8"   ||    "); break;
+					case 12: utils::set_clantag(u8"    ||   "); break;
+					case 13: utils::set_clantag(u8"     ||  "); break;
+					case 14: utils::set_clantag(u8"      || "); break;
+					case 15: utils::set_clantag(u8"       ||"); break;
+					case 16: utils::set_clantag(u8"      |r|"); break;
+					case 17: utils::set_clantag(u8"     |tr|"); break;
+					case 18: utils::set_clantag(u8"    |ptr|"); break;
+					case 19: utils::set_clantag(u8"   |lptr|"); break;
+					case 20: utils::set_clantag(u8"  |llptr|"); break;
+					case 21: utils::set_clantag(u8" |ullptr|"); break;
+					case 22: utils::set_clantag(u8"|nullptr|"); break;
+					case 23: utils::set_clantag(u8"|nullptr|"); break;
+					case 24: utils::set_clantag(u8"|nullptr|"); break;
+					case 25: utils::set_clantag(u8"|nullptr|"); break;
+					}
+
+					break;
+				case 1:
+					switch (tick % 18) {
+					case 0:  utils::set_clantag("         "); break;
+					case 1:  utils::set_clantag("        g"); break;
+					case 2:  utils::set_clantag("       ga"); break;
+					case 3:  utils::set_clantag("      gam"); break;
+					case 4:  utils::set_clantag("     game"); break;
+					case 5:  utils::set_clantag("    games"); break;
+					case 6:  utils::set_clantag("   gamese"); break;
+					case 7:  utils::set_clantag("  gamesen"); break;
+					case 8:  utils::set_clantag(" gamesens"); break;
+					case 9:  utils::set_clantag("gamesense"); break;
+					case 10: utils::set_clantag("gamesense"); break;
+					case 11: utils::set_clantag("amesense "); break;
+					case 12: utils::set_clantag("mesense  "); break;
+					case 13: utils::set_clantag("esense   "); break;
+					case 14: utils::set_clantag("sense    "); break;
+					case 15: utils::set_clantag("ense     "); break;
+					case 16: utils::set_clantag("nse      "); break;
+					case 17: utils::set_clantag("se       "); break;
+					case 18: utils::set_clantag("e        "); break;
+					}
+					break;
+				case 2:
+					switch (tick % 13) {
+					case 0:  utils::set_clantag("AIMWARE.net"); break;
+					case 1:  utils::set_clantag("IMWARE.net "); break;
+					case 2:  utils::set_clantag("MWARE.net A"); break;
+					case 3:  utils::set_clantag("WARE.net AI"); break;
+					case 4:  utils::set_clantag("ARE.net AIM"); break;
+					case 5:  utils::set_clantag("RE.net AIMW"); break;
+					case 6:  utils::set_clantag("E.net AIMWA"); break;
+					case 7:  utils::set_clantag(".net AIMWAR"); break;
+					case 8:  utils::set_clantag("net AIMWARE"); break;
+					case 9:  utils::set_clantag("et AIMWARE."); break;
+					case 10: utils::set_clantag("t AIMWARE.n"); break;
+					case 11: utils::set_clantag(" AIMWARE.ne"); break;
+					case 12: utils::set_clantag("AIMWARE.net"); break;
+					case 13: utils::set_clantag("AIMWARE.net"); break;
+					}
+					break;
+				case 3:
+					switch (tick % 15) {
+					case 0:   utils::set_clantag("clown");     break;
+					case 1:   utils::set_clantag("c lown");    break;
+					case 2:   utils::set_clantag("c low n");   break;
+					case 3:   utils::set_clantag("c l ow n");  break;
+					case 4:   utils::set_clantag("c l o w n"); break;
+					case 5:   utils::set_clantag("c l o w n"); break;
+					case 6:   utils::set_clantag(" c l o w "); break;
+					case 7:   utils::set_clantag("  c l o w"); break;
+					case 8:   utils::set_clantag("   c l o "); break;
+					case 9:   utils::set_clantag("    c l o"); break;
+					case 10:  utils::set_clantag("     c l "); break;
+					case 11:  utils::set_clantag("      c l"); break;
+					case 12:  utils::set_clantag("       c "); break;
+					case 13:  utils::set_clantag("        c"); break;
+					case 14:  utils::set_clantag("         "); break;
+					case 15:  utils::set_clantag("n        "); break;
+					case 16:  utils::set_clantag("w n      "); break;
+					case 17:  utils::set_clantag("o w n    "); break;
+					case 18:  utils::set_clantag("l o w n  "); break;
+					case 19:  utils::set_clantag("c l o w n"); break;
+					case 20:  utils::set_clantag("c l o w n"); break;
+					case 21:  utils::set_clantag("c l ow n");  break;
+					case 22:  utils::set_clantag("c low n");   break;
+					case 23:  utils::set_clantag("c lown");    break;
+					}
+					break;
+				}
+			}
+			else if (settings::misc::clantag::clantag_type == 1) {
+				if (user_index == 0) return;
+
+				auto* player = c_base_player::get_player_by_index(user_index);
+				if (!player) return;
+
+				const auto info = player->get_player_info();
+				if (info.fakeplayer) return;
+
+				auto user_tag = std::string((*sdk::player_resource)->clantag()[player->get_index()]);
+
+				utils::set_clantag(user_tag);
+			} else if (settings::misc::clantag::clantag_type == 2) {
+				if (settings::misc::clantag::clantag.empty() || settings::misc::clantag::clantag.length() == 0) return;
+
+				if (settings::misc::clantag::custom_type == 0) {
+					switch (tick % 2) {
+					case 1: utils::set_clantag(settings::misc::clantag::clantag, false); break;
+					}
+				} else if (settings::misc::clantag::custom_type == 1) {
+					if (clantag != settings::misc::clantag::clantag || clantag.length() < pos) {
+						clantag = settings::misc::clantag::clantag;
+						pos = 0;
+					}
+
+					if (last_time + settings::misc::clantag::speed > sdk::global_vars->realtime) return;
+
+					last_time = sdk::global_vars->realtime;
+
+					utils::set_clantag(clantag.substr(0, pos).c_str());
+					pos++;
+				}
+				else if (settings::misc::clantag::custom_type == 2) {
+
+					static float last_change_time = 0.f;
+
+					if (sdk::global_vars->realtime - last_change_time >= settings::misc::clantag::speed) {
+						last_change_time = sdk::global_vars->realtime;
+
+						std::string temp = settings::misc::clantag::clantag_visible;
+						settings::misc::clantag::clantag_visible.erase(0, 1);
+						settings::misc::clantag::clantag_visible += temp[0];
+
+						utils::set_clantag(settings::misc::clantag::clantag_visible.data());
+					}
+				}
+			}
+		}
+	}
+
+	namespace bhop {
+
+		void on_create_move(c_user_cmd* cmd) {
+			if (!settings::misc::bhop::enable) return;
 
 			static bool jumped_last_tick = false;
 			static bool should_fake_jump = false;
@@ -21,7 +396,7 @@ namespace misc {
 				cmd->buttons |= IN_JUMP;
 			}
 			else if (cmd->buttons & IN_JUMP) {
-				if (sdk::local_player->m_flags() & FL_ONGROUND) {
+				if (sdk::local_player->m_flags() & entity_flags::on_ground) {
 					jumped_last_tick = true;
 					should_fake_jump = true;
 				}
@@ -35,13 +410,14 @@ namespace misc {
 				should_fake_jump = false;
 			}
 		}
+
 		void auto_strafe(c_user_cmd* cmd, qangle va) {
 			if (settings::misc::bhop::strafe_type == 0) return;
 
 			if (settings::misc::bhop::strafe_type == 1) {
-				if (!sdk::local_player || !sdk::local_player->is_alive() || sdk::local_player->move_type() != MOVETYPE_WALK) return;
+				if (!sdk::local_player || !sdk::local_player->is_alive() || sdk::local_player->move_type() != move_type::walk) return;
 
-				bool on_ground = (sdk::local_player->m_flags() & FL_ONGROUND) && !(cmd->buttons & IN_JUMP);
+				bool on_ground = (sdk::local_player->m_flags() & entity_flags::on_ground) && !(cmd->buttons & IN_JUMP);
 				if (on_ground) return;
 
 				static auto side = 1.0f;
@@ -110,7 +486,7 @@ namespace misc {
 				};
 
 				is_bhopping = cmd->buttons & IN_JUMP;
-				if (!is_bhopping && sdk::local_player->m_flags() & FL_ONGROUND) {
+				if (!is_bhopping && sdk::local_player->m_flags() & entity_flags::on_ground) {
 					calculated_direction = directions::FORWARDS;
 					in_transition = false;
 					return;

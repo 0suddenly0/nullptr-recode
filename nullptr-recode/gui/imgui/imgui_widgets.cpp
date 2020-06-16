@@ -2090,6 +2090,35 @@ static bool Items_SingleStringGetter(void* data, int idx, const char** out_text)
     return true;
 }
 
+bool ImGui::FunctionCombo(const char* label, const char* preview_value, std::function<void()> func_body)
+{
+    ImGuiContext& g = *GImGui;
+
+    ImGuiStyle& style = g.Style;
+
+    ImVec2 becup = style.WindowPadding;
+    float bec = style.FramePadding.x;
+
+    bool value_changed = false;
+
+    if (!BeginCombo(label, preview_value, ImGuiComboFlags_None)) return false;
+
+    style.WindowPadding.x = becup.x;
+    style.WindowPadding.y = becup.y;
+    style.FramePadding.x = bec;
+
+    // Display items
+    // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
+
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+    {
+        func_body();
+    } 
+    ImGui::PopStyleVar();
+
+    EndCombo();
+    return value_changed;
+}
 // Old API, prefer using BeginCombo() nowadays if you can.
 bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(void*, int, const char**), void* data, int items_count, int popup_max_height_in_items)
 {
@@ -2111,42 +2140,38 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
 
     bool value_changed = false;
 
+    if (!BeginCombo(label, preview_value, ImGuiComboFlags_None)) return false;
+
+    style.WindowPadding.x = becup.x;
+    style.WindowPadding.y = becup.y;
+    style.FramePadding.x = bec;
+
+    // Display items
+    // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
+
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
     {
-        if (!BeginCombo(label, preview_value, ImGuiComboFlags_None))
-        {
-            ImGui::PopStyleVar();
-            return false;
-        }
-
-        style.WindowPadding.x = becup.x;
-        style.WindowPadding.y = becup.y;
-        style.FramePadding.x = bec;
-
-        // Display items
-        // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
-
         /*ImGui::PushStyleColor(ImGuiCol_Border, ImVec4());
         {*/
-            for (int i = 0; i < items_count; i++)
+        for (int i = 0; i < items_count; i++)
+        {
+            PushID((void*)(intptr_t)i);
+            const bool item_selected = (i == *current_item);
+            const char* item_text;
+            if (!items_getter(data, i, &item_text))
+                item_text = "*Unknown item*";
+            if (Selectable(item_text, item_selected))
             {
-                PushID((void*)(intptr_t)i);
-                const bool item_selected = (i == *current_item);
-                const char* item_text;
-                if (!items_getter(data, i, &item_text))
-                    item_text = "*Unknown item*";
-                if (Selectable(item_text, item_selected))
-                {
-                    value_changed = true;
-                    *current_item = i;
-                }
-                if (item_selected)
-                    SetItemDefaultFocus();
-                PopID();
+                value_changed = true;
+                *current_item = i;
             }
+            if (item_selected)
+                SetItemDefaultFocus();
+            PopID();
+        }
         /*}
         ImGui::PopStyleColor();*/
-    }
+    } 
     ImGui::PopStyleVar();
 
     EndCombo();
@@ -2224,17 +2249,106 @@ bool ImGui::MultiCombo(const char* name, std::vector<std::string> names, std::ve
 
     if (opened)
     {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+        {
+            for (int i = 0; i < dataSize; i++) {
 
-        for (int i = 0; i < dataSize; i++) {
+                sprintf(buf, names[i].c_str());
 
-            sprintf(buf, names[i].c_str());
+                if (ImGui::Selectable(buf, values->at(i), ImGuiSelectableFlags_DontClosePopups)) {
 
-            if (ImGui::Selectable(buf, values->at(i), ImGuiSelectableFlags_DontClosePopups)) {
-
-                values->at(i) = !values->at(i);
-                isDataChanged = true;
+                    values->at(i) = !values->at(i);
+                    isDataChanged = true;
+                }
             }
         }
+        ImGui::PopStyleVar();
+
+        ImGui::EndCombo();
+    }
+
+    ImGui::PopID();
+
+    return isDataChanged;
+}
+
+bool ImGui::MultiCombo(const char* name, std::vector<std::string> names, std::vector<bool*> values, int dataSize)
+{
+    ImGuiComboFlags flags;
+
+    ImGuiContext& g = *GImGui;
+
+    ImGuiWindow* window = GetCurrentWindow();
+
+    ImGui::PushID(name);
+
+    char previewText[1024] = { 0 };
+    char buf[1024] = { 0 };
+    char buf2[1024] = { 0 };
+    int currentPreviewTextLen = 0;
+    float multicomboWidth = 0;
+
+    ImGuiComboBox* combo = findcombo(name);
+    if (combo != NULL)
+        multicomboWidth = combo->size.x - 20.f;
+
+    for (int i = 0; i < dataSize; i++) {
+
+        if (*values.at(i) == true)
+        {
+
+            if (currentPreviewTextLen == 0)
+                sprintf(buf, "%s", names[i].c_str());
+            else
+                sprintf(buf, ", %s", names[i].c_str());
+
+            strcpy(buf2, previewText);
+            sprintf(buf2 + currentPreviewTextLen, buf);
+            ImVec2 textSize = ImGui::CalcTextSize(buf2);
+
+            if (textSize.x > multicomboWidth) {
+
+                sprintf(previewText + currentPreviewTextLen, " ...");
+                currentPreviewTextLen += (int)strlen(" ...");
+                break;
+            }
+
+            sprintf(previewText + currentPreviewTextLen, buf);
+            currentPreviewTextLen += (int)strlen(buf);
+        }
+    }
+
+    if (currentPreviewTextLen > 0)
+        previewText[currentPreviewTextLen] = NULL;
+    else
+        sprintf(previewText, " -");
+
+    bool isDataChanged = false;
+
+    float w;
+    ImVec2 becup = g.Style.WindowPadding;
+    float bec = g.Style.FramePadding.x;
+
+    bool opened = ImGui::BeginComboMulti(name, previewText, 0);
+    g.Style.WindowPadding.x = becup.x;
+    g.Style.WindowPadding.y = becup.y;
+    g.Style.FramePadding.x = bec;
+
+    if (opened)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+        {
+            for (int i = 0; i < dataSize; i++) {
+
+                sprintf(buf, names[i].c_str());
+
+                if (ImGui::Selectable(buf, *values.at(i), ImGuiSelectableFlags_DontClosePopups)) {
+                    *values.at(i) = !(*values.at(i));
+                    isDataChanged = true;
+                }
+            }
+        }
+        ImGui::PopStyleVar();
 
         ImGui::EndCombo();
     }

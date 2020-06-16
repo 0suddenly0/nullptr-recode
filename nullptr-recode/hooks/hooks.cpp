@@ -25,6 +25,7 @@ namespace hooks {
 	vfunc_hook surface_vhook;
 	vfunc_hook client_vhook;
 	vfunc_hook net_channel_vhook;
+	vfunc_hook client_mode_vhook;
 
 	void initialize() {
 		wndproc::o_wnd_proc = (wndproc::WNDPROC)SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::hook);
@@ -42,6 +43,9 @@ namespace hooks {
 		client_vhook.setup(sdk::chl_client); 
 		client_vhook.hook_index(indexes::create_move,        create_move_hook_proxy);
 		client_vhook.hook_index(indexes::frame_stage_notify, frame_stage_notify::hook);
+
+		client_mode_vhook.setup(sdk::client_mode);
+		client_mode_vhook.hook_index(indexes::override_view, override_view::hook);
 	}
 
 	void unhook() {
@@ -50,6 +54,7 @@ namespace hooks {
 		surface_vhook.unhook_all();
 		client_vhook.unhook_all();
 		net_channel_vhook.unhook_all();
+		client_mode_vhook.unhook_all();
 
 		SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::o_wnd_proc);
 	}

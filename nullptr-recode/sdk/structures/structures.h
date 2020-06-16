@@ -1,10 +1,8 @@
 #pragma once
-#include "../../helpers/math/math.h"
 #include "../sdk.h"
 #include <array>
 #include "../../utils/utils.h"
-#include "../interfaces/e_handle.h"
-#include "../../helpers/netvars.h"
+#include "../../helpers/math/math.h"
 
 #define NETVAR(type, name, table, netvar_name)                      \
     type& name##() const {                                          \
@@ -32,33 +30,34 @@
 }
 
 enum observer_mode_t {
-	OBS_MODE_NONE = 0,
-	OBS_MODE_DEATHCAM = 1,
-	OBS_MODE_FREEZECAM = 2,
-	OBS_MODE_FIXED = 3,
-	OBS_MODE_IN_EYE = 4,
-	OBS_MODE_CHASE = 5,
-	OBS_MODE_ROAMING = 6
+	obs_none = 0,
+	obs_deathcam = 1,
+	obs_freezecam = 2,
+	obs_fixed = 3,
+	obs_in_eye = 4,
+	obs_chase = 5,
+	obs_oaming = 6
 };
 
 enum cs_weapon_type
 {
-	WEAPONTYPE_KNIFE = 0,
-	WEAPONTYPE_PISTOL,
-	WEAPONTYPE_SUBMACHINEGUN,
-	WEAPONTYPE_RIFLE,
-	WEAPONTYPE_SHOTGUN,
-	WEAPONTYPE_SNIPER_RIFLE,
-	WEAPONTYPE_MACHINEGUN,
-	WEAPONTYPE_C4,
-	WEAPONTYPE_PLACEHOLDER,
-	WEAPONTYPE_GRENADE,
-	WEAPONTYPE_UNKNOWN
+	type_knife = 0,
+	type_pistol,
+	type_submachinegun,
+	type_rifle,
+	type_shotgun,
+	type_sniper_rifle,
+	type_machinegun,
+	type_c4,
+	type_placeholder,
+	type_grenade,
+	type_unknown
 };
 
 struct datamap_t;
+class c_game_rules;
+class c_player_resource;
 class c_econ_item_view;
-class c_base_attributable_item;
 class c_animation_layer;
 class c_base_combat_weapon;
 class c_base_attributable_item;
@@ -66,8 +65,12 @@ class c_base_view_model;
 class c_csgo_player_animstate;
 class c_base_player_animstate;
 class c_base_entity;
+class c_base_player;
+class c_base_weapon_world_model;
+class c_hud_texture;
 
 #include "c_animation_layer.h"
+#include "c_base_combat_weapon.h"
 #include "c_base_entity.h"
 #include "c_base_attributable_item.h"
 #include "c_base_player.h"

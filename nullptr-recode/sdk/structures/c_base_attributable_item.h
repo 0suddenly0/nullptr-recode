@@ -1,5 +1,6 @@
 #pragma once
-#include "structures.h"
+#include "c_base_entity.h"
+#include "c_econ_item_view.h"
 
 class c_base_attributable_item : public c_base_entity {
 public:

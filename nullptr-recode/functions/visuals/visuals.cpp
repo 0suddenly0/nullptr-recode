@@ -15,7 +15,7 @@ namespace visuals {
 		float rounding = 4.f;
 
 		vec2 screen_size = utils::get_screen_size();
-		std::string watermark_text = utils::snprintf("nullptr | v %.1f | %s | fps: %i", nullptr_version, utils::current_date_time().c_str(), null_gui::get_framerate());
+		std::string watermark_text = utils::snprintf("nullptr | v %.1f | %s | fps: %i", nullptr_version, utils::current_date_time().c_str(), null_gui::deep::get_framerate());
 		vec2 watermark_text_size = vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, watermark_text.c_str()).x, render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, watermark_text.c_str()).y);
 
 		vec2 bar_start_position  = vec2(screen_size.x - offsets.x - watermark_text_size.x - offsets_text.x, offsets.y);

@@ -1,9 +1,37 @@
 #include "math.h"
 #include <cmath>
 #include "../../sdk/structures/structures.h"
-#include "../../sdk/sdk.h"
 
 namespace math {
+	void clamp_angles(qangle& angles) {
+		if (angles.pitch > 89.0f) angles.pitch = 89.0f;
+		else if (angles.pitch < -89.0f) angles.pitch = -89.0f;
+
+		if (angles.yaw > 180.0f) angles.yaw = 180.0f;
+		else if (angles.yaw < -180.0f) angles.yaw = -180.0f;
+
+		angles.roll = 0;
+	}
+
+	void fix_angles(qangle& angles) {
+		normalize(angles);
+		clamp_angles(angles);
+	}
+
+	qangle calc_angle(const vec3& src, const vec3& dst) {
+		qangle vAngle;
+		vec3 delta((src.x - dst.x), (src.y - dst.y), (src.z - dst.z));
+		double hyp = sqrt(delta.x * delta.x + delta.y * delta.y);
+
+		vAngle.pitch = float(atanf(float(delta.z / hyp)) * 57.295779513082f);
+		vAngle.yaw = float(atanf(float(delta.y / delta.x)) * 57.295779513082f);
+		vAngle.roll = 0.0f;
+
+		if (delta.x >= 0.0) vAngle.yaw += 180.0f;
+
+		return vAngle;
+	}
+
 	void angle_vector(const qangle& angles, vec3& forward) {
 		float	sp, sy, cp, cy;
 
@@ -41,7 +69,7 @@ namespace math {
 			auto movedata = vec3(m_Cmd->forwardmove, m_Cmd->sidemove, m_Cmd->upmove);
 			viewangles.Normalize();
 
-			if (!(sdk::local_player->m_flags() & FL_ONGROUND) && viewangles.roll != 0.f) movedata.y = 0.f;
+			if (!(sdk::local_player->m_flags() & on_ground) && viewangles.roll != 0.f) movedata.y = 0.f;
 
 			angle_vectors(wish_angle, wish_forward, wish_right, wish_up);
 			angle_vectors(viewangles, cmd_forward, cmd_right, cmd_up);

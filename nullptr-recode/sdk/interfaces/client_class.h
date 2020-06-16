@@ -16,5 +16,5 @@ public:
     char*                    network_name;
     recv_table*               recv_table;
     client_class*             next;
-    ClassId                  class_id;
+    class_id                  class_id;
 };

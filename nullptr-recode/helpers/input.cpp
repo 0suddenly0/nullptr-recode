@@ -1,5 +1,6 @@
 #include "input.h"
 #include "../gui/nullptr_gui.h"
+#include "../settings/settings.h"
 #include "../sdk/sdk.h"
 
 bool is_mouse(int vk) {
@@ -34,7 +35,9 @@ bool mouse_key(int vk, bool down) {
 namespace input {
 
 	void create_binds() {
-		create_bind("watermark", settings::misc::watermark, &settings::misc::watermark_bind, bind_info_flags_standart);
+		create_bind("prepare revolver", settings::misc::prepare_revolver::enable, &settings::misc::prepare_revolver::bind, bind_info_flags_standart);
+		create_bind("block bot", settings::misc::block_bot::enable, &settings::misc::block_bot::bind, bind_info_flags_standart);
+		create_bind("edge jump", settings::misc::edge_jump::enable, &settings::misc::edge_jump::bind, bind_info_flags_standart);
 	}
 
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {

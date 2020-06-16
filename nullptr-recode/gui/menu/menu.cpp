@@ -44,13 +44,33 @@ namespace menu {
 	void draw_main_window() {
 		if (!globals::show_menu) return;
 
-		null_gui::set_menu_color(globals::menu_color);
+		null_gui::deep::set_menu_color(globals::menu_color);
 
-		null_gui::set_next_window_pos((utils::get_screen_size() / 2) - vec2(600 / 2, 500 / 2));
+		null_gui::deep::set_next_window_pos((utils::get_screen_size() / 2) - vec2(600 / 2, 500 / 2));
 
-		null_gui::begin_window("##nullptr", (bool)0, vec2(600, 500), ImGuiWindowFlags_NoScrollbar); {
+		null_gui::begin_window("##nullptr", (bool)0, vec2(600, 500), ImGuiWindowFlags_MenuBar); {
 
-			null_gui::set_cursor_pos(vec2(0, 0));
+			ImGui::BeginMenuBar(); {
+				null_gui::deep::set_cursor_y(6 + null_gui::deep::get_scroll().y);
+
+				null_gui::push_font(render::menu_big_font); {
+					null_gui::text_no_space("nullptr | ");
+				}
+				null_gui::pop_font();
+
+				null_gui::same_line();
+
+				null_gui::deep::set_cursor_y(9 + null_gui::deep::get_scroll().y);
+
+				null_gui::push_font(render::menu_bar_font); {
+					null_gui::horizontal(current_tab, tabs, true);
+				}
+				null_gui::pop_font();
+
+				ImGui::EndMenuBar();
+			}
+
+			/*null_gui::set_cursor_pos(vec2(0, 0));
 
 			null_gui::begin_group("##body", vec2(600, 40));{
 				null_gui::set_cursor_pos(vec2(8, 9));
@@ -68,7 +88,7 @@ namespace menu {
 
 				ImGui::Separator();
 			}
-			null_gui::end_group();
+			null_gui::end_group();*/
 
 			switch (current_tab) {
 

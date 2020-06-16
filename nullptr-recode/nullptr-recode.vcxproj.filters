@@ -196,6 +196,12 @@
     <ClCompile Include="hooks\hooks\send_net_msg.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
+    <ClCompile Include="functions\misc\engine_prediction.cpp">
+      <Filter>sources\functions\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\override_view.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">
@@ -509,6 +515,9 @@
     </ClInclude>
     <ClInclude Include="sdk\interfaces\net_message.h">
       <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\misc\engine_prediction.h">
+      <Filter>sources\functions\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

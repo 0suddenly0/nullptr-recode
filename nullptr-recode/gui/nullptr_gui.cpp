@@ -2,22 +2,37 @@
 #include "../settings/globals.h"
 
 std::string last_child_name;
+bool need_to_offset;
 
 namespace null_gui {
-    int get_framerate() {
-       return (int)ImGui::GetIO().Framerate;
-    }
+    namespace deep {
+        int get_framerate() {
+            return (int)ImGui::GetIO().Framerate;
+        }
 
-    void set_cursor_pos(vec2 pos) {
-        ImGui::SetCursorPos(ImVec2(pos.x, pos.y));
-    }
+        void set_cursor_pos(vec2 pos) {
+            ImGui::SetCursorPos(ImVec2(pos.x, pos.y));
+        }
 
-    void set_next_window_pos(vec2 pos) {
-        ImGui::SetNextWindowPos(ImVec2(pos.x, pos.y), ImGuiCond_Once);
-    }
+        void set_cursor_x(float x) {
+            ImGui::SetCursorPosX(x);
+        }
 
-    void set_menu_color(color clr) {
-        ImGui::GetStyle().Colors[ImGuiCol_nullptr_color] = render::get_vec4(clr);
+        void set_cursor_y(float y) {
+            ImGui::SetCursorPosY(y);
+        }
+
+        vec2 get_scroll() {
+            return vec2(ImGui::GetScrollX(), ImGui::GetScrollY());
+        }
+
+        void set_next_window_pos(vec2 pos) {
+            ImGui::SetNextWindowPos(ImVec2(pos.x, pos.y), ImGuiCond_Once);
+        }
+
+        void set_menu_color(color clr) {
+            ImGui::GetStyle().Colors[ImGuiCol_nullptr_color] = render::get_vec4(clr);
+        }
     }
 
     void text(const char* text, ...) {
@@ -43,7 +58,9 @@ namespace null_gui {
     }
 
     bool key_bind(const char* text, key_bind_t* bind, bool tooltip) {
-        return ImGui::KeyBind(text, bind, tooltip ? ImGuiKeyBindFlags_OnTooltip : 0);
+        bool ret = ImGui::KeyBind(text, bind, need_to_offset ? ImGuiKeyBindFlags_OnTooltip : 0);
+        need_to_offset = false;
+        return ret;
     }
 
     bool slider_int(const char* text, int* value, int min, int max, const char* format) {
@@ -87,13 +104,23 @@ namespace null_gui {
         return ImGui::Combo(text, value, vector_getter, static_cast<void*>(&items), items.size());
     }
 
+    bool functional_combo(const char* text, const char* prev_item, std::function<void()> function) {
+        return ImGui::FunctionCombo(text, prev_item, function);
+    }
+
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values) {
         if (names.size() != values->size()) return false;
         return ImGui::MultiCombo(text, names, values, (int)names.size());
     }
 
+    bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool*> values) {
+        if (names.size() != values.size()) return false;
+        return ImGui::MultiCombo(text, names, values, (int)names.size());
+    }
+
     void tooltip_items(const char* text, std::function<void()> func) {
         ImGui::TooltipSettings(text, func);
+        need_to_offset = true;
     }
 
     void tooltip(const char* text, ...) {

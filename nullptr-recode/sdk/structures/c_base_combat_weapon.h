@@ -1,5 +1,6 @@
 #pragma once 
-#include "structures.h"
+#include "c_base_attributable_item.h"
+#include "c_base_player.h"
 
 class c_base_combat_weapon : public c_base_attributable_item {
 public:
@@ -37,7 +38,7 @@ public:
 			return false;
 		}
 
-		if (is_reloading() || clip1() <= 0 || !sdk::local_player)
+		if (is_reloading() || clip1() <= 0 || !sdk::local_player || !sdk::engine_client)
 			return false;
 
 		auto flServerTime = sdk::local_player->tick_base() * sdk::global_vars->interval_per_tick;
@@ -46,17 +47,16 @@ public:
 	}
 
 	bool is_grenade() {
-		return get_cs_weapondata()->weapon_type == WEAPONTYPE_GRENADE;
+		return get_cs_weapondata()->weapon_type == type_grenade;
 	}
 
 	bool is_knife() {
-		if (this->item().item_definition_index() == WEAPON_TASER) return false;
-		return get_cs_weapondata()->weapon_type == WEAPONTYPE_KNIFE;
+		if (this->item().item_definition_index() == taser) return false;
+		return get_cs_weapondata()->weapon_type == type_knife;
 	}
 
 	bool is_zeus() {
-		if (this->item().item_definition_index() == WEAPON_TASER)
-			return true;
+		if (this->item().item_definition_index() == taser) return true;
 		return false;
 	}
 
@@ -67,50 +67,36 @@ public:
 
 	bool is_rifle() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case WEAPONTYPE_RIFLE:
-			return true;
-		case WEAPONTYPE_SUBMACHINEGUN:
-			return true;
-		case WEAPONTYPE_SHOTGUN:
-			return true;
-		case WEAPONTYPE_MACHINEGUN:
-			return true;
-		default:
-			return false;
+		case type_rifle: return true;
+		case type_submachinegun: return true;
+		case type_shotgun: return true;
+		case type_machinegun: return true;
+		default: return false;
 		}
 	}
 
 	bool is_pistol() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case WEAPONTYPE_PISTOL:
-			return true;
-		default:
-			return false;
+		case type_pistol: return true;
+		default: return false;
 		}
 	}
 
 	bool is_sniper() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case WEAPONTYPE_SNIPER_RIFLE:
-			return true;
-		default:
-			return false;
+		case type_sniper_rifle: return true;
+		default: return false;
 		}
 	}
 
 	bool is_gun() {
 		switch (get_cs_weapondata()->weapon_type)
 		{
-		case WEAPONTYPE_C4:
-			return false;
-		case WEAPONTYPE_GRENADE:
-			return false;
-		case WEAPONTYPE_KNIFE:
-			return false;
-		case WEAPONTYPE_UNKNOWN:
-			return false;
-		default:
-			return true;
+		case type_c4: return false;
+		case type_grenade: return false;
+		case type_knife: return false;
+		case type_unknown: return false;
+		default: return true;
 		}
 	}
 
@@ -137,9 +123,7 @@ public:
 	}
 
 	int get_item_definition_index() {
-		if (!this)
-			return 0;
-
+		if (!this) return 0;
 		return this->item().item_definition_index();
 	}
 

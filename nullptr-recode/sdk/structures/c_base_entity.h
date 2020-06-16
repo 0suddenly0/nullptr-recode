@@ -1,5 +1,4 @@
 #pragma once
-#include "structures.h"
 
 class c_base_entity : public c_client_entity {
 public:
@@ -12,9 +11,11 @@ public:
 		typedef datamap_t* (__thiscall* o_GetPredDescMap)(void*);
 		return call_vfunction<o_GetPredDescMap>(this, 17)(this);
 	}
+
 	static __forceinline c_base_entity* get_entity_by_index(int index) {
 		return static_cast<c_base_entity*>(sdk::entity_list->get_client_entity(index));
 	}
+
 	static __forceinline c_base_entity* get_entity_from_handle(c_base_handle h) {
 		return static_cast<c_base_entity*>(sdk::entity_list->get_client_entity_from_handle(h));
 	}
@@ -47,7 +48,7 @@ public:
 		return (get_client_class()->class_id == ClassId_CPhysPropAmmoBox ||
 			get_client_class()->class_id == ClassId_CPhysPropLootCrate ||
 			get_client_class()->class_id == ClassId_CPhysPropRadarJammer ||
-			get_client_class()->class_id == ClassId_CPhysPropWeaponUpgrade ||
+			get_client_class()->class_id == ClassId_CPhysPropweaponUpgrade ||
 			get_client_class()->class_id == ClassId_CDrone ||
 			get_client_class()->class_id == ClassId_CDronegun ||
 			get_client_class()->class_id == ClassId_CItem_Healthshot ||

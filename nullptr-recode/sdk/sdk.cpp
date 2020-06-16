@@ -1,4 +1,5 @@
 #include "sdk.h"
+#include "structures/structures.h"
 
 create_interface_fn get_module_factory(HMODULE module) {
 	return reinterpret_cast<create_interface_fn>(GetProcAddress(module, "CreateInterface"));
@@ -25,7 +26,7 @@ T get_steam_interface(const char* version)
 namespace sdk {
 	HWND                      game_hwnd         = nullptr;
 	c_game_rules*             game_rules        = nullptr;
-	c_player_resource*        player_resource   = nullptr;
+	c_player_resource**       player_resource   = nullptr;
 	c_weapon_system*          weapon_system     = nullptr;
 	c_engine_client*          engine_client     = nullptr;
 	c_base_client_dll*        chl_client        = nullptr;
@@ -135,8 +136,8 @@ namespace sdk {
 		move_helper            = **(c_move_helper***)             (utils::pattern_scan(h_client, "8B 0D ? ? ? ? 8B 45 ? 51 8B D4 89 02 8B 01") + 2);
 		glow_obj_manager       = *(c_glow_object_manager**)       (utils::pattern_scan(h_client, "0F 11 05 ? ? ? ? 83 C8 01") + 3);
 		view_render            = *(c_view_render**)               (utils::pattern_scan(h_client, "A1 ? ? ? ? B9 ? ? ? ? C7 05 ? ? ? ? ? ? ? ? FF 10") + 1);
-		player_resource        = *(c_player_resource**)           (utils::pattern_scan(h_client, "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7") + 2);
 		client_state           = **(c_client_state***)            (utils::pattern_scan(h_engine, "A1 ? ? ? ? 8B 80 ? ? ? ? C3") + 1);
+		player_resource        = *(c_player_resource***)          (utils::pattern_scan(h_client, "A1 ? ? ? ? 57 85 C0 74 08") + 1);
 		game_rules             = *(c_game_rules**)                (utils::pattern_scan(h_client, "8B 0D ?? ?? ?? ?? 85 C0 74 0A 8B 01 FF 50 78 83 C0 54") + 2);
 		local_player           = *(c_local_player*)               (utils::pattern_scan(h_client, "8B 0D ? ? ? ? 83 FF FF 74 07") + 2);
 		weapon_system          = *(c_weapon_system**)             (utils::pattern_scan(h_client, "8B 35 ? ? ? ? FF 10 0F B7 C0") + 2);

@@ -1,5 +1,4 @@
 #pragma once 
-#include "structures.h"
 
 class c_hud_texture {
 public:

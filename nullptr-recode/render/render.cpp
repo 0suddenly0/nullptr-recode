@@ -8,6 +8,7 @@ ImDrawList* draw_list_for_render = nullptr;
 std::mutex render_mutex;
 
 namespace render {
+	ImFont* menu_bar_font = nullptr;
 	ImFont* menu_big_font = nullptr;
 	ImFont* default_font = nullptr;
 	ImDrawList* draw_list = nullptr;
@@ -47,7 +48,7 @@ namespace render {
 		ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
 			fonts::main_compressed_data,
 			fonts::main_compressed_size,
-			14.f,
+			12.f,
 			nullptr,
 			ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 
@@ -56,6 +57,13 @@ namespace render {
 			fonts::main_compressed_data,
 			fonts::main_compressed_size,
 			12.f,
+			nullptr,
+			ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
+
+		menu_bar_font = ImGui::GetIO().Fonts->AddFontFromMemoryCompressedTTF(
+			fonts::main_compressed_data,
+			fonts::main_compressed_size,
+			14.f,
 			nullptr,
 			ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
 

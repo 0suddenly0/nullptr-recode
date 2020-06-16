@@ -1,5 +1,4 @@
 #pragma once 
-#include "structures.h"
 
 class c_base_weapon_world_model : public c_base_entity
 {

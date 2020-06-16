@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "../hooks/hooks.h"
+#include "../sdk/structures/structures.h"
 #include <Tlhelp32.h>
 
 HANDLE _out = NULL, _old_out = NULL;
@@ -215,4 +216,37 @@ namespace utils {
 	float lerp(float a, float b, float f) {
 		return a + f * (b - a);
 	}
+
+    float get_curtime(c_user_cmd* ucmd) {
+        if (!sdk::local_player) return 0;
+
+        int g_tick = 0;
+        c_user_cmd* last_cmd = nullptr;
+        if (!last_cmd || last_cmd->hasbeenpredicted) {
+            g_tick = (float)sdk::local_player->tick_base();
+        }
+        else {
+            ++g_tick;
+        }
+        last_cmd = ucmd;
+
+        float curtime = g_tick * sdk::global_vars->interval_per_tick;
+        return curtime;
+    }
+
+    void set_clantag(std::string tag, bool anim) {
+        static std::string old_tag;
+        std::string p_tag = "";
+
+        if (sdk::player_resource && sdk::local_player) {
+            p_tag = std::string((*sdk::player_resource)->clantag()[sdk::local_player->get_index()]);
+        }
+
+        if (old_tag != tag || (!anim && (p_tag != "" && p_tag != tag))) {
+            static auto fnClantagChanged = (int(__fastcall*)(const char*, const char*))pattern_scan(GetModuleHandleW(L"engine.dll"), "53 56 57 8B DA 8B F9 FF 15");
+            fnClantagChanged(tag.c_str(), tag.c_str());
+
+            old_tag = tag;
+        }
+    }
 }

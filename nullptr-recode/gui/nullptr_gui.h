@@ -65,10 +65,15 @@ void render_tabs2(char* (&names)[N], int& activetab, float w, float h, bool Keyb
 }
 
 namespace null_gui {
-    int get_framerate();
-    void set_cursor_pos(vec2 pos);
-    void set_next_window_pos(vec2 pos);
-    void set_menu_color(color clr);
+    namespace deep {
+        int get_framerate();
+        void set_cursor_pos(vec2 pos);
+        void set_cursor_x(float x);
+        void set_cursor_y(float y);
+        vec2 get_scroll();
+        void set_next_window_pos(vec2 pos);
+        void set_menu_color(color clr);
+    }
 
     void text(const char* text, ...);
     void text_no_space(const char* text, ...);
@@ -84,12 +89,14 @@ namespace null_gui {
     bool color_edit(const char* text, color* color, bool alpha = true);
     bool text_input(const char* text, std::string* value);
     bool combo(const char* text, int* value, std::vector<std::string>& items);
+    bool functional_combo(const char* text, const char* prev_item, std::function<void()> function);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values);
+    bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool*> values);
     void tooltip_items(const char* text, std::function<void()> func);
     void tooltip(const char* text, ...);
     void line(float size = 0.f);
     bool begin_list_box(const char* text, vec2 size = vec2(0, 0));
-    bool selectable(const char* text, bool selected);
+    bool selectable(const char* text, bool selected = false);
     void end_list_box();
 
     bool begin_window(const char* text, bool* open = NULL, vec2 size = vec2(0, 0), ImGuiWindowFlags flags = 0);
@@ -121,8 +128,8 @@ namespace null_gui {
         auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x) / _countof(tabs);
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing_new, ImVec2(0, 0)); {
-            if (main) render_tabsMain(tabs, tab, tabs_w, 30.f);
-            else render_tabs(tabs, tab, tabs_w, 25.f);
+            if (main) render_tabs(tabs, tab, tabs_w, 25.f);
+            else render_tabs(tabs, tab, tabs_w, 20.f);
         }
         ImGui::PopStyleVar();
     }

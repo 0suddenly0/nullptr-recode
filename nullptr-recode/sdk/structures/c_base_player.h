@@ -1,5 +1,4 @@
 #pragma once
-#include "structures.h"
 
 class c_base_player : public c_base_entity {
 public:
@@ -53,7 +52,7 @@ public:
 	PNETVAR(c_handle<c_base_attributable_item>, my_wearables, "DT_BaseCombatCharacter", "m_hMyWearables");
 
 	bool is_on_ground() {
-		return m_flags() & FL_ONGROUND;
+		return m_flags() & entity_flags::on_ground;
 	}
 
 	int get_fov() {
@@ -78,7 +77,7 @@ public:
 		return call_vfunction<void(__thiscall*)(void*, int)>(this, 75)(this, index);
 	}
 
-	void set_abs_angles2(vec3 angle) {
+	void set_abs_angles(vec3 angle) {
 		using SetAbsAnglesFn = void(__thiscall*)(void*, const vec3 & angle);
 		static SetAbsAnglesFn set_abs_angles;
 
@@ -235,7 +234,7 @@ public:
 	}
 
 	bool          is_alive() {
-		return life_state() == LIFE_ALIVE;
+		return life_state() == life_state::alive;
 	}
 
 	bool		  is_flashed(int min_alpha) {
@@ -445,7 +444,7 @@ public:
 		if (gun_game_immunity())
 			return true;
 
-		if (m_flags() & FL_FROZEN)
+		if (m_flags() & entity_flags::frozen)
 			return true;
 
 		int _ent_index = ent_index();

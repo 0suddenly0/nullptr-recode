@@ -4,8 +4,9 @@
 #include "../settings/globals.h"
 #include "../gui/nullptr_gui.h"
 #include <intrin.h>
-
+#include "../sdk/sdk.h"
 #include "../functions/misc/misc.h"
+#include "../functions/misc/engine_prediction.h"
 
 #pragma intrinsic(_ReturnAddress)  
 
@@ -16,6 +17,7 @@ namespace hooks {
 	extern vfunc_hook client_hook;
 	extern vfunc_hook net_channel_vhook;
 	extern vfunc_hook client_vhook;
+	extern vfunc_hook client_mode_vhook;
 
 	namespace indexes {
 		int send_net_msg = 40;
@@ -26,6 +28,7 @@ namespace hooks {
 		int paint_traverse = 41;
 		int create_move = 22;
 		int lock_cursor = 67;
+		int override_view = 18;
 	}
 
 	void initialize();
@@ -69,6 +72,11 @@ namespace hooks {
 	namespace frame_stage_notify {
 		using fn = void(__thiscall*)(c_base_client_dll*, frame_stage_t);
 		void __stdcall hook(frame_stage_t framestage);
+	}
+
+	namespace override_view {
+		using fn = void(__thiscall*)(c_client_mode*, c_view_setup*);
+		void __stdcall hook(c_view_setup* view);
 	}
 
 	namespace wndproc {

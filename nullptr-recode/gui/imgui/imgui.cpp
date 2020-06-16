@@ -5350,7 +5350,7 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
             }
             if (override_alpha)
                 bg_col = (bg_col & ~IM_COL32_A_MASK) | (IM_F32_TO_INT8_SAT(alpha) << IM_COL32_A_SHIFT);
-            window->DrawList->AddRectFilled(window->Pos + ImVec2(0, window->TitleBarHeight()), window->Pos + window->Size, bg_col, window_rounding, (flags & ImGuiWindowFlags_ListboxTitleBarLine) ? ImDrawCornerFlags_Bot : (flags & ImGuiWindowFlags_NoTitleBar) ? ImDrawCornerFlags_All : ImDrawCornerFlags_Bot);
+            window->DrawList->AddRectFilled(window->Pos + ImVec2(0, window->TitleBarHeight()), window->Pos + window->Size, bg_col, window_rounding, (flags & ImGuiWindowFlags_ListboxTitleBarLine || ( flags & ImGuiWindowFlags_NoTitleBar && flags & ImGuiWindowFlags_TitleBarLine)) ? ImDrawCornerFlags_Bot : (flags & ImGuiWindowFlags_NoTitleBar) ? ImDrawCornerFlags_All : ImDrawCornerFlags_Bot);
         }
 
         // Title bar
@@ -5365,7 +5365,8 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
         {
             ImRect menu_bar_rect = window->MenuBarRect();
             menu_bar_rect.ClipWith(window->Rect());  // Soft clipping, in particular child window don't have minimum size covering the menu bar so this is useful for them.
-            window->DrawList->AddRectFilled(menu_bar_rect.Min + ImVec2(window_border_size, 0), menu_bar_rect.Max - ImVec2(window_border_size, 0), GetColorU32(ImGuiCol_MenuBarBg), (flags & ImGuiWindowFlags_NoTitleBar) ? window_rounding : 0.0f, ImDrawCornerFlags_Top);
+            window->DrawList->AddRectFilled(menu_bar_rect.Min + ImVec2(window_border_size, 0), menu_bar_rect.Max - ImVec2(window_border_size, 0), GetColorU32(ImGuiCol_ChildBg), (flags & ImGuiWindowFlags_NoTitleBar && !(flags & ImGuiWindowFlags_TitleBarLine)) ? window_rounding : 0.0f);
+            window->DrawList->AddLine(ImVec2(menu_bar_rect.Min.x, menu_bar_rect.Max.y-1), ImVec2(menu_bar_rect.Max.x, menu_bar_rect.Max.y-1), GetColorU32(ImGuiCol_Separator));
             if (style.FrameBorderSize > 0.0f && menu_bar_rect.Max.y < window->Pos.y + window->Size.y)
                 window->DrawList->AddLine(menu_bar_rect.GetBL(), menu_bar_rect.GetBR(), GetColorU32(ImGuiCol_Border), style.FrameBorderSize);
         }
@@ -7300,13 +7301,13 @@ bool ImGui::ToggleButton(const char* label, bool* v, const ImVec2& size_arg, int
         switch (side)
         {
         case 0:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), 0.f);
+            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max + ImVec2(1, 0), ImGui::GetColorU32(ImGuiCol_nullptr_color), 0.f);
             break;
         case 1:
             window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotLeft);
             break;
         case 2:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotRight);
+            window->DrawList->AddRectFilled(ImVec2(bb.Min.x - 1, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotRight);
             break;
         }
         //window->DrawList->AddRectFilledMultiColor(ImVec2(bb.Min.x, bb.Max.y - 1), bb.Max, ImGui::GetColorU32(ImGuiCol_SliderGrab), ImGui::GetColorU32(ImGuiCol_SliderGrabActive), ImGui::GetColorU32(ImGuiCol_SliderGrabActive), ImGui::GetColorU32(ImGuiCol_SliderGrab));

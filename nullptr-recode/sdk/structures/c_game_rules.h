@@ -1,5 +1,4 @@
 #pragma once
-#include "structures.h"
 
 class c_game_rules {
 public:

@@ -7,10 +7,13 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "../helpers/helpers.h"
+/*#include "../helpers/helpers.h"
 #include "../gui/nullptr_gui.h"
 #include "../sdk/sdk.h"
-#include "../sdk/misc/datamap.h"
+#include "../sdk/misc/datamap.h"*/
+#include <initializer_list>
+#include "../helpers/math/qangle.h"
+#include "../sdk/sdk.h"
 
 #include <d3d9.h>
 #pragma comment(lib, "d3d9.lib")
@@ -33,4 +36,7 @@ namespace utils {
 	std::string current_date_time();
 	int epoch_time();
 	float lerp(float a, float b, float f);
+
+	float get_curtime(c_user_cmd* ucmd);
+	void set_clantag(std::string tag, bool anim = true);
 }

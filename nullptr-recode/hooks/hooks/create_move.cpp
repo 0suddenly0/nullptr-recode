@@ -11,6 +11,8 @@ namespace hooks {
 
 		if (!cmd || !cmd->command_number || globals::unloading) return;
 
+		int old_flags = sdk::local_player->m_flags();
+
 		if (!net_channel_vhook.class_base) {
 			auto net_channel = sdk::client_state->net_channel;
 			if (net_channel) {
@@ -20,11 +22,24 @@ namespace hooks {
 			}
 		}
 
-		if (globals::show_menu)
-			cmd->buttons &= ~(IN_ATTACK | IN_ATTACK2);
+		if (globals::show_menu) cmd->buttons &= ~(IN_ATTACK | IN_ATTACK2);
 
+		misc::fog();
+		misc::disable_flash_alpha();
 		misc::bhop::on_create_move(cmd);
 		misc::bhop::auto_strafe(cmd, cmd->viewangles);
+		misc::prepare_revolver(cmd);
+		misc::moon_walk(cmd);
+		misc::fast_duck(cmd);
+		misc::clan_tag::init();
+
+		engine_prediction::begin(cmd); {
+			misc::edge_jump(cmd, old_flags);
+			misc::block_bot(cmd);
+
+			math::fix_angles(cmd->viewangles);
+		}
+		engine_prediction::end();
 		
 		verified->m_cmd = *cmd;
 		verified->m_crc = cmd->get_checksum();

@@ -1,5 +1,4 @@
 #pragma once
-#include "structures.h"
 
 class c_base_view_model : public c_base_entity {
 public:

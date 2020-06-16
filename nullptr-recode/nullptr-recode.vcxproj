@@ -165,6 +165,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\misc\engine_prediction.cpp" />
     <ClCompile Include="functions\misc\misc.cpp" />
     <ClCompile Include="functions\notify\notify.cpp" />
     <ClCompile Include="functions\visuals\background.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
     <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
+    <ClCompile Include="hooks\hooks\override_view.cpp" />
     <ClCompile Include="hooks\hooks\paint_traverse.cpp" />
     <ClCompile Include="hooks\hooks\reset.cpp" />
     <ClCompile Include="hooks\hooks\send_datagram.cpp" />
@@ -209,6 +211,7 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions\misc\engine_prediction.h" />
     <ClInclude Include="functions\misc\misc.h" />
     <ClInclude Include="functions\notify\notify.h" />
     <ClInclude Include="functions\visuals\background.h" />
