@@ -17,17 +17,8 @@
     <Filter Include="sources\hooks\hooks">
       <UniqueIdentifier>{c099a3c1-0c8f-46d0-ad8d-c321b26b4fd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\gui">
-      <UniqueIdentifier>{10e6497f-aaca-4133-bf6c-f9d4f20d7dfc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sources\gui\imgui">
-      <UniqueIdentifier>{afc4f849-a5c4-4cc7-a453-bf43fb86fe84}</UniqueIdentifier>
-    </Filter>
     <Filter Include="sources\sdk">
       <UniqueIdentifier>{b0281690-0fb5-4160-a6fd-39d61ebe4220}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sources\gui\menu">
-      <UniqueIdentifier>{4f78a8e8-32ae-419a-b462-01b1ac952cc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="sources\helpers">
       <UniqueIdentifier>{0dbdc76b-32b3-43a7-ae80-1b5cee4a5ba2}</UniqueIdentifier>
@@ -59,11 +50,35 @@
     <Filter Include="sources\sdk\structures">
       <UniqueIdentifier>{5cb0f7b8-c652-4b08-9ba6-d7dd16f1f605}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\functions\misc">
+      <UniqueIdentifier>{b18ba37a-841d-4ef8-8fcf-ea23dd2bf654}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui">
+      <UniqueIdentifier>{10e6497f-aaca-4133-bf6c-f9d4f20d7dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui\imgui">
+      <UniqueIdentifier>{afc4f849-a5c4-4cc7-a453-bf43fb86fe84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\gui\menu">
+      <UniqueIdentifier>{4f78a8e8-32ae-419a-b462-01b1ac952cc6}</UniqueIdentifier>
+    </Filter>
     <Filter Include="sources\gui\menu\tabs">
       <UniqueIdentifier>{73466a8e-4589-4f3f-b28f-110e5b63c38e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\functions\misc">
-      <UniqueIdentifier>{b18ba37a-841d-4ef8-8fcf-ea23dd2bf654}</UniqueIdentifier>
+    <Filter Include="sources\functions\changers">
+      <UniqueIdentifier>{eba76c49-094a-4507-982b-86fd2eb5935b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\changers\profile">
+      <UniqueIdentifier>{4eb970bd-044a-490a-811f-32e6d1cc8f13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\changers\skins">
+      <UniqueIdentifier>{38f2b8a6-ecce-4144-8b7f-13e64168bb04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\helpers\proto">
+      <UniqueIdentifier>{8719dc6f-0b28-4660-8f86-30af6d2df440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\helpers\configs_sys">
+      <UniqueIdentifier>{87428552-a071-4da7-82fb-748016361a1f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +216,36 @@
     </ClCompile>
     <ClCompile Include="hooks\hooks\override_view.cpp">
       <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\emit_sound.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\is_playing_demo.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="settings\settings.cpp">
+      <Filter>sources\settings</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\changers\profile changer\profile_changer.cpp">
+      <Filter>sources\functions\changers\profile</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\retrieve_message.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers\config_sys\config_sys.cpp">
+      <Filter>sources\helpers\configs_sys</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\changers\skin changer\kit_parser.cpp">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\changers\skin changer\parser.cpp">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\changers\skin changer\skins.cpp">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClCompile>
+    <ClCompile Include="sdk\structures\c_base_inferno.h">
+      <Filter>sources\sdk\structures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,6 +563,33 @@
     </ClInclude>
     <ClInclude Include="functions\misc\engine_prediction.h">
       <Filter>sources\functions\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\changers\profile changer\profile_changer.h">
+      <Filter>sources\functions\changers\profile</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\proto\pbwrap.h">
+      <Filter>sources\helpers\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\proto\protomessages.h">
+      <Filter>sources\helpers\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\proto\protoparser.h">
+      <Filter>sources\helpers\proto</Filter>
+    </ClInclude>
+    <ClInclude Include="helpers\config_sys\config_sys.h">
+      <Filter>sources\helpers\configs_sys</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\changers\skin changer\item_definitions.h">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\changers\skin changer\kit_parser.h">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\changers\skin changer\parser.h">
+      <Filter>sources\functions\changers\skins</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\changers\skin changer\skins.h">
+      <Filter>sources\functions\changers\skins</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

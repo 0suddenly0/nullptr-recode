@@ -15,11 +15,9 @@ static int s_nDLLIdentifier = -1;
 static int s_nCVarFlag = 0;
 static bool s_bRegistered = false;
 
-class c_defaultaccessor : public i_con_command_base_accessor
-{
+class c_defaultaccessor : public i_con_command_base_accessor {
 public:
-    virtual bool register_con_command_base(con_command_base*pVar)
-    {
+    virtual bool register_con_command_base(con_command_base*pVar) {
         // Link to engine's list instead
         sdk::cvar->register_con_command(pVar);
         return true;
@@ -31,10 +29,8 @@ static c_defaultaccessor s_DefaultAccessor;
 //-----------------------------------------------------------------------------
 // Called by the framework to register ConCommandBases with the ICVar
 //-----------------------------------------------------------------------------
-void convar_register(int nCVarFlag, i_con_command_base_accessor *pAccessor)
-{
-    if(!sdk::cvar || s_bRegistered)
-        return;
+void convar_register(int nCVarFlag, i_con_command_base_accessor *pAccessor) {
+    if(!sdk::cvar || s_bRegistered) return;
 
     assert(s_nDLLIdentifier < 0);
     s_bRegistered = true;
@@ -59,10 +55,8 @@ void convar_register(int nCVarFlag, i_con_command_base_accessor *pAccessor)
     con_command_base::s_pConCommandBases = NULL;
 }
 
-void convar_unregister()
-{
-    if(!sdk::cvar || !s_bRegistered)
-        return;
+void convar_unregister() {
+    if(!sdk::cvar || !s_bRegistered) return;
 
     assert(s_nDLLIdentifier >= 0);
     sdk::cvar->unregister_con_commands(s_nDLLIdentifier);
@@ -70,8 +64,7 @@ void convar_unregister()
     s_bRegistered = false;
 }
 
-con_command_base::con_command_base(void)
-{
+con_command_base::con_command_base(void) {
     m_bRegistered = false;
     m_pszName = NULL;
     m_pszHelpString = NULL;
@@ -80,28 +73,23 @@ con_command_base::con_command_base(void)
     m_pNext = NULL;
 }
 
-con_command_base::con_command_base(const char *pName, const char *pHelpString /*=0*/, int flags /*= 0*/)
-{
+con_command_base::con_command_base(const char *pName, const char *pHelpString /*=0*/, int flags /*= 0*/) {
     create(pName, pHelpString, flags);
 }
 
-con_command_base::~con_command_base(void)
-{
+con_command_base::~con_command_base(void) {
 }
 
-bool con_command_base::is_command(void) const
-{
+bool con_command_base::is_command(void) const {
     //	assert( 0 ); This can't assert. . causes a recursive assert in Sys_Printf, etc.
     return true;
 }
 
-c_var_dll_identifier_t con_command_base::get_dll_identifier() const
-{
+c_var_dll_identifier_t con_command_base::get_dll_identifier() const {
     return s_nDLLIdentifier;
 }
 
-void con_command_base::create(const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/)
-{
+void con_command_base::create(const char *pName, const char *pHelpString /*= 0*/, int flags /*= 0*/) {
     static const char *empty_string = "";
 
     m_bRegistered = false;
@@ -120,57 +108,47 @@ void con_command_base::create(const char *pName, const char *pHelpString /*= 0*/
     }
 }
 
-void con_command_base::init()
-{
+void con_command_base::init() {
     if(s_pAccessor) {
         s_pAccessor->register_con_command_base(this);
     }
 }
 
-void con_command_base::shutdown()
-{
+void con_command_base::shutdown() {
     if(sdk::cvar) {
         sdk::cvar->unregister_con_command(this);
     }
 }
 
-const char * con_command_base::get_name(void) const
-{
+const char * con_command_base::get_name(void) const {
     return m_pszName;
 }
 
-bool con_command_base::is_flag_set(int flag) const
-{
+bool con_command_base::is_flag_set(int flag) const {
     return (flag & m_nFlags) ? true : false;
 }
 
-void con_command_base::add_flags(int flags)
-{
+void con_command_base::add_flags(int flags) {
     m_nFlags |= flags;
 }
 
-void con_command_base::remove_flags(int flags)
-{
+void con_command_base::remove_flags(int flags) {
     m_nFlags &= ~flags;
 }
 
-int con_command_base::get_flags(void) const
-{
+int con_command_base::get_flags(void) const {
     return m_nFlags;
 }
 
-const con_command_base* con_command_base::get_next(void) const
-{
+const con_command_base* con_command_base::get_next(void) const {
     return m_pNext;
 }
 
-con_command_base* con_command_base::get_next(void)
-{
+con_command_base* con_command_base::get_next(void) {
     return m_pNext;
 }
 
-char * con_command_base::copy_string(const char *from)
-{
+char * con_command_base::copy_string(const char *from) {
     int		len;
     char	*to;
 
@@ -185,21 +163,18 @@ char * con_command_base::copy_string(const char *from)
     return to;
 }
 
-const char * con_command_base::get_help_text(void) const
-{
+const char * con_command_base::get_help_text(void) const {
     return m_pszHelpString;
 }
 
-bool con_command_base::is_registered(void) const
-{
+bool con_command_base::is_registered(void) const {
     return m_bRegistered;
 }
 
 static characterset_t s_BreakSet;
 static bool s_bBuiltBreakSet = false;
 
-c_command::c_command()
-{
+c_command::c_command() {
     if(!s_bBuiltBreakSet) {
         s_bBuiltBreakSet = true;
         character_set_build(&s_BreakSet, "{}()':");
@@ -208,8 +183,7 @@ c_command::c_command()
     reset();
 }
 
-c_command::c_command(int nArgC, const char **ppArgV)
-{
+c_command::c_command(int nArgC, const char **ppArgV) {
     assert(nArgC > 0);
 
     if(!s_bBuiltBreakSet) {
@@ -247,23 +221,19 @@ c_command::c_command(int nArgC, const char **ppArgV)
     }
 }
 
-void c_command::reset()
-{
+void c_command::reset() {
     m_nArgc = 0;
     m_nArgv0Size = 0;
     m_pArgSBuffer[0] = 0;
 }
 
-characterset_t* c_command::default_break_set()
-{
+characterset_t* c_command::default_break_set() {
     return &s_BreakSet;
 }
 
-bool c_command::tokenize(const char *pCommand, characterset_t *pBreakSet)
-{
+bool c_command::tokenize(const char *pCommand, characterset_t *pBreakSet) {
     reset();
-    if(!pCommand)
-        return false;
+    if(!pCommand) return false;
 
     // Use default break Set
     if(!pBreakSet) {
@@ -329,8 +299,7 @@ bool c_command::tokenize(const char *pCommand, characterset_t *pBreakSet)
     return true;
 }
 
-const char* c_command::find_arg(const char *pName) const
-{
+const char* c_command::find_arg(const char *pName) const {
     int nArgC = arg_c();
     for(int i = 1; i < nArgC; i++) {
         if(!_stricmp(arg(i), pName))
@@ -339,8 +308,7 @@ const char* c_command::find_arg(const char *pName) const
     return 0;
 }
 
-int c_command::find_arg_int(const char *pName, int nDefaultVal) const
-{
+int c_command::find_arg_int(const char *pName, int nDefaultVal) const {
     const char *pVal = find_arg(pName);
     if(pVal)
         return atoi(pVal);
@@ -348,13 +316,11 @@ int c_command::find_arg_int(const char *pName, int nDefaultVal) const
         return nDefaultVal;
 }
 
-int default_completion_func(const char *partial, char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH])
-{
+int default_completion_func(const char *partial, char commands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH]) {
     return 0;
 }
 
-con_command::con_command(const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/)
-{
+con_command::con_command(const char *pName, FnCommandCallbackV1_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/) {
     // Set the callback
     m_fnCommandCallbackV1 = callback;
     m_bUsingNewCommandCallback = false;
@@ -366,8 +332,7 @@ con_command::con_command(const char *pName, FnCommandCallbackV1_t callback, cons
     base_class::create(pName, pHelpString, flags);
 }
 
-con_command::con_command(const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/)
-{
+con_command::con_command(const char *pName, FnCommandCallback_t callback, const char *pHelpString /*= 0*/, int flags /*= 0*/, FnCommandCompletionCallback completionFunc /*= 0*/) {
     // Set the callback
     m_fnCommandCallback = callback;
     m_bUsingNewCommandCallback = true;
@@ -379,8 +344,7 @@ con_command::con_command(const char *pName, FnCommandCallback_t callback, const 
     base_class::create(pName, pHelpString, flags);
 }
 
-con_command::con_command(const char *pName, i_command_callback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, i_command_completion_callback *pCompletionCallback /*= 0*/)
-{
+con_command::con_command(const char *pName, i_command_callback *pCallback, const char *pHelpString /*= 0*/, int flags /*= 0*/, i_command_completion_callback *pCompletionCallback /*= 0*/) {
     // Set the callback
     m_pCommandCallback = pCallback;
     m_bUsingNewCommandCallback = false;
@@ -392,17 +356,14 @@ con_command::con_command(const char *pName, i_command_callback *pCallback, const
     base_class::create(pName, pHelpString, flags);
 }
 
-con_command::~con_command(void)
-{
+con_command::~con_command(void) {
 }
 
-bool con_command::is_command(void) const
-{
+bool con_command::is_command(void) const {
     return true;
 }
 
-void con_command::dispatch(const c_command &command)
-{
+void con_command::dispatch(const c_command &command) {
     if(m_bUsingNewCommandCallback) {
         if(m_fnCommandCallback) {
             (*m_fnCommandCallback)(command);
@@ -424,16 +385,14 @@ void con_command::dispatch(const c_command &command)
     //AssertMsg(0, ("Encountered ConCommand without a callback!\n"));
 }
 
-int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< CUtlString > &commands)
-{
+int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< CUtlString > &commands) {
     if(m_bUsingCommandCallbackInterface) {
         if(!m_pCommandCompletionCallback)
             return 0;
         return m_pCommandCompletionCallback->command_completion_callback(partial, commands);
     }
 
-    if(!m_fnCompletionCallback)
-        return 0;
+    if(!m_fnCompletionCallback) return 0;
 
     char rgpchCommands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH];
     int iret = (m_fnCompletionCallback)(partial, rgpchCommands);
@@ -444,38 +403,31 @@ int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< CUtlSt
     return iret;
 }
 
-bool con_command::can_auto_complete(void)
-{
+bool con_command::can_auto_complete(void) {
     return m_bHasCompletionCallback;
 }
 
-convar::convar(const char *pName, const char *pDefaultValue, int flags /* = 0 */)
-{
+convar::convar(const char *pName, const char *pDefaultValue, int flags /* = 0 */) {
     create(pName, pDefaultValue, flags);
 }
 
-convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString)
-{
+convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString) {
     create(pName, pDefaultValue, flags, pHelpString);
 }
 
-convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax)
-{
+convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax) {
     create(pName, pDefaultValue, flags, pHelpString, bMin, fMin, bMax, fMax);
 }
 
-convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, FnChangeCallback_t callback)
-{
+convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, FnChangeCallback_t callback) {
     create(pName, pDefaultValue, flags, pHelpString, false, 0.0, false, 0.0, callback);
 }
 
-convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax, FnChangeCallback_t callback)
-{
+convar::convar(const char *pName, const char *pDefaultValue, int flags, const char *pHelpString, bool bMin, float fMin, bool bMax, float fMax, FnChangeCallback_t callback) {
     create(pName, pDefaultValue, flags, pHelpString, bMin, fMin, bMax, fMax, callback);
 }
 
-convar::~convar(void)
-{
+convar::~convar(void) {
     //if(IsRegistered())
     //    convar->UnregisterConCommand(this);
     if(m_Value.m_pszString) {
@@ -484,8 +436,7 @@ convar::~convar(void)
     }
 }
 
-void convar::install_change_callback(FnChangeCallback_t callback, bool bInvoke)
-{
+void convar::install_change_callback(FnChangeCallback_t callback, bool bInvoke) {
     if(callback) {
         if(m_fnChangeCallbacks.GetOffset(callback) != -1) {
             m_fnChangeCallbacks.AddToTail(callback);
@@ -499,18 +450,15 @@ void convar::install_change_callback(FnChangeCallback_t callback, bool bInvoke)
     }
 }
 
-bool convar::is_flag_set(int flag) const
-{
+bool convar::is_flag_set(int flag) const {
     return (flag & m_pParent->m_nFlags) ? true : false;
 }
 
-const char * convar::get_help_text(void) const
-{
+const char * convar::get_help_text(void) const {
     return m_pParent->m_pszHelpString;
 }
 
-void convar::add_flags(int flags)
-{
+void convar::add_flags(int flags) {
     m_pParent->m_nFlags |= flags;
 
 #ifdef ALLOW_DEVELOPMENT_CVARS
@@ -518,43 +466,35 @@ void convar::add_flags(int flags)
 #endif
 }
 
-int convar::get_flags(void) const
-{
+int convar::get_flags(void) const {
     return m_pParent->m_nFlags;
 }
 
-bool convar::is_registered(void) const
-{
+bool convar::is_registered(void) const {
     return m_pParent->m_bRegistered;
 }
 
-const char * convar::get_name(void) const
-{
+const char * convar::get_name(void) const {
     return m_pParent->m_pszName;
 }
 
-bool convar::is_command(void) const
-{
+bool convar::is_command(void) const {
     return false;
 }
 
-void convar::Init()
-{
+void convar::Init() {
     base_class::init();
 }
 
-const char * convar::get_base_name(void) const
-{
+const char * convar::get_base_name(void) const {
     return m_pParent->m_pszName;
 }
 
-int convar::get_split_screen_player_slot(void) const
-{
+int convar::get_split_screen_player_slot(void) const {
     return 0;
 }
 
-void convar::internal_set_value(const char *value)
-{
+void convar::internal_set_value(const char *value) {
     float fNewValue;
     char  tempVal[32];
     char  *val;
@@ -579,8 +519,7 @@ void convar::internal_set_value(const char *value)
     }
 }
 
-void convar::change_string_value(const char *tempVal, float flOldValue)
-{
+void convar::change_string_value(const char *tempVal, float flOldValue) {
     char* pszOldValue = (char*)stackalloc(m_Value.m_StringLength);
     memcpy(pszOldValue, m_Value.m_pszString, m_Value.m_StringLength);
 
@@ -606,8 +545,7 @@ void convar::change_string_value(const char *tempVal, float flOldValue)
         sdk::cvar->call_global_change_callbacks(this, pszOldValue, flOldValue);
 }
 
-bool convar::clamp_value(float& value)
-{
+bool convar::clamp_value(float& value) {
     if(m_bHasMin && (value < m_fMinVal)) {
         value = m_fMinVal;
         return true;
@@ -621,10 +559,8 @@ bool convar::clamp_value(float& value)
     return false;
 }
 
-void convar::internal_set_float_value(float fNewValue)
-{
-    if(fNewValue == m_Value.m_fValue)
-        return;
+void convar::internal_set_float_value(float fNewValue) {
+    if(fNewValue == m_Value.m_fValue) return;
 
     clamp_value(fNewValue);
 
@@ -642,10 +578,8 @@ void convar::internal_set_float_value(float fNewValue)
     }
 }
 
-void convar::internal_set_int_value(int nValue)
-{
-    if(nValue == ((int)m_Value.m_nValue ^ (int)this))
-        return;
+void convar::internal_set_int_value(int nValue) {
+    if(nValue == ((int)m_Value.m_nValue ^ (int)this)) return;
 
     float fValue = (float)nValue;
     if(clamp_value(fValue)) {
@@ -666,16 +600,15 @@ void convar::internal_set_int_value(int nValue)
     }
 }
 
-void convar::internal_set_color_value(color cValue)
-{
+void convar::internal_set_color_value(color cValue) {
     int color = (int)cValue.get_raw();
     internal_set_int_value(color);
 }
 
 void convar::create(const char *pName, const char *pDefaultValue, int flags /*= 0*/,
     const char *pHelpString /*= NULL*/, bool bMin /*= false*/, float fMin /*= 0.0*/,
-    bool bMax /*= false*/, float fMax /*= false*/, FnChangeCallback_t callback /*= NULL*/)
-{
+    bool bMax /*= false*/, float fMax /*= false*/, FnChangeCallback_t callback /*= NULL*/)  {
+
     static const char *empty_string = "";
 
     m_pParent = this;
@@ -703,74 +636,62 @@ void convar::create(const char *pName, const char *pDefaultValue, int flags /*= 
     base_class::create(pName, pHelpString, flags);
 }
 
-void convar::set_value_char(const char* value)
-{
+void convar::set_value_char(const char* value) {
     convar* var = (convar*)m_pParent;
     var->internal_set_value(value);
 }
 
-void convar::set_value_float(float value)
-{
+void convar::set_value_float(float value) {
     convar* var = (convar*)m_pParent;
     var->internal_set_float_value(value);
 }
 
-void convar::set_value_int(int value)
-{
+void convar::set_value_int(int value) {
     convar* var = (convar*)m_pParent;
     var->internal_set_int_value(value);
 }
 
-void convar::set_value_color(color value)
-{
+void convar::set_value_color(color value) {
     convar* var = (convar*)m_pParent;
     var->internal_set_color_value(value);
 }
 
-void convar::set_value(const char *value)
-{
+void convar::set_value(const char *value) {
     convar *var = (convar*)m_pParent;
     var->internal_set_value(value);
 }
 
-void convar::set_value(float value)
-{
+void convar::set_value(float value) {
     convar*var = (convar*)m_pParent;
     var->internal_set_float_value(value);
 }
 
-void convar::set_value(int value)
-{
+void convar::set_value(int value) {
     convar*var = (convar*)m_pParent;
     var->internal_set_int_value(value);
 }
 
-void convar::set_value(color value)
-{
+void convar::set_value(color value) {
     convar*var = (convar*)m_pParent;
     var->internal_set_color_value(value);
 }
 
-void convar::revert(void)
-{
+void convar::revert(void) {
     // Force default value again
     convar*var = (convar*)m_pParent;
     var->set_value(var->m_pszDefaultValue);
 }
 
-bool convar::get_min(float& minVal) const
-{
+bool convar::get_min(float& minVal) const {
     minVal = m_pParent->m_fMinVal;
     return m_pParent->m_bHasMin;
 }
 
-bool convar::get_max(float& maxVal) const
-{
+bool convar::get_max(float& maxVal) const {
     maxVal = m_pParent->m_fMaxVal;
     return m_pParent->m_bHasMax;
 }
 
-const char * convar::get_default(void) const
-{
+const char * convar::get_default(void) const {
     return m_pParent->m_pszDefaultValue;
 }

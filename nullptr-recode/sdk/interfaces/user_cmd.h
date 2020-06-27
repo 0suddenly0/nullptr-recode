@@ -31,14 +31,12 @@
 
 class c_user_cmd {
 public:
-    c_user_cmd()
-    {
+    c_user_cmd() {
         memset(this, 0, sizeof(*this));
     };
     virtual ~c_user_cmd() {};
 
-    CRC32_t get_checksum(void) const
-    {
+    CRC32_t get_checksum(void) const {
         CRC32_t crc;
         CRC32_Init(&crc);
 
@@ -79,8 +77,7 @@ public:
     char    pad_0x4C[0x18];     // 0x4C Current sizeof( usercmd ) =  100  = 0x64
 };
 
-class c_verified_user_cmd
-{
+class c_verified_user_cmd {
 public:
     c_user_cmd m_cmd;
     CRC32_t  m_crc;

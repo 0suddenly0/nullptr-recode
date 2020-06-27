@@ -322,7 +322,7 @@ c_utl_char_conversion *GetNoEscCharConversion();
 // Macro to Set overflow functions easily
 //-----------------------------------------------------------------------------
 #define SetUtlBufferOverflowFuncs( _get, _put )	\
-	SetOverflowFuncs( static_cast <UtlBufferOverflowFunc_t>( _get ), static_cast <UtlBufferOverflowFunc_t>( _put ) )
+	SetOverflowFuncs( (UtlBufferOverflowFunc_t)( _get ), static_cast <UtlBufferOverflowFunc_t>( _put ) )
 
 
 //-----------------------------------------------------------------------------

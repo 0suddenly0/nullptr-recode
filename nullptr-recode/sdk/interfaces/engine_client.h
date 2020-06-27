@@ -136,8 +136,7 @@ public:
 };
 
 
-class c_engine_client
-{
+class c_engine_client {
 public:
 	virtual int                   get_intersecting_surfaces(const model_t *model, const vec3&vCenter, const float radius, const bool bOnlyVisibleSurfaces, surf_info *pInfos, const int nMaxInfos) = 0;
 	virtual vec3                  get_light_for_point(const vec3&pos, bool bClamp) = 0;

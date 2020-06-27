@@ -1,7 +1,7 @@
 #pragma once
 #include "vfunc.h"
 #include "../utils/utils.h"
-#include "../settings/globals.h"
+#include "../settings/settings.h"
 #include "../gui/nullptr_gui.h"
 #include <intrin.h>
 #include "../sdk/sdk.h"
@@ -18,6 +18,9 @@ namespace hooks {
 	extern vfunc_hook net_channel_vhook;
 	extern vfunc_hook client_vhook;
 	extern vfunc_hook client_mode_vhook;
+	extern vfunc_hook sound_vhook;
+	extern vfunc_hook engine_vhook;
+	extern vfunc_hook game_coordinator_vhook;
 
 	namespace indexes {
 		int send_net_msg = 40;
@@ -29,6 +32,9 @@ namespace hooks {
 		int create_move = 22;
 		int lock_cursor = 67;
 		int override_view = 18;
+		int emit_sound = 5;
+		int is_playing_demo = 82;
+		int retrieve_message = 2;
 	}
 
 	void initialize();
@@ -71,12 +77,27 @@ namespace hooks {
 
 	namespace frame_stage_notify {
 		using fn = void(__thiscall*)(c_base_client_dll*, frame_stage_t);
-		void __stdcall hook(frame_stage_t framestage);
+		void __stdcall hook(frame_stage_t stage);
 	}
 
 	namespace override_view {
 		using fn = void(__thiscall*)(c_client_mode*, c_view_setup*);
 		void __stdcall hook(c_view_setup* view);
+	}
+
+	namespace emit_sound {
+		using fn = void(__thiscall*)(void*, c_recipient_filter&, int, int, const char*, unsigned int, const char*, float, int, float, int, int, const vec3*, const vec3*, void*, bool, float, int, int);
+		void __stdcall hook(c_recipient_filter& filter, int iEntIndex, int iChannel, const char* pSoundEntry, unsigned int nSoundEntryHash, const char* pSample, float flVolume, int nSeed, float flAttenuation, int iFlags, int iPitch, const vec3* pOrigin, const vec3* pDirection, void* pUtlVecOrigins, bool bUpdatePositions, float soundtime, int speakerentity, int unk);
+	}
+
+	namespace is_playing_demo {
+		using fn = bool(__stdcall*)();
+		bool __stdcall hook();
+	}
+
+	namespace retrieve_message {
+		using fn = game_coordinator_results(__thiscall*)(void*, uint32_t*, void*, uint32_t, uint32_t*);
+		game_coordinator_results __stdcall hook(uint32_t* punMsgType, void* pubDest, uint32_t cubDest, uint32_t* pcubMsgSize);
 	}
 
 	namespace wndproc {

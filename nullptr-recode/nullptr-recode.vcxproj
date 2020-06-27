@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -165,6 +167,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\changers\profile changer\profile_changer.cpp" />
+    <ClCompile Include="functions\changers\skin changer\kit_parser.cpp" />
+    <ClCompile Include="functions\changers\skin changer\parser.cpp" />
+    <ClCompile Include="functions\changers\skin changer\skins.cpp" />
     <ClCompile Include="functions\misc\engine_prediction.cpp" />
     <ClCompile Include="functions\misc\misc.cpp" />
     <ClCompile Include="functions\notify\notify.cpp" />
@@ -185,17 +191,21 @@
     <ClCompile Include="gui\menu\tabs\skins_tab.cpp" />
     <ClCompile Include="gui\menu\tabs\visuals_tab.cpp" />
     <ClCompile Include="gui\nullptr_gui.cpp" />
+    <ClCompile Include="helpers\config_sys\config_sys.cpp" />
     <ClCompile Include="helpers\input.cpp" />
     <ClCompile Include="helpers\math\math.cpp" />
     <ClCompile Include="helpers\netvars.cpp" />
     <ClCompile Include="hooks\hooks.cpp" />
     <ClCompile Include="hooks\hooks\create_move.cpp" />
+    <ClCompile Include="hooks\hooks\emit_sound.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
+    <ClCompile Include="hooks\hooks\is_playing_demo.cpp" />
     <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
     <ClCompile Include="hooks\hooks\override_view.cpp" />
     <ClCompile Include="hooks\hooks\paint_traverse.cpp" />
     <ClCompile Include="hooks\hooks\reset.cpp" />
+    <ClCompile Include="hooks\hooks\retrieve_message.cpp" />
     <ClCompile Include="hooks\hooks\send_datagram.cpp" />
     <ClCompile Include="hooks\hooks\send_net_msg.cpp" />
     <ClCompile Include="hooks\hooks\wndproc.cpp" />
@@ -208,9 +218,16 @@
     <ClCompile Include="sdk\misc\utl_buffer.cpp" />
     <ClCompile Include="sdk\misc\utl_string.cpp" />
     <ClCompile Include="sdk\sdk.cpp" />
+    <ClCompile Include="sdk\structures\c_base_inferno.h" />
+    <ClCompile Include="settings\settings.cpp" />
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions\changers\profile changer\profile_changer.h" />
+    <ClInclude Include="functions\changers\skin changer\item_definitions.h" />
+    <ClInclude Include="functions\changers\skin changer\kit_parser.h" />
+    <ClInclude Include="functions\changers\skin changer\parser.h" />
+    <ClInclude Include="functions\changers\skin changer\skins.h" />
     <ClInclude Include="functions\misc\engine_prediction.h" />
     <ClInclude Include="functions\misc\misc.h" />
     <ClInclude Include="functions\notify\notify.h" />
@@ -227,6 +244,7 @@
     <ClInclude Include="gui\menu\menu.h" />
     <ClInclude Include="gui\nullptr_gui.h" />
     <ClInclude Include="helpers\color.h" />
+    <ClInclude Include="helpers\config_sys\config_sys.h" />
     <ClInclude Include="helpers\helpers.h" />
     <ClInclude Include="helpers\input.h" />
     <ClInclude Include="helpers\math\math.h" />
@@ -234,6 +252,9 @@
     <ClInclude Include="helpers\math\qangle.h" />
     <ClInclude Include="helpers\math\vector.h" />
     <ClInclude Include="helpers\netvars.h" />
+    <ClInclude Include="helpers\proto\pbwrap.h" />
+    <ClInclude Include="helpers\proto\protomessages.h" />
+    <ClInclude Include="helpers\proto\protoparser.h" />
     <ClInclude Include="hooks\hooks.h" />
     <ClInclude Include="hooks\vfunc.h" />
     <ClInclude Include="render\fonts\fonts.h" />

@@ -10,6 +10,8 @@ namespace misc {
 	void edge_jump(c_user_cmd* cmd, int old_flags);
 	void disable_flash_alpha();
 	void no_smoke();
+	void viewmodel();
+	void gravity();
 	void fog();
 
 	namespace clan_tag {

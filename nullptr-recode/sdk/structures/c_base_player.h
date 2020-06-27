@@ -3,10 +3,10 @@
 class c_base_player : public c_base_entity {
 public:
 	static __forceinline c_base_player* get_player_by_user_id(int id) {
-		return static_cast<c_base_player*>(get_entity_by_index(sdk::engine_client->get_player_for_user_id(id)));
+		return (c_base_player*)(get_entity_by_index(sdk::engine_client->get_player_for_user_id(id)));
 	}
 	static __forceinline c_base_player* get_player_by_index(int i) {
-		return static_cast<c_base_player*>(get_entity_by_index(i));
+		return (c_base_player*)(get_entity_by_index(i));
 	}
 
 	NETVAR(observer_mode_t, observer_mode, "DT_BasePlayer", "m_iObserverMode")
@@ -166,7 +166,7 @@ public:
 		// sig for C_BaseAnimating version: 55 8B EC 83 7D 08 FF 56 8B F1 74 3D
 		// c_csplayer vfunc 242, follow calls to find the function.
 
-		static auto get_sequence_activity = reinterpret_cast<int(__fastcall*)(void*, studiohdr_t*, int)>(utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 53 8B 5D 08 56 8B F1 83"));
+		static auto get_sequence_activity = (int(__fastcall*)(void*, studiohdr_t*, int))(utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 53 8B 5D 08 56 8B F1 83"));
 
 		return get_sequence_activity(this, hdr, sequence);
 	}
@@ -233,20 +233,19 @@ public:
 		return info;
 	}
 
-	bool          is_alive() {
+	bool is_alive() {
 		return life_state() == life_state::alive;
 	}
 
-	bool		  is_flashed(int min_alpha) {
+	bool is_flashed(int min_alpha) {
 		return flash_duration() > (float)min_alpha;
 	}
-	bool          has_c4() {
-		static auto fnHasC4
-			= reinterpret_cast<bool(__thiscall*)(void*)>(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "56 8B F1 85 F6 74 31"));
 
+	bool has_c4() {
+		static auto fnHasC4 = (bool(__thiscall*)(void*))(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "56 8B F1 85 F6 74 31"));
 		return fnHasC4(this);
 	}
-	vec3        get_hitbox_pos(int hitbox_id) {
+	vec3 get_hitbox_pos(int hitbox_id) {
 		matrix3x4 boneMatrix[MAXSTUDIOBONES];
 
 		if (setup_bones(boneMatrix, MAXSTUDIOBONES, BONE_USED_BY_HITBOX, 0.0f)) {
@@ -292,7 +291,7 @@ public:
 
 		if (!can_use_precached) return false;
 		
-		if (hitbox >= HITBOX_MAX) return false;
+		if (hitbox >= hitbox_max) return false;
 
 		vec3 min, max;
 
@@ -322,14 +321,15 @@ public:
 		return nullptr;
 	}
 
-	vec3        get_bone_pos(int bone) {
+	vec3 get_bone_pos(int bone) {
 		matrix3x4 boneMatrix[MAXSTUDIOBONES];
 		if (setup_bones(boneMatrix, MAXSTUDIOBONES, BONE_USED_BY_ANYTHING, 0.0f)) {
 			return boneMatrix[bone].at(3);
 		}
 		return vec3{};
 	}
-	bool          can_see_player(c_base_player* player, int hitbox) {
+
+	bool can_see_player(c_base_player* player, int hitbox) {
 		c_game_trace tr;
 		ray_t ray;
 		c_trace_filter filter;
@@ -342,7 +342,8 @@ public:
 
 		return tr.hit_entity == player || tr.fraction > 0.97f;
 	}
-	bool          can_see_player(c_base_player* player, const vec3& pos) {
+
+	bool can_see_player(c_base_player* player, const vec3& pos) {
 		c_game_trace tr;
 		ray_t ray;
 		c_trace_filter filter;
@@ -353,7 +354,8 @@ public:
 
 		return tr.hit_entity == player || tr.fraction > 0.9f;
 	}
-	float         can_see_player(const vec3& pos) {
+
+	float can_see_player(const vec3& pos) {
 		c_game_trace tr;
 		ray_t ray;
 		c_trace_filter filter;
@@ -364,18 +366,20 @@ public:
 
 		return tr.fraction /*> 0.9f*/;
 	}
+
 	void update_client_side_animation() {
 		return call_vfunction< void(__thiscall*)(void*) >(this, 223)(this);
 	}
+
 	float get_max_desync_delta() {
 		auto animstate = uintptr_t(this->get_player_anim_state());
 
 		float duckammount = *(float*)(animstate + 0xA4);
-		float speedfraction = std::fmax(0, std::fmin(*reinterpret_cast<float*>(animstate + 0xF8), 1));
+		float speedfraction = std::fmax(0, std::fmin(*(float*)(animstate + 0xF8), 1));
 
-		float speedfactor = std::fmax(0, std::fmin(1, *reinterpret_cast<float*> (animstate + 0xFC)));
+		float speedfactor = std::fmax(0, std::fmin(1, *(float*)(animstate + 0xFC)));
 
-		float unk1 = ((*reinterpret_cast<float*> (animstate + 0x11C) * -0.30000001) - 0.19999999)* speedfraction;
+		float unk1 = ((*(float*)(animstate + 0x11C) * -0.30000001) - 0.19999999)* speedfraction;
 		float unk2 = unk1 + 1.f;
 		float unk3;
 
@@ -413,8 +417,7 @@ public:
 		char buf[128];
 		int c = 0;
 
-		for (int i = 0; pl_name[i]; ++i)
-		{
+		for (int i = 0; pl_name[i]; ++i) {
 			if (c >= sizeof(buf) - 1)
 				break;
 

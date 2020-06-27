@@ -19,8 +19,7 @@ class c_texture;
 //-----------------------------------------------------------------------------
 // Flags used by DrawWorldLists
 //-----------------------------------------------------------------------------
-enum
-{
+enum {
     DRAWWORLDLISTS_DRAW_STRICTLYABOVEWATER = 0x001,
     DRAWWORLDLISTS_DRAW_STRICTLYUNDERWATER = 0x002,
     DRAWWORLDLISTS_DRAW_INTERSECTSWATER = 0x004,
@@ -34,8 +33,7 @@ enum
     DRAWWORLDLISTS_DRAW_DECALS_AND_OVERLAYS = 0x400,
 };
 
-enum
-{
+enum {
     MAT_SORT_GROUP_STRICTLY_ABOVEWATER = 0,
     MAT_SORT_GROUP_STRICTLY_UNDERWATER,
     MAT_SORT_GROUP_INTERSECTS_WATER_SURFACE,
@@ -48,36 +46,31 @@ enum
 // Leaf index
 //-----------------------------------------------------------------------------
 typedef unsigned short eafindex_t;
-enum
-{
+enum {
     INVALID_LEAF_INDEX = (eafindex_t)~0
 };
 
-struct world_list_leaf_data_t
-{
+struct world_list_leaf_data_t {
     eafindex_t     leafIndex;    // 16 bits
     int16_t         waterData;
     uint16_t        firstTranslucentSurface;    // engine-internal list index
     uint16_t        translucentSurfaceCount;    // count of translucent surfaces+disps
 };
 
-struct world_list_info_t
-{
+struct world_list_info_t {
     int                     m_ViewFogVolume;
     int                     m_LeafCount;
     bool                    m_bHasWater;
     world_list_leaf_data_t*    m_pLeafDataList;
 };
 
-class c_world_render_list /*: public i_ref_counted*/
-{
+class c_world_render_list /*: public i_ref_counted*/ {
 };
 
 //-----------------------------------------------------------------------------
 // Describes the fog volume for a particular point
 //-----------------------------------------------------------------------------
-struct visible_fog_volume_info_t
-{
+struct visible_fog_volume_info_t {
     int            m_nVisibleFogVolume;
     int            m_nVisibleFogVolumeLeaf;
     bool        m_bEyeInFogVolume;
@@ -86,8 +79,7 @@ struct visible_fog_volume_info_t
     c_material*  m_pFogVolumeMaterial;
 };
 
-struct v_plane
-{
+struct v_plane {
     vec3        m_Normal;
     float        m_Dist;
 };
@@ -96,8 +88,7 @@ typedef v_plane Frustum[FRUSTUM_NUMPLANES];
 //-----------------------------------------------------------------------------
 // Vertex format for brush models
 //-----------------------------------------------------------------------------
-struct brush_vertex_t
-{
+struct brush_vertex_t {
     vec3        m_Pos;
     vec3        m_Normal;
     vec3        m_TangentS;
@@ -112,8 +103,7 @@ private:
 //-----------------------------------------------------------------------------
 // Visibility data for area portal culling
 //-----------------------------------------------------------------------------
-struct vis_override_data_t
-{
+struct vis_override_data_t {
     vec3        m_vecVisOrigin;                    // The point to to use as the viewpoint for area portal backface cull checks.
     float        m_fDistToAreaPortalTolerance;    // The distance from an area portal before using the full screen as the viewable portion.
 };
@@ -123,8 +113,7 @@ struct vis_override_data_t
 // interface for asking about the Brush surfaces from the client DLL
 //-----------------------------------------------------------------------------
 
-class c_brush_surface
-{
+class c_brush_surface {
 public:
     // Computes texture coordinates + lightmap coordinates given a world position
     virtual void compute_texture_coordinate(vec3 const& worldPos, vec2& texCoord) = 0;
@@ -143,8 +132,7 @@ public:
 // interface for installing a new renderer for brush surfaces
 //-----------------------------------------------------------------------------
 
-class c_brush_renderer
-{
+class c_brush_renderer {
 public:
     // Draws the surface; returns true if decals should be rendered on this surface
     virtual bool render_brush_model_surface(c_client_entity* pBaseEntity, c_brush_surface* pBrushSurface) = 0;
@@ -154,10 +142,8 @@ public:
 #define MAX_AREA_STATE_BYTES        32
 #define MAX_AREA_PORTAL_STATE_BYTES 24
 
-class c_render_view
-{
-    enum
-    {
+class c_render_view {
+    enum {
         VIEW_SETUP_VIS_EX_RETURN_FLAGS_USES_RADIAL_VIS = 0x00000001
     };
 public:
@@ -168,8 +154,7 @@ public:
     virtual void                set_blend(float blend) = 0;
     virtual float               get_blend(void) = 0;
     virtual void                set_color_modulation(float const* blend) = 0;
-    void                        set_color_modulation(float r, float g, float b)
-    {
+    void                        set_color_modulation(float r, float g, float b) {
         float clr[3] = { r, g, b };
         set_color_modulation(clr);
     }

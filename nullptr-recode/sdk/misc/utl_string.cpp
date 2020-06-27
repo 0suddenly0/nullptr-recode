@@ -137,7 +137,7 @@ const char* CUtlString::Get() const {
 		return "";
 	}
 
-	return reinterpret_cast< const char* >( m_Storage.Get() );
+	return ( const char* )( m_Storage.Get() );
 }
 
 // Converts to c-strings
@@ -156,7 +156,7 @@ char* CUtlString::Get() {
 		m_Storage[0] = '\0';
 	}
 
-	return reinterpret_cast< char* >( m_Storage.Get() );
+	return ( char* )( m_Storage.Get() );
 }
 
 CUtlString& CUtlString::operator=( const CUtlString& src ) {

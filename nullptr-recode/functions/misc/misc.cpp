@@ -124,23 +124,19 @@ namespace misc {
 	}
 
 	void fog() {
-		static auto fog_enable = sdk::cvar->find_var("fog_enable");
-		static auto fog_override = sdk::cvar->find_var("fog_override");
-		static auto fog_color = sdk::cvar->find_var("fog_color");
-		static auto fog_start = sdk::cvar->find_var("fog_start");
-		static auto fog_end = sdk::cvar->find_var("fog_end");
-		static auto fog_destiny = sdk::cvar->find_var("fog_maxdensity");
+		static convar* fog_enable = sdk::cvar->find_var("fog_enable");
+		static convar* fog_override = sdk::cvar->find_var("fog_override");
+		static convar* fog_color = sdk::cvar->find_var("fog_color");
+		static convar* fog_start = sdk::cvar->find_var("fog_start");
+		static convar* fog_end = sdk::cvar->find_var("fog_end");
+		static convar* fog_destiny = sdk::cvar->find_var("fog_maxdensity");
 
-		static auto r_modelAmbientMin = sdk::cvar->find_var("r_modelAmbientMin");
-		static auto mat_bloomscale = sdk::cvar->find_var("mat_bloomscale");
-		static auto mat_bloom_scalefactor_scalar = sdk::cvar->find_var("mat_bloom_scalefactor_scalar");
-
-		static const auto fog_enable_bec = fog_enable->get_bool();
-		static const auto fog_override_bec = fog_override->get_bool();
-		static const auto fog_color_bec = fog_color->get_string();
-		static const auto fog_start_bec = fog_start->get_float();
-		static const auto fog_end_bec = fog_end->get_float();
-		static const auto fog_destiny_bec = fog_destiny->get_float();
+		static const bool fog_enable_bec = fog_enable->get_bool();
+		static const bool fog_override_bec = fog_override->get_bool();
+		static const const char* fog_color_bec = fog_color->get_string();
+		static const float fog_start_bec = fog_start->get_float();
+		static const float fog_end_bec = fog_end->get_float();
+		static const float fog_destiny_bec = fog_destiny->get_float();
 
 		if (settings::misc::fog::enable && !globals::unloading) {
 			fog_enable->m_fnChangeCallbacks.m_Size = 0;
@@ -154,10 +150,10 @@ namespace misc {
 
 			fog_enable->set_value(settings::misc::fog::enable);
 			fog_override->set_value(settings::misc::fog::enable);
-			fog_color->set_value(utils::snprintf("%d %d %d", clr.get<int>(return_color::r), clr.get<int>(return_color::g), clr.get<int>(return_color::b)).c_str()); //fog color
+			fog_color->set_value(utils::snprintf("%d %d %d", clr.color_char[0], clr.color_char[1], clr.color_char[2]).c_str()); //fog color
 			fog_start->set_value(settings::misc::fog::start_dist);
 			fog_end->set_value(settings::misc::fog::end_dist);
-			fog_destiny->set_value(settings::misc::fog::clr.get<int>(return_color::a));
+			fog_destiny->set_value(settings::misc::fog::clr.color_char[3]);
 		} else if (globals::unloading || !settings::misc::fog::enable) {
 			fog_enable->m_fnChangeCallbacks.m_Size = 0;
 			fog_override->m_fnChangeCallbacks.m_Size = 0;
@@ -180,10 +176,9 @@ namespace misc {
 		static uint8_t* offset;
 
 		if (!offset) offset = utils::pattern_scan(GetModuleHandleW(L"client.dll"), "55 8B EC 83 EC 08 8B 15 ? ? ? ? 0F 57 C0");
+		if (!smoke_count) smoke_count = *(DWORD*)(offset + 0x8);
 
-		if (!smoke_count) smoke_count = *reinterpret_cast<DWORD*>(offset + 0x8);
-
-		if (settings::misc::disable_smoke) *reinterpret_cast<int*>(smoke_count) = 0;
+		if (settings::misc::disable_smoke) *(int*)(smoke_count) = 0;
 
 		static bool set = true;
 		static std::vector<const char*> smoke_materials = {
@@ -214,6 +209,65 @@ namespace misc {
 	void disable_flash_alpha() {
 		if (settings::misc::disable_flash) sdk::local_player->flash_max_alpha() = settings::misc::flash_alpha;
 		else sdk::local_player->flash_max_alpha() = 255.f;
+	}
+
+	void viewmodel() {
+		static convar* fov_x = sdk::cvar->find_var("viewmodel_offset_x");
+		static convar* fov_y = sdk::cvar->find_var("viewmodel_offset_y");
+		static convar* fov_z = sdk::cvar->find_var("viewmodel_offset_z");
+		static convar* view_model = sdk::cvar->find_var("viewmodel_fov");
+
+		static const float fov_x_becup = fov_x->get_float();
+		static const float fov_y_becup = fov_y->get_float();
+		static const float fov_z_becup = fov_z->get_float();
+		static const float view_model_becup = view_model->get_float();
+
+		if (!globals::unloading) {
+			fov_x->m_fnChangeCallbacks.m_Size = 0;
+			fov_y->m_fnChangeCallbacks.m_Size = 0;
+			fov_z->m_fnChangeCallbacks.m_Size = 0;
+			view_model->m_fnChangeCallbacks.m_Size = 0;
+
+			fov_x->set_value(settings::misc::viewmodel::fov_x);
+			fov_y->set_value(settings::misc::viewmodel::fov_y);
+			fov_z->set_value(settings::misc::viewmodel::fov_z);
+			view_model->set_value(settings::misc::viewmodel::viewmodel);
+		} else {
+			fov_x->m_fnChangeCallbacks.m_Size = 0;
+			fov_y->m_fnChangeCallbacks.m_Size = 0;
+			fov_z->m_fnChangeCallbacks.m_Size = 0;
+			view_model->m_fnChangeCallbacks.m_Size = 0;
+
+			fov_x->set_value(fov_x_becup);
+			fov_y->set_value(fov_y_becup);
+			fov_z->set_value(fov_z_becup);
+			view_model->set_value(view_model_becup);
+		}
+	}
+
+	void gravity() {
+		static convar* cl_ragdoll_gravity = sdk::cvar->find_var("cl_ragdoll_gravity");
+		static convar* cl_phys_timescale = sdk::cvar->find_var("cl_phys_timescale");
+
+		static const int becup_cl_ragdoll_gravity = cl_ragdoll_gravity->get_int();
+		static const int becup_cl_phys_timescale = cl_phys_timescale->get_int();
+
+		if (settings::misc::inverse_gravity::enable && !globals::unloading) {
+			cl_ragdoll_gravity->m_fnChangeCallbacks.m_Size = 0;
+			cl_ragdoll_gravity->set_value(settings::misc::inverse_gravity::value * 100);
+		} else {
+			cl_ragdoll_gravity->m_fnChangeCallbacks.m_Size = 0;
+			cl_ragdoll_gravity->set_value(becup_cl_ragdoll_gravity);
+		}
+
+		if (settings::misc::inverse_gravity::enable_slow && !globals::unloading)
+		{
+			cl_phys_timescale->m_fnChangeCallbacks.m_Size = 0;
+			cl_phys_timescale->set_value(0.2f);
+		} else {
+			cl_phys_timescale->m_fnChangeCallbacks.m_Size = 0;
+			cl_phys_timescale->set_value(becup_cl_phys_timescale);
+		}
 	}
 
 	namespace clan_tag {
@@ -586,11 +640,11 @@ namespace misc {
 
 		if (!sdk::local_player->is_alive()) return;
 
-		static auto old_seq = 0;
+		static int32_t old_seq = 0;
 
-		if (old_seq == net_channel->in_sequence_nr)return;
+		if (old_seq == net_channel->in_sequence_nr) return;
 		old_seq = net_channel->in_sequence_nr;
 
-		net_channel->in_sequence_nr += (64 - 1) * 2 - static_cast<uint32_t>((64 - 1) * (settings::misc::fake_latency::amount / 1000.f));
+		net_channel->in_sequence_nr += (64 - 1) * 2 - (uint32_t)((64 - 1) * (settings::misc::fake_latency::amount / 1000.f));
 	}
 }

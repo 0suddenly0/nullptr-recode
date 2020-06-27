@@ -3,6 +3,18 @@
 #include "../../sdk/structures/structures.h"
 
 namespace math {
+	int clamp(int a, int min, int max) {
+		if (a < min) return min;
+		if (a > max) return max;
+		return a;
+	}
+
+	float clamp(float a, float min, float max) {
+		if (a < min) return min;
+		if (a > max) return max;
+		return a;
+	}
+
 	void clamp_angles(qangle& angles) {
 		if (angles.pitch > 89.0f) angles.pitch = 89.0f;
 		else if (angles.pitch < -89.0f) angles.pitch = -89.0f;

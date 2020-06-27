@@ -4,8 +4,7 @@
 #include "user_cmd.h"
 #include "move_helper.h"
 
-class c_move_data
-{
+class c_move_data {
 public:
     bool    m_bFirstRunOfFunctions : 1;
     bool    m_bGameCodeMovedPlayer : 1;
@@ -36,8 +35,7 @@ public:
 
 class c_base_player;
 
-class c_game_movement
-{
+class c_game_movement {
 public:
     virtual			~c_game_movement(void) {}
 
@@ -55,36 +53,29 @@ public:
     virtual void              setup_movement_bounds(c_move_data *pMove) = 0;
 };
 
-class c_gamemovement
-    : public c_game_movement
-{
+class c_gamemovement : public c_game_movement {
 public:
     virtual ~c_gamemovement(void) {}
 };
 
-class c_prediction
-{
+class c_prediction {
 public:
-    bool in_prediction()
-    {
+    bool in_prediction() {
         typedef bool(__thiscall* oInPrediction)(void*);
         return call_vfunction<oInPrediction>(this, 14)(this);
     }
 
-    void run_command(c_base_player *player, c_user_cmd *ucmd, c_move_helper* moveHelper)
-    {
+    void run_command(c_base_player *player, c_user_cmd *ucmd, c_move_helper* moveHelper) {
         typedef void(__thiscall* oRunCommand)(void*, c_base_player*, c_user_cmd*, c_move_helper*);
         return call_vfunction<oRunCommand>(this, 19)(this, player, ucmd, moveHelper);
     }
 
-    void setup_move(c_base_player *player, c_user_cmd*ucmd, c_move_helper* moveHelper, void* pMoveData)
-    {
+    void setup_move(c_base_player *player, c_user_cmd*ucmd, c_move_helper* moveHelper, void* pMoveData) {
         typedef void(__thiscall* oSetupMove)(void*, c_base_player*, c_user_cmd*, c_move_helper*, void*);
         return call_vfunction<oSetupMove>(this, 20)(this, player, ucmd, moveHelper, pMoveData);
     }
 
-    void finish_move(c_base_player *player, c_user_cmd*ucmd, void*pMoveData)
-    {
+    void finish_move(c_base_player *player, c_user_cmd*ucmd, void*pMoveData) {
         typedef void(__thiscall* oFinishMove)(void*, c_base_player*, c_user_cmd*, void*);
         return call_vfunction<oFinishMove>(this, 21)(this, player, ucmd, pMoveData);
     }

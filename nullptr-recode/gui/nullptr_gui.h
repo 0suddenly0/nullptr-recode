@@ -6,6 +6,12 @@
 #include <vector>
 #include "../helpers/helpers.h"
 
+enum class tabs_type {
+    standart = 0,
+    big = 1,
+    spac = 2
+};
+
 template<size_t N>
 void render_tabs(char* (&names)[N], int& activetab, float w, float h) {
     bool values[N] = { false };
@@ -24,6 +30,7 @@ void render_tabs(char* (&names)[N], int& activetab, float w, float h) {
         if (i < N - 1) ImGui::SameLine();
     }
 }
+
 template<size_t N>
 void render_tabsMain(char* (&names)[N], int& activetab, float w, float h) {
     bool values[N] = { false };
@@ -71,28 +78,38 @@ namespace null_gui {
         void set_cursor_x(float x);
         void set_cursor_y(float y);
         vec2 get_scroll();
-        void set_next_window_pos(vec2 pos);
+        void set_next_window_pos(vec2 pos, bool once = true);
+        void set_next_window_size(vec2 size, bool once = true);
         void set_menu_color(color clr);
+        void set_window_pos(vec2 pos);
+        void set_window_size(vec2 size);
+        void set_window_hidden(bool hidden);
+        void set_next_window_alpha(float alpha);
+        void set_next_window_focus();
+
+        void get_window_pos_and_size(vec2* pos, vec2* size);
     }
 
     void text(const char* text, ...);
     void text_no_space(const char* text, ...);
     bool check_box(const char* text, bool* value);
     // if max_size = true, button.size.x = window.size.x
-    bool button(const char* text, bool max_size = true, vec2 size = vec2(0, 0));
+    bool button(const char* text, bool max_size = true, vec2 size = vec2(0, 0), bool use_space = true);
     // if u need to use tooltip_items with key_bind, set tooltip to true
     bool key_bind(const char* text, key_bind_t* bind, bool tooltip = false);
     bool slider_int(const char* text, int* value, int min, int max, const char* format = "%d");
-    bool slider_float(const char* text, float* value, float min, float max, const char* format = "%.1f");
+    bool slider_float(const char* text, float* value, float min, float max, const char* format = "%.1f", float power = 1.f);
     bool int_input(const char* text, int* value, int step_low = 1, int step_big = 100);
-    bool float_input(const char* text, float* value, float step_low = 0.f, float step_big = 0.f, const char* format = "%.1f");
+    bool float_input(const char* text, float* value, float step_low = 1.f, float step_big = 100.f, const char* format = "%.1f");
     bool color_edit(const char* text, color* color, bool alpha = true);
     bool text_input(const char* text, std::string* value);
+    void image(IDirect3DTexture9* texture, vec2 size);
     bool combo(const char* text, int* value, std::vector<std::string>& items);
     bool functional_combo(const char* text, const char* prev_item, std::function<void()> function);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool*> values);
     void tooltip_items(const char* text, std::function<void()> func);
+    void tooltip_on_click(const char* text, std::function<void()> func);
     void tooltip(const char* text, ...);
     void line(float size = 0.f);
     bool begin_list_box(const char* text, vec2 size = vec2(0, 0));
@@ -101,10 +118,12 @@ namespace null_gui {
 
     bool begin_window(const char* text, bool* open = NULL, vec2 size = vec2(0, 0), ImGuiWindowFlags flags = 0);
     bool begin_group(const char* text, vec2 size = vec2(0, 0));
-    void end_window();
+    bool begin_menu_bar();
+    void end_menu_bar();
     void end_group();
+    void end_window();
 
-    void same_line(float x = 0.f);
+    void same_line(float x = -1.f);
     void create_columns(int count);
     void set_column_width(int idx, float size);
     void next_column();
@@ -112,9 +131,16 @@ namespace null_gui {
     void push_font(ImFont* font);
     void pop_font();
 
+    void push_style_var(ImGuiStyleVar style, vec2 val);
+    void push_style_var(ImGuiStyleVar style, float val);
+    void pop_style_var(int count = 1);
+
+    void push_style_color(ImGuiCol style, color clr);
+    void pop_style_color(int count = 1);
+
     template<size_t T>
     inline void vertical_tabs(int& tab, char* (&tabs)[T], bool key_bind = false) {
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing_new, ImVec2(0, 0)); {
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0)); {
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));  {
                 render_tabs2(tabs, tab, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y / T, key_bind);
             }
@@ -124,13 +150,29 @@ namespace null_gui {
     }
 
     template<size_t T>
-    inline void horizontal(int& tab, char* (&tabs)[T], bool main = false) {
-        auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x) / _countof(tabs);
+    inline void horizontal(int& tab, char* (&tabs)[T], tabs_type type = tabs_type::standart) {
+        auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x - (type == tabs_type::spac ? (6 * _countof(tabs)) : 0)) / _countof(tabs);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing_new, ImVec2(0, 0)); {
-            if (main) render_tabs(tabs, tab, tabs_w, 25.f);
-            else render_tabs(tabs, tab, tabs_w, 20.f);
+        switch (type)
+        {
+        case tabs_type::standart:
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0)); {
+                render_tabs(tabs, tab, tabs_w, 20.f);
+            }
+            ImGui::PopStyleVar();
+            break;
+        case tabs_type::big:
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0)); {
+                render_tabs(tabs, tab, tabs_w, 25.f);
+            }
+            ImGui::PopStyleVar();
+            break;
+        case tabs_type::spac:
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(6, 6)); {
+                render_tabsMain(tabs, tab, tabs_w, 20.f);
+            }
+            ImGui::PopStyleVar();
+            break;
         }
-        ImGui::PopStyleVar();
     }
 }

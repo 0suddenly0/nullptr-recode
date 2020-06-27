@@ -74,8 +74,7 @@ class c_texture;
 class c_material_system_hardware_config;
 class c_shadow_mgr;
 
-enum compiled_vtf_flags
-{
+enum compiled_vtf_flags {
     TEXTUREFLAGS_POINTSAMPLE = 0x00000001,
     TEXTUREFLAGS_TRILINEAR = 0x00000002,
     TEXTUREFLAGS_CLAMPS = 0x00000004,
@@ -110,46 +109,39 @@ enum compiled_vtf_flags
     TEXTUREFLAGS_UNUSED_80000000 = 0x80000000
 };
 
-enum standard_lightmap_t
-{
+enum standard_lightmap_t {
     MATERIAL_SYSTEM_LIGHTMAP_PAGE_WHITE = -1,
     MATERIAL_SYSTEM_LIGHTMAP_PAGE_WHITE_BUMP = -2,
     MATERIAL_SYSTEM_LIGHTMAP_PAGE_USER_DEFINED = -3
 };
 
 
-struct material_system_sort_info_t
-{
+struct material_system_sort_info_t {
     c_material	*material;
     int			lightmapPageID;
 };
 
-enum material_thread_mode_t
-{
+enum material_thread_mode_t {
     MATERIAL_SINGLE_THREADED,
     MATERIAL_QUEUED_SINGLE_THREADED,
     MATERIAL_QUEUED_THREADED
 };
 
-enum material_context_type_t
-{
+enum material_context_type_t {
     MATERIAL_HARDWARE_CONTEXT,
     MATERIAL_QUEUED_CONTEXT,
     MATERIAL_NULL_CONTEXT
 };
 
-enum
-{
+enum {
     MATERIAL_ADAPTER_NAME_LENGTH = 512
 };
 
-struct material_texture_info_t
-{
+struct material_texture_info_t {
     int iExcludeInformation;
 };
 
-struct application_performance_counters_info_t
-{
+struct application_performance_counters_info_t {
     float msMain;
     float msMST;
     float msGPU;
@@ -157,13 +149,12 @@ struct application_performance_counters_info_t
     float msTotal;
 };
 
-struct application_instant_counters_info_t
-{
+struct application_instant_counters_info_t {
     uint32_t m_nCpuActivityMask;
     uint32_t m_nDeferredWordsAllocated;
 };
-struct material_adapter_info_t
-{
+
+struct material_adapter_info_t {
     char m_pDriverName[MATERIAL_ADAPTER_NAME_LENGTH];
     unsigned int m_VendorID;
     unsigned int m_DeviceID;
@@ -176,28 +167,25 @@ struct material_adapter_info_t
     unsigned int m_nDriverVersionLow;
 };
 
-struct material_video_mode_t
-{
+struct material_video_mode_t {
     int m_Width;			// if width and height are 0 and you select 
     int m_Height;			// windowed mode, it'll use the window size
     image_format m_Format;	// use image_formats (ignored for windowed mode)
     int m_RefreshRate;		// 0 == default (ignored for windowed mode)
 };
-enum hdr_type_t
-{
+
+enum hdr_type_t {
     HDR_TYPE_NONE,
     HDR_TYPE_INTEGER,
     HDR_TYPE_FLOAT,
 };
 
-enum restore_change_flags_t
-{
+enum restore_change_flags_t {
     MATERIAL_RESTORE_VERTEX_FORMAT_CHANGED = 0x1,
     MATERIAL_RESTORE_RELEASE_MANAGED_RESOURCES = 0x2,
 };
 
-enum render_target_size_mode_t
-{
+enum render_target_size_mode_t {
     RT_SIZE_NO_CHANGE = 0,
     RT_SIZE_DEFAULT = 1,
     RT_SIZE_PICMIP = 2,
@@ -207,8 +195,7 @@ enum render_target_size_mode_t
     RT_SIZE_FULL_FRAME_BUFFER_ROUNDED_UP = 6
 };
 
-enum material_render_target_depth_t
-{
+enum material_render_target_depth_t {
     MATERIAL_RT_DEPTH_SHARED = 0x0,
     MATERIAL_RT_DEPTH_SEPARATE = 0x1,
     MATERIAL_RT_DEPTH_NONE = 0x2,
@@ -225,8 +212,7 @@ typedef void(*on_level_shutdown_func_t)(void *pUserData);
 typedef unsigned short material_handle_t;
 DECLARE_POINTER_HANDLE(material_lock_t);
 
-class c_material_system : public c_app_system
-{
+class c_material_system : public c_app_system {
 public:
 
     virtual create_interface_fn               init(char const* pShaderAPIDLL, c_material_proxy_factory *pMaterialProxyFactory, create_interface_fn fileSystemFactory, create_interface_fn cvarFactory = NULL) = 0;

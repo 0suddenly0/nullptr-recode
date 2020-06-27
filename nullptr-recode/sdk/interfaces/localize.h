@@ -1,17 +1,16 @@
 #pragma once
 using localize_string_index_t = unsigned;
-class c_localize_text_query
-{
+class c_localize_text_query {
 public:
 	virtual int compute_text_width(const wchar_t* pString) = 0;
 };
-class c_localization_change_callback
-{
+
+class c_localization_change_callback {
 public:
 	virtual void on_localization_changed() = 0;
 };
-class c_localize : public c_app_system
-{
+
+class c_localize : public c_app_system {
 public:
 	virtual bool                    add_file(const char* fileName, const char* pPathID = nullptr, bool bIncludeFallbackSearchPaths = false) = 0;
 	virtual void                    remove_all() = 0;

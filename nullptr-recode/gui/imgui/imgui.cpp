@@ -2457,6 +2457,7 @@ static const ImGuiStyleVarInfo GStyleVarInfo[] =
     { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, TabRounding) },         // ImGuiStyleVar_TabRounding
     { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, ButtonTextAlign) },     // ImGuiStyleVar_ButtonTextAlign
     { ImGuiDataType_Float, 2, (ImU32)IM_OFFSETOF(ImGuiStyle, SelectableTextAlign) }, // ImGuiStyleVar_SelectableTextAlign
+    { ImGuiDataType_Float, 1, (ImU32)IM_OFFSETOF(ImGuiStyle, MainBarSize) },
 };
 
 static const ImGuiStyleVarInfo* GetStyleVarInfo(ImGuiStyleVar idx)
@@ -4769,7 +4770,7 @@ bool ImGui::BeginChildEx(const char* name, ImGuiID id, const ImVec2& size_arg, b
     SetNextWindowSize(size);
 
     // Build up name. If you need to append to a same child from multiple location in the ID stack, use BeginChild(ImGuiID id) with a stable value.
-    bool no_title = name[0] == '#' && name[1] == '#';
+    bool no_title = name != nullptr ? name[0] == '#' && name[1] == '#' : false;
     char title[256];
     if (name)
         ImFormatString(title, IM_ARRAYSIZE(title), "%s/%s_%08X", parent_window->Name, name, id);
@@ -5356,7 +5357,7 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
         // Title bar
         if (!(flags & ImGuiWindowFlags_NoTitleBar))
         {
-            ImU32 title_bar_col = GetColorU32(title_bar_is_highlight ? ImGuiCol_TitleBgActive : ImGuiCol_TitleBg);
+            ImU32 title_bar_col = GetColorU32(title_bar_is_highlight ? ImGuiCol_TitleBgActive : ImGuiCol_TitleBgActive);
             window->DrawList->AddRectFilled(title_bar_rect.Min, title_bar_rect.Max, title_bar_col, window_rounding, ImDrawCornerFlags_Top);
         }
 
@@ -5366,7 +5367,8 @@ void ImGui::RenderWindowDecorations(ImGuiWindow* window, const ImRect& title_bar
             ImRect menu_bar_rect = window->MenuBarRect();
             menu_bar_rect.ClipWith(window->Rect());  // Soft clipping, in particular child window don't have minimum size covering the menu bar so this is useful for them.
             window->DrawList->AddRectFilled(menu_bar_rect.Min + ImVec2(window_border_size, 0), menu_bar_rect.Max - ImVec2(window_border_size, 0), GetColorU32(ImGuiCol_ChildBg), (flags & ImGuiWindowFlags_NoTitleBar && !(flags & ImGuiWindowFlags_TitleBarLine)) ? window_rounding : 0.0f);
-            window->DrawList->AddLine(ImVec2(menu_bar_rect.Min.x, menu_bar_rect.Max.y-1), ImVec2(menu_bar_rect.Max.x, menu_bar_rect.Max.y-1), GetColorU32(ImGuiCol_Separator));
+            if (g.Style.MainBarSize > 36.f) window->DrawList->AddRectFilled(ImVec2(menu_bar_rect.Min.x, menu_bar_rect.Min.y + 36), menu_bar_rect.Max, GetColorU32(ImGuiCol_TitleBgActive), (flags & ImGuiWindowFlags_NoTitleBar && !(flags & ImGuiWindowFlags_TitleBarLine)) ? window_rounding : 0.0f);
+            window->DrawList->AddLine(ImVec2(menu_bar_rect.Min.x, menu_bar_rect.Min.y + 36.f), ImVec2(menu_bar_rect.Max.x, menu_bar_rect.Min.y + 36.f), GetColorU32(ImGuiCol_Separator));
             if (style.FrameBorderSize > 0.0f && menu_bar_rect.Max.y < window->Pos.y + window->Size.y)
                 window->DrawList->AddLine(menu_bar_rect.GetBL(), menu_bar_rect.GetBR(), GetColorU32(ImGuiCol_Border), style.FrameBorderSize);
         }
@@ -6553,6 +6555,11 @@ void ImGui::SetWindowSize(ImGuiWindow* window, const ImVec2& size, ImGuiCond con
     }
 }
 
+void ImGui::SetWindowHidden(bool hidden)
+{
+    GImGui->CurrentWindow->Hidden = hidden;
+}
+
 void ImGui::SetWindowSize(const ImVec2& size, ImGuiCond cond)
 {
     SetWindowSize(GImGui->CurrentWindow, size, cond);
@@ -7116,45 +7123,11 @@ bool ImGui::ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg,
     bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
 
     // Render
-    const ImU32 col = ImGui::GetColorU32(*v ? ImGuiCol_TitleBg : (hovered ? ImGuiCol_ChildBg : ImGuiCol_WindowBg));
-    //ImGui::RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
-    switch (side)
-    {
-    case 0:
-        window->DrawList->AddRectFilled(bb.Min, bb.Max, col, 0.f);
-        break;
-    case 1:
-        window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding, ImDrawCornerFlags_BotLeft);
-        break;
-    case 2:
-        window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding, ImDrawCornerFlags_BotRight);
-        break;
-    }
+    const ImU32 col = ImGui::GetColorU32(*v ? ImGuiCol_TitleBg : (hovered ? ImGuiCol_ChildBg : ImGuiCol_TitleBgActive));
 
-    if (*v)
-    {
-        ImGui::RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding - ImVec2(0, 8), label, NULL, &label_size, style.ButtonTextAlign, &bb);
-    }
-    else
-    {
-        ImGui::RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
-    }
-
-    if (*v)
-    {
-        switch (side)
-        {
-        case 0:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), 0.f);
-            break;
-        case 1:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotLeft);
-            break;
-        case 2:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotRight);
-            break;
-        }
-    }
+    window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding);
+    RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
+    
     if (pressed)
         *v = !*v;
 
@@ -7880,7 +7853,7 @@ void ImGui::EndTooltip()
 
 bool ImGui::ItemsToolTipBegin(const char* name, int button)
 {
-    ImGui::SetNextWindowSize(ImVec2(250, 0));
+    ImGui::SetNextWindowSize(ImVec2(249, 0));
 
     OpenPopupOnItemClick(name, button);
 
@@ -7952,7 +7925,7 @@ void ImGui::TooltipSettings(const char* text, std::function<void()> func)
     const ImVec2 offset = ImVec2(19 + style.ItemInnerSpacing.x, 0);
     bool is_on_item = text_size.x == 0.f;
     if (is_on_item) SameLine();
-    ImVec2 button_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x, plus_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 button_size = CalcItemSize(ImVec2(0, 0), plus_size.x + 8, plus_size.y + 3 * 2.0f);
 
     ImVec2 end_position = ImVec2(window_position.x + (window_size.x - (offset.x * 2) + 15.f - offset_scroll), window->DC.CursorPos.y + button_size.y);
     ImVec2 start_position = is_on_item ? ImVec2(end_position.x - button_size.x, window->DC.CursorPos.y) : ImVec2(window->DC.CursorPos.x + offset.x, window->DC.CursorPos.y);
@@ -7961,7 +7934,7 @@ void ImGui::TooltipSettings(const char* text, std::function<void()> func)
 
     ImRect all_item_size = ImRect(start_position, end_position);
 
-    ImGui::ItemSize(all_item_size, style.FramePadding.y);
+    ImGui::ItemSize(all_item_size, 3);
     if (!ImGui::ItemAdd(all_item_size, id))
         return;
 

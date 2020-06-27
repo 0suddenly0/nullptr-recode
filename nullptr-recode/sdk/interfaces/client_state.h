@@ -30,7 +30,7 @@ public:
 class c_client_state {
 public:
 	void force_full_update() {
-		*reinterpret_cast<int*>(std::uintptr_t(this) + 0x174) = -1;
+		delta_tick = -1;
 	}
 
 	char pad_0000[156];             //0x0000

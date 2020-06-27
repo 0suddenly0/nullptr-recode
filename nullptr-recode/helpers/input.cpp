@@ -38,6 +38,7 @@ namespace input {
 		create_bind("prepare revolver", settings::misc::prepare_revolver::enable, &settings::misc::prepare_revolver::bind, bind_info_flags_standart);
 		create_bind("block bot", settings::misc::block_bot::enable, &settings::misc::block_bot::bind, bind_info_flags_standart);
 		create_bind("edge jump", settings::misc::edge_jump::enable, &settings::misc::edge_jump::bind, bind_info_flags_standart);
+		create_bind("third person", settings::misc::third_person::enable, &settings::misc::third_person::bind, bind_info_flags_standart);
 	}
 
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {

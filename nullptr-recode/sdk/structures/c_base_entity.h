@@ -13,11 +13,11 @@ public:
 	}
 
 	static __forceinline c_base_entity* get_entity_by_index(int index) {
-		return static_cast<c_base_entity*>(sdk::entity_list->get_client_entity(index));
+		return (c_base_entity*)(sdk::entity_list->get_client_entity(index));
 	}
 
 	static __forceinline c_base_entity* get_entity_from_handle(c_base_handle h) {
-		return static_cast<c_base_entity*>(sdk::entity_list->get_client_entity_from_handle(h));
+		return (c_base_entity*)(sdk::entity_list->get_client_entity_from_handle(h));
 	}
 
 	NETVAR(int32_t, model_index, "DT_BaseEntity", "m_nModelIndex");
@@ -45,31 +45,31 @@ public:
 		return call_vfunction<bool(__thiscall*)(c_base_entity*)>(this, 157)(this);
 	}
 	bool is_loot() {
-		return (get_client_class()->class_id == ClassId_CPhysPropAmmoBox ||
-			get_client_class()->class_id == ClassId_CPhysPropLootCrate ||
-			get_client_class()->class_id == ClassId_CPhysPropRadarJammer ||
-			get_client_class()->class_id == ClassId_CPhysPropweaponUpgrade ||
-			get_client_class()->class_id == ClassId_CDrone ||
-			get_client_class()->class_id == ClassId_CDronegun ||
-			get_client_class()->class_id == ClassId_CItem_Healthshot ||
-			get_client_class()->class_id == ClassId_CItemCash);
+		return (get_client_class()->class_id == class_id::c_phys_prop_ammo_box ||
+			get_client_class()->class_id == class_id::c_phys_prop_loot_crate ||
+			get_client_class()->class_id == class_id::c_phys_prop_radar_jammer ||
+			get_client_class()->class_id == class_id::c_phys_prop_weapon_upgrade ||
+			get_client_class()->class_id == class_id::c_drone ||
+			get_client_class()->class_id == class_id::c_dronegun ||
+			get_client_class()->class_id == class_id::c_item_healthshot ||
+			get_client_class()->class_id == class_id::c_item_cash);
 	}
 	bool is_weapon() {
 		return call_vfunction<bool(__thiscall*)(c_base_entity*)>(this, 165)(this);
 	}
 	bool is_planted_c4() {
-		return get_client_class()->class_id == 128;
+		return get_client_class()->class_id == class_id::c_planted_c4;
 	}
 	bool is_defuse_kit() {
-		return get_client_class()->class_id == ClassId_CBaseAnimating;
+		return get_client_class()->class_id == class_id::c_base_animating;
 	}
 	matrix3x4 get_bone_matrix(int BoneID) {
 		matrix3x4 matrix;
 
 		uintptr_t m_dwBoneMatrix = 0x26A8;
-		auto offset = *reinterpret_cast<uintptr_t*>(uintptr_t(this) + m_dwBoneMatrix);
+		auto offset = *(uintptr_t*)(uintptr_t(this) + m_dwBoneMatrix);
 		if (offset)
-			matrix = *reinterpret_cast<matrix3x4*>(offset + 0x30 * BoneID);
+			matrix = *(matrix3x4*)(offset + 0x30 * BoneID);
 
 		return matrix;
 	}

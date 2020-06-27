@@ -17,7 +17,7 @@ public:
     virtual void            add_swept_box_overlay(const vec3& start, const vec3& end, const vec3& mins, const vec3& max, const qangle& angles, int r, int g, int b, int a, float flDuration) = 0;
     virtual void            add_grid_overlay(const vec3& origin) = 0;
     virtual void            add_coord_frame_overlay(const matrix3x4& frame, float flScale, int vColorTable[3][3] = NULL) = 0;
-    virtual int             screen_position(const vec3& point, vec3& screen) = 0;
+    virtual int             screen_position(const vec3& point, vec2& screen) = 0;
     virtual int             screen_position(float flXPos, float flYPos, vec3& screen) = 0;
     virtual overlay_text_t* get_first(void) = 0;
     virtual overlay_text_t* get_next(overlay_text_t* current) = 0;
@@ -29,8 +29,7 @@ public:
     virtual void            add_box_overlay2(const vec3& origin, const vec3& mins, const vec3& max, qangle const& orientation, const uint8_t* faceColor, const uint8_t* edgeColor, float duration) = 0;
     virtual void            purge_text_overlays() = 0;
     virtual void            draw_pill(const vec3& mins, const vec3& max, float& diameter, int r, int g, int b, int a, float duration) = 0;
-    void                    add_capsule_overlay(vec3& mins, vec3& maxs, float pillradius, int r, int g, int b, int a, float duration)
-    {
+    void                    add_capsule_overlay(vec3& mins, vec3& maxs, float pillradius, int r, int g, int b, int a, float duration) {
         return vfunc<void(__thiscall*)(void*, vec3&, vec3&, float&, int, int, int, int, float)>(this, 24)(this, mins, maxs, pillradius, r, g, b, a, duration);
     } 
 

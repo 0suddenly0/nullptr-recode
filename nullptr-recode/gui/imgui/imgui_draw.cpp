@@ -188,6 +188,7 @@ void ImGui::set_nullptr_styles(ImGuiStyle* dst)
     style->WindowPadding            = ImVec2(8, 8); // 8, 5
     style->FramePadding             = ImVec2(8, 3);
     style->ItemSpacing              = ImVec2(3, 6);
+    style->ItemInnerSpacing_new     = ImVec2(5, 6);
     style->WindowRounding           = 4;
     style->ChildRounding            = 4;
     style->FrameRounding            = 4;
@@ -198,6 +199,7 @@ void ImGui::set_nullptr_styles(ImGuiStyle* dst)
     style->ScrollbarSize            = 10;
     style->WindowBorderSize         = 0;
     style->WindowMenuButtonPosition = -1;
+    style->MainBarSize              = 36.f;
 
     colors[ImGuiCol_nullptr_color]          = convert(43, 90, 255, 255);
     colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
@@ -208,10 +210,10 @@ void ImGui::set_nullptr_styles(ImGuiStyle* dst)
     colors[ImGuiCol_Border]                 = ImVec4(0.5f, 0.5f, 0.5f, 0.50f);
     colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     colors[ImGuiCol_FrameBg]                = convert(51, 51, 51, 255);
-    colors[ImGuiCol_FrameBgHovered]         = convert(81, 81, 81, 255);
-    colors[ImGuiCol_FrameBgActive]          = convert(81, 81, 81, 255);
+    colors[ImGuiCol_FrameBgHovered]         = convert(61, 61, 61, 255);
+    colors[ImGuiCol_FrameBgActive]          = convert(61, 61, 61, 255);
     colors[ImGuiCol_TitleBg]                = convert(61, 61, 61, 255);
-    colors[ImGuiCol_TitleBgActive]          = convert(61, 61, 61, 255);
+    colors[ImGuiCol_TitleBgActive]          = convert(31, 31, 31, 255);
     colors[ImGuiCol_TitleBgCollapsed]       = convert(61, 61, 61, 255);
     colors[ImGuiCol_MenuBarBg]              = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
     colors[ImGuiCol_ScrollbarBg]            = convert(0,0,0,0);

@@ -191,7 +191,7 @@ void c_utl_memory<T, I>::SetExternalBuffer(const T* pMemory, int numElements)
 	// Blow away any existing allocated memory
 	Purge();
 
-	m_pMemory = const_cast<T*>(pMemory);
+	m_pMemory = (T*)(pMemory);
 	m_nAllocationCount = numElements;
 
 	// Indicate that we don't own the memory

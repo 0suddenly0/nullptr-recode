@@ -4,14 +4,14 @@
 #include "client_class.h"
 
 enum class frame_stage_t {
-	UNDEFINED = -1,
-	START,
-	NET_UPDATE_START,
-	NET_UPDATE_POSTDATAUPDATE_START,
-	NET_UPDATE_POSTDATAUPDATE_END,
-	NET_UPDATE_END,
-	RENDER_START,
-	RENDER_END
+	undefined = -1,
+	start,
+	net_update_start,
+	net_update_post_data_update_start,
+	net_update_post_data_update_end,
+	net_update_end,
+	render_start,
+	render_end
 };
 
 // Used by RenderView

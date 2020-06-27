@@ -39,7 +39,7 @@ namespace engine_prediction {
 
 		sdk::local_player->current_command() = cmd;
 
-		sdk::global_vars->curtime = static_cast<float>(_fixedtick)* sdk::global_vars->interval_per_tick;
+		sdk::global_vars->curtime = (float)(_fixedtick)* sdk::global_vars->interval_per_tick;
 		sdk::global_vars->frametime = sdk::global_vars->interval_per_tick;
 
 		bool _inpred_backup = *(bool*)((uintptr_t)sdk::prediction + 0x8);

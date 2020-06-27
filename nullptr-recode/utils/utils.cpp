@@ -52,7 +52,7 @@ namespace utils {
         _vsnprintf_s(buf, 1024, fmt, va);
         va_end(va);
 
-        return !!WriteConsoleA(_out, buf, static_cast<DWORD>(strlen(buf)), nullptr, nullptr);
+        return !!WriteConsoleA(_out, buf, (DWORD)(strlen(buf)), nullptr, nullptr);
     }
 
     char console_read_key() {
@@ -157,8 +157,8 @@ namespace utils {
     std::uint8_t* pattern_scan(void* module, const char* signature) {
         static auto pattern_to_byte = [](const char* pattern) {
             auto bytes = std::vector<int>{};
-            auto start = const_cast<char*>(pattern);
-            auto end = const_cast<char*>(pattern) + strlen(pattern);
+            auto start = (char*)(pattern);
+            auto end = (char*)(pattern) + strlen(pattern);
 
             for (auto current = start; current < end; ++current) {
                 if (*current == '?') {
@@ -178,7 +178,7 @@ namespace utils {
 
         auto sizeOfImage = ntHeaders->OptionalHeader.SizeOfImage;
         auto patternBytes = pattern_to_byte(signature);
-        auto scanBytes = reinterpret_cast<std::uint8_t*>(module);
+        auto scanBytes = (std::uint8_t*)(module);
 
         auto s = patternBytes.size();
         auto d = patternBytes.data();

@@ -11,8 +11,7 @@
 
 class c_handle_entity;
 
-class c_base_handle
-{
+class c_base_handle {
 public:
     c_base_handle();
     c_base_handle(const c_base_handle&other);
@@ -51,94 +50,76 @@ protected:
     unsigned long	m_Index;
 };
 
-c_base_handle::c_base_handle()
-{
+c_base_handle::c_base_handle() {
     m_Index = INVALID_EHANDLE_INDEX;
 }
 
-c_base_handle::c_base_handle(const c_base_handle&other)
-{  
+c_base_handle::c_base_handle(const c_base_handle&other) {  
     m_Index = other.m_Index;
 }
 
-c_base_handle::c_base_handle(unsigned long value)
-{
+c_base_handle::c_base_handle(unsigned long value) {
     m_Index = value;
 }
 
-c_base_handle::c_base_handle(int iEntry, int iSerialNumber)
-{
+c_base_handle::c_base_handle(int iEntry, int iSerialNumber) {
     init(iEntry, iSerialNumber);
 }
 
-void c_base_handle::init(int iEntry, int iSerialNumber)
-{
+void c_base_handle::init(int iEntry, int iSerialNumber) {
     m_Index = iEntry | (iSerialNumber << NUM_ENT_ENTRY_BITS);
 }
 
-void c_base_handle::term()
-{
+void c_base_handle::term() {
     m_Index = INVALID_EHANDLE_INDEX;
 }
 
-bool c_base_handle::is_valid() const
-{
+bool c_base_handle::is_valid() const {
     return m_Index != INVALID_EHANDLE_INDEX;
 }
 
-int c_base_handle::get_entry_index() const
-{
+int c_base_handle::get_entry_index() const {
     return m_Index & ENT_ENTRY_MASK;
 }
 
-int c_base_handle::get_serial_number() const
-{
+int c_base_handle::get_serial_number() const {
     return m_Index >> NUM_ENT_ENTRY_BITS;
 }
 
-int c_base_handle::to_int() const
-{
+int c_base_handle::to_int() const {
     return (int)m_Index;
 }
 
-bool c_base_handle::operator !=(const c_base_handle&other) const
-{
+bool c_base_handle::operator !=(const c_base_handle&other) const {
     return m_Index != other.m_Index;
 }
 
-bool c_base_handle::operator ==(const c_base_handle&other) const
-{
+bool c_base_handle::operator ==(const c_base_handle&other) const {
     return m_Index == other.m_Index;
 }
 
-bool c_base_handle::operator ==(const c_handle_entity* pEnt) const
-{
+bool c_base_handle::operator ==(const c_handle_entity* pEnt) const {
     return get() == pEnt;
 }
 
-bool c_base_handle::operator !=(const c_handle_entity* pEnt) const
-{
+bool c_base_handle::operator !=(const c_handle_entity* pEnt) const {
     return get() != pEnt;
 }
 
-bool c_base_handle::operator <(const c_base_handle&other) const
-{
+bool c_base_handle::operator <(const c_base_handle&other) const {
     return m_Index < other.m_Index;
 }
 
-bool c_base_handle::operator <(const c_handle_entity*pEntity) const
-{
+bool c_base_handle::operator <(const c_handle_entity*pEntity) const {
     unsigned long otherIndex = (pEntity) ? pEntity->get_ref_ehandle().m_Index : INVALID_EHANDLE_INDEX;
     return m_Index < otherIndex;
 }
 
-const c_base_handle& c_base_handle::operator=(const c_handle_entity*pEntity)
-{
+const c_base_handle& c_base_handle::operator=(const c_handle_entity*pEntity) {
     return set(pEntity);
 }
 
-const c_base_handle& c_base_handle::set(const c_handle_entity*pEntity)
-{
+const c_base_handle& c_base_handle::set(const c_handle_entity*pEntity) {
     if(pEntity) {
         *this = pEntity->get_ref_ehandle();
     } else {

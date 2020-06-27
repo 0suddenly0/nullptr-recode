@@ -1,5 +1,4 @@
 #include "../hooks.h"
-#include "../../settings/globals.h"
 
 uintptr_t gameoverlay_return_address = 0;
 

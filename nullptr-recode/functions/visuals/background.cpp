@@ -1,5 +1,5 @@
 #include "background.h"
-#include "../../settings/globals.h"
+#include "../../settings/settings.h"
 
 std::vector<Dot*> Dots;
 

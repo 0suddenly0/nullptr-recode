@@ -53,40 +53,37 @@ typedef float radian_euler[3];
 #define HITGROUP_RIGHTLEG 7
 #define HITGROUP_GEAR 10
 
-enum modtype_t
-{
+enum modtype_t {
     mod_bad = 0,
     mod_brush,
     mod_sprite,
     mod_studio
 };
 
-enum hitboxes
-{
-	HITBOX_HEAD,
-	HITBOX_NECK,
-	HITBOX_PELVIS,
-	HITBOX_STOMACH,
-	HITBOX_LOWER_CHEST,
-	HITBOX_CHEST,
-	HITBOX_UPPER_CHEST,
-	HITBOX_RIGHT_THIGH,
-	HITBOX_LEFT_THIGH,
-	HITBOX_RIGHT_CALF,
-	HITBOX_LEFT_CALF,
-	HITBOX_RIGHT_FOOT,
-	HITBOX_LEFT_FOOT,
-	HITBOX_RIGHT_HAND,
-	HITBOX_LEFT_HAND,
-	HITBOX_RIGHT_UPPER_ARM,
-	HITBOX_RIGHT_FOREARM,
-	HITBOX_LEFT_UPPER_ARM,
-	HITBOX_LEFT_FOREARM,
-	HITBOX_MAX
+enum hitboxes {
+	hitbox_head,
+	hitbox_neck,
+	hitbox_pelvis,
+	hitbox_stomach,
+	hitbox_lower_chest,
+	hitbox_chest,
+	hitbox_upper_chest,
+	hitbox_right_thigh,
+	hitbox_left_thigh,
+	hitbox_right_calf,
+	hitbox_left_calf,
+	hitbox_right_foot,
+	hitbox_left_foot,
+	hitbox_right_hand,
+	hitbox_left_hand,
+	hitbox_right_upper_arm,
+	hitbox_right_forearm,
+	hitbox_left_upper_arm,
+	hitbox_left_forearm,
+	hitbox_max
 };
 
-enum hitbox_event
-{
+enum hitbox_event {
     hit_head = 1,
     hit_neck = 8,
     hit_lower_chest = 3,
@@ -101,8 +98,7 @@ enum hitbox_event
 typedef unsigned short mdl_handle_t;
 
 
-struct mstudiobone_t
-{
+struct mstudiobone_t {
 	int                    sznameindex;
 	char * const    pszName(void) const { return ((char *)this) + sznameindex; }
 	int                    parent;

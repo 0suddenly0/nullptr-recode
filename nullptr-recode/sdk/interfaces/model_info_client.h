@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../../helpers/helpers.h"
 #include "studio.h"
 #include "engine_trace.h" //Has some structs we need here
@@ -10,15 +9,13 @@ class c_client_renderable;
 class c_studio_hdr;
 struct virtualmodel_t;
 
-enum renderable_translucency_type_t
-{
+enum renderable_translucency_type_t {
 	RENDERABLE_IS_OPAQUE = 0,
 	RENDERABLE_IS_TRANSLUCENT,
 	RENDERABLE_IS_TWO_PASS,    // has both translucent and opaque sub-partsa
 };
 
-class c_model_info
-{
+class c_model_info {
 public:
 	virtual                                 ~c_model_info(void) {}
 	virtual const model_t*                  get_model(int modelindex) const = 0;
@@ -72,7 +69,6 @@ public:
 	virtual bool                            uses_static_lighting(const model_t *model) const = 0;
 };
 
-class c_model_info_client : public c_model_info
-{
+class c_model_info_client : public c_model_info {
 public:
 };

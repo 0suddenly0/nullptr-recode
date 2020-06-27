@@ -8,16 +8,15 @@
 
 #define RAD2DEG(x) DirectX::XMConvertToDegrees(x)
 #define DEG2RAD(x) DirectX::XMConvertToRadians(x)
+#define M_PI 3.14159265358979323846
 
 #define TICK_INTERVAL			(sdk::global_vars->interval_per_tick)
 #define TICKS_TO_TIME(t) (sdk::global_vars->interval_per_tick * (t) )
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
-/*class vec2;
-class vec3;
-class qangle;
-class matrix3x4;*/
 
 namespace math {
+	int clamp(int a, int min, int max);
+	float clamp(float a, float min, float max);
 	void clamp_angles(qangle& angles);
 	void fix_angles(qangle& angle);
 	qangle calc_angle(const vec3& src, const vec3& dst);

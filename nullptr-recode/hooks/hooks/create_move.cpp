@@ -13,7 +13,7 @@ namespace hooks {
 
 		int old_flags = sdk::local_player->m_flags();
 
-		if (!net_channel_vhook.class_base) {
+		if (!net_channel_vhook.class_base && sdk::client_state) {
 			auto net_channel = sdk::client_state->net_channel;
 			if (net_channel) {
 				net_channel_vhook.setup(net_channel);
@@ -24,7 +24,6 @@ namespace hooks {
 
 		if (globals::show_menu) cmd->buttons &= ~(IN_ATTACK | IN_ATTACK2);
 
-		misc::fog();
 		misc::disable_flash_alpha();
 		misc::bhop::on_create_move(cmd);
 		misc::bhop::auto_strafe(cmd, cmd->viewangles);

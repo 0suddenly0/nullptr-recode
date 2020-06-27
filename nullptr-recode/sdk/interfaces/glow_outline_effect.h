@@ -37,11 +37,9 @@ public:
     static const int ENTRY_IN_USE = -2;
 }; //Size: 0x0038 (56)
 
-class c_glow_object_manager
-{
+class c_glow_object_manager {
 public:
-    int register_glow_object(c_client_entity *pEntity, const vec3 &vGlowColor, float flGlowAlpha, bool bRenderWhenOccluded, bool bRenderWhenUnoccluded, int nSplitScreenSlot)
-    {
+    int register_glow_object(c_client_entity *pEntity, const vec3 &vGlowColor, float flGlowAlpha, bool bRenderWhenOccluded, bool bRenderWhenUnoccluded, int nSplitScreenSlot) {
         int nIndex;
         if(m_nFirstFreeSlot == glow_object_definition::END_OF_FREE_LIST) {
             nIndex = m_GlowObjectDefinitions.AddToTail();
@@ -61,52 +59,43 @@ public:
         return nIndex;
     }
 
-    void unregister_glow_object(int nGlowObjectHandle)
-    {
+    void unregister_glow_object(int nGlowObjectHandle) {
         m_GlowObjectDefinitions[nGlowObjectHandle].m_nNextFreeSlot = m_nFirstFreeSlot;
         m_GlowObjectDefinitions[nGlowObjectHandle].m_pEntity = NULL;
         m_nFirstFreeSlot = nGlowObjectHandle;
     }
 
-    void set_entity(int nGlowObjectHandle, c_client_entity *pEntity)
-    {
+    void set_entity(int nGlowObjectHandle, c_client_entity *pEntity) {
         m_GlowObjectDefinitions[nGlowObjectHandle].m_pEntity = pEntity;
     }
 
-    void set_color(int nGlowObjectHandle, const vec3 &vGlowColor)
-    {
+    void set_color(int nGlowObjectHandle, const vec3 &vGlowColor) {
         m_GlowObjectDefinitions[nGlowObjectHandle].m_vGlowColor = vGlowColor;
     }
 
-    void set_alpha(int nGlowObjectHandle, float flAlpha)
-    {
+    void set_alpha(int nGlowObjectHandle, float flAlpha) {
         m_GlowObjectDefinitions[nGlowObjectHandle].m_flAlpha = flAlpha;
     }
 
-    void set_render_flags(int nGlowObjectHandle, bool bRenderWhenOccluded, bool bRenderWhenUnoccluded)
-    {
+    void set_render_flags(int nGlowObjectHandle, bool bRenderWhenOccluded, bool bRenderWhenUnoccluded) {
         m_GlowObjectDefinitions[nGlowObjectHandle].m_bRenderWhenOccluded = bRenderWhenOccluded;
         m_GlowObjectDefinitions[nGlowObjectHandle].m_bRenderWhenUnoccluded = bRenderWhenUnoccluded;
     }
 
-    bool is_reendering_when_occluded(int nGlowObjectHandle) const
-    {
+    bool is_reendering_when_occluded(int nGlowObjectHandle) const {
         return m_GlowObjectDefinitions[nGlowObjectHandle].m_bRenderWhenOccluded;
     }
 
-    bool is_rendering_when_unoccluded(int nGlowObjectHandle) const
-    {
+    bool is_rendering_when_unoccluded(int nGlowObjectHandle) const {
         return m_GlowObjectDefinitions[nGlowObjectHandle].m_bRenderWhenUnoccluded;
     }
 
-    bool has_glow_effect(c_client_entity *pEntity) const
-    {
+    bool has_glow_effect(c_client_entity *pEntity) const {
         for(int i = 0; i < m_GlowObjectDefinitions.Count(); ++i) {
             if(!m_GlowObjectDefinitions[i].is_unused() && m_GlowObjectDefinitions[i].m_pEntity == pEntity) {
                 return true;
             }
         }
-
         return false;
     }
 

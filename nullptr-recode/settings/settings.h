@@ -1,15 +1,43 @@
 #pragma once
+#include "../functions/notify/notify.h"
+#include "../functions/changers/skin changer/skins.h"
+#include "globals.h"
 #include "../helpers/input.h"
 #include "../helpers/color.h"
+#include "../helpers/math/vector.h"
+
+extern std::map<int, std::string> mode_names;
+
+struct statrack_setting_t {
+	int definition_index = 1;
+	struct
+	{
+		int counter = 0;
+	}statrack_new;
+};
+
+struct profile_settings_t {
+	int wins = 0;
+	int rank_id = 0;
+};
 
 namespace settings {
 	namespace visuals {
 		bool ingame_radar = false;
+
+		namespace logs {
+			bool enable = true;
+
+			log_settings_t hurt       = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(255, 100, 100, 255), log_type::standart };
+			log_settings_t player_buy = log_settings_t{ false, false, false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
+			log_settings_t planting   = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
+			log_settings_t defusing   = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
+			log_settings_t config     = log_settings_t{ true,  true,  true,  false, color(255,255,255,255), globals::menu_color,       log_type::big };
+			log_settings_t lua        = log_settings_t{ true,  true,  true,  false, color(255,255,255,255), globals::menu_color,       log_type::big };
+		}
 	}
 
 	namespace misc {
-		bool bind_window = false;
-
 		bool obs_bypass = false;
 		bool moon_walk = false;
 		bool auto_accept = false;
@@ -92,5 +120,36 @@ namespace settings {
 			int max_dist = 200;
 			key_bind_t bind = { 0, 0, false };
 		}
+	}
+
+	namespace changers {
+		namespace profile {
+			extern std::map<int, profile_settings_t> profile_items;
+
+			int mode_id;
+			int private_id = 0;
+			int private_xp = 0;
+			int teacher = 0;
+			int leader = 0;
+			int friendly = 0;
+			int ban_type = 0;
+			int ban_time = 0;
+			int ban_time_type = 0;
+		}
+
+		namespace skin {
+			bool skin_preview = false;
+			bool show_cur = true;
+
+			extern std::map<int, statrack_setting_t> statrack_items;
+			extern std::map<int, item_setting_t> m_items;
+			extern std::map<std::string, std::string> m_icon_overrides;
+		}
+	}
+
+	namespace windows {
+		bool bind_window_show = false;
+		int bind_window_alpha = 255;
+		vec2 bind_window_pos = vec2(100, 100);
 	}
 }

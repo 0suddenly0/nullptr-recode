@@ -5,6 +5,11 @@
 #include "fonts/fonts.h"
 #include "../functions/notify/notify.h"
 #include "../functions/visuals/visuals.h"
+#include <d3d9.h>
+#include <d3dx9.h>
+#pragma comment(lib,"d3dx9.lib")
+#pragma comment(lib,"d3d9.lib")
+
 
 namespace render {
 	extern ImFont* menu_bar_font;
@@ -22,7 +27,11 @@ namespace render {
 	ImDrawList* get_list_for_render();
 
 	ImVec4 get_vec4(color clr) {
-		return ImVec4(clr.get<float>(return_color::r), clr.get<float>(return_color::g), clr.get<float>(return_color::b), clr.get<float>(return_color::a));
+		return ImVec4(clr.color_float[0], clr.color_float[1], clr.color_float[2], clr.color_float[3]);
+	}
+
+	void draw_polugin(std::vector<ImVec2> points, color clr) {
+		draw_list->AddConvexPolyFilled(points.data(), points.size(), ImGui::GetColorU32(get_vec4(clr)));
 	}
 
 	template <typename T>
@@ -73,4 +82,10 @@ namespace render {
 		draw_circle_filled(vec2(x, y), radius, points, clr);
 	}
 	void draw_circle_filled(vec2 pos, float radius, int points, color clr);
+
+	template<typename T>
+	void draw_circle_3d(T x, T y, T z, float radius, int points, color clr) {
+		draw_circle_3d(vec3(x, y, z), radius, points, clr);
+	}
+	void draw_circle_3d(vec3 pos, float points, float radius, color clr);
 }

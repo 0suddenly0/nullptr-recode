@@ -5,14 +5,12 @@
 // this should == MAX_JOYSTICKS in InputEnums.h
 #define MAX_SPLITSCREEN_CLIENTS	( 1 << MAX_SPLITSCREEN_CLIENT_BITS ) // 4
 
-enum
-{
+enum {
 	MAX_JOYSTICKS = MAX_SPLITSCREEN_CLIENTS,
 	MOUSE_BUTTON_COUNT = 5,
 };
 
-enum JoystickAxis_t
-{
+enum JoystickAxis_t {
 	JOY_AXIS_X = 0,
 	JOY_AXIS_Y,
 	JOY_AXIS_Z,
@@ -22,8 +20,7 @@ enum JoystickAxis_t
 	MAX_JOYSTICK_AXES,
 };
 
-enum
-{
+enum {
 	JOYSTICK_MAX_BUTTON_COUNT = 32,
 	JOYSTICK_POV_BUTTON_COUNT = 4,
 	JOYSTICK_AXIS_BUTTON_COUNT = MAX_JOYSTICK_AXES * 2,
@@ -37,8 +34,7 @@ enum
 #define JOYSTICK_POV_BUTTON( _joystick, _button ) ( (ButtonCode_t)JOYSTICK_POV_BUTTON_INTERNAL( _joystick, _button ) )
 #define JOYSTICK_AXIS_BUTTON( _joystick, _button ) ( (ButtonCode_t)JOYSTICK_AXIS_BUTTON_INTERNAL( _joystick, _button ) )
 
-enum button_code_t
-{
+enum button_code_t {
 	BUTTON_CODE_INVALID = -1,
 	BUTTON_CODE_NONE = 0,
 
@@ -214,41 +210,34 @@ enum button_code_t
 	KEY_XSTICK2_UP,								// VAXIS NEGATIVE
 };
 
-class c_input_system : c_app_system
-{
+class c_input_system : c_app_system {
 public:
-	void enable_input(bool bEnable)
-	{
+	void enable_input(bool bEnable) {
 		typedef void(__thiscall* OriginalFn)(void*, bool);
 		return call_vfunction< OriginalFn >(this, 11)(this, bEnable);
 	}
 
-	void reset_input_state()
-	{
+	void reset_input_state() {
 		typedef void(__thiscall* OriginalFn)(void*);
 		return call_vfunction< OriginalFn >(this, 39)(this);
 	}
 
-	bool is_button_down(button_code_t code)
-	{
+	bool is_button_down(button_code_t code) {
 		typedef bool(__thiscall* OriginalFn)(void*, button_code_t);
 		return call_vfunction< OriginalFn >(this, 15)(this, code);
 	}
 
-	void get_cursor_position(int* m_pX, int* m_pY)
-	{
+	void get_cursor_position(int* m_pX, int* m_pY) {
 		typedef void(__thiscall* OriginalFn)(void*, int*, int*);
 		return call_vfunction< OriginalFn >(this, 56)(this, m_pX, m_pY);
 	}
 
-	button_code_t virtual_key_to_button_code(int nVirtualKey)
-	{
+	button_code_t virtual_key_to_button_code(int nVirtualKey) {
 		typedef button_code_t(__thiscall* OriginalFn)(void*, int);
 		return call_vfunction< OriginalFn >(this, 45)(this, nVirtualKey);
 	}
 
-	int button_code_to_virtual_key(button_code_t code)
-	{
+	int button_code_to_virtual_key(button_code_t code) {
 		typedef int(__thiscall* OriginalFn)(void*, button_code_t);
 		return call_vfunction< OriginalFn >(this, 46)(this, code);
 	}

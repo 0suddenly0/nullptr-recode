@@ -7,8 +7,7 @@
 
 class bf_write;
 class bf_read;
-class c_game_event
-{
+class c_game_event {
 public:
 	virtual ~c_game_event() {};
 	virtual const char*    get_name() const = 0;
@@ -31,8 +30,7 @@ public:
 	virtual void           set_ptr(const char* keyname, const void* value) = 0;
 };
 
-class c_game_event_listener
-{
+class c_game_event_listener {
 public:
     virtual ~c_game_event_listener(void) {}
 
@@ -43,8 +41,7 @@ public:
     int m_iDebugId;
 };
 
-class c_game_event_manager
-{
+class c_game_event_manager {
 public:
     virtual             ~c_game_event_manager() = 0;
     virtual int         load_events_from_file(const char *filename) = 0;

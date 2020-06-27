@@ -730,7 +730,7 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
     ImVec2 label_size = ImGui::CalcTextSize(label, NULL, true);
     ImVec2 key_size = ImGui::CalcTextSize(text_display.c_str(), NULL, true);
     ImVec2 plus_size = ImGui::CalcTextSize("+");
-    ImVec2 button_tooltip_size = CalcItemSize(ImVec2(0, 0), plus_size.x + style.FramePadding.x, plus_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 button_tooltip_size = CalcItemSize(ImVec2(0, 0), plus_size.x + 8, plus_size.y + 3 * 2.0f);
 
     ImGuiKeyBind* keybind = findkeybind(label);
     if (keybind != NULL)
@@ -746,7 +746,7 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
     if (window->ScrollbarY)
         offset_scroll = style.ScrollbarSize;
 
-    ImVec2 size = ImGui::CalcItemSize(ImVec2(0, 0), ImGui::CalcItemWidth(), label_size.y + style.FramePadding.y);
+    ImVec2 size = ImGui::CalcItemSize(ImVec2(0, 0), ImGui::CalcItemWidth(), label_size.y + 3);
     const ImRect frame_bb(window->DC.CursorPos + global_offset, ImVec2(pos_wind.x + (size_wind_max.x - key_size.x - 31 - 4 - offset_scroll), window->DC.CursorPos.y + size.y));
 
     ImVec2 pos_max = ImVec2(pos_wind.x + size_wind_max.x - offset_scroll, pos_wind.y);
@@ -848,7 +848,7 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
     }
 
     const ImRect clip_rect(frame_bb.Min.x, frame_bb.Min.y, frame_bb.Min.x + size.x, frame_bb.Min.y + size.y);
-    ImVec2 render_pos = frame_bb.Min + style.FramePadding;
+    ImVec2 render_pos = frame_bb.Min + ImVec2(8, 3);
 
     key_size = CalcTextSize(text_display.c_str());
 
@@ -876,7 +876,7 @@ bool ImGui::KeyBind(const char* label, key_bind_t* k, ImGuiKeyBindFlags flags)
         keybind->key = text_new;
     }
     ImVec2 position_button = ImVec2(pos_end.x - key_size.x - 8.f, frame_bb.Min.y);
-    ImVec2 size_button = CalcItemSize(ImVec2(0, 0), key_size.x + style.FramePadding.x, key_size.y + style.FramePadding.y * 2.0f);
+    ImVec2 size_button = CalcItemSize(ImVec2(0, 0), key_size.x + 8, key_size.y + 3 * 2.0f);
 
     window->DrawList->AddRectFilled(position_button, position_button + size_button, GetColorU32(hovered ? ImGuiCol_nullptr_color : ImGuiCol_Button), style.FrameRounding);
 
@@ -985,9 +985,9 @@ bool ImGui::ButtonSpace(const char* label, const ImVec2& size_arg, bool size_on_
     return ButtonEx(label, size_arg, ImGuiButtonFlags_MakeSpace | ( size_on_window ? ImGuiButtonFlags_SizeOnWindow : 0));
 }
 
-bool ImGui::Button(const char* label, const ImVec2& size_arg)
+bool ImGui::Button(const char* label, const ImVec2& size_arg, bool size_on_window)
 {
-    return ButtonEx(label, size_arg, 0);
+    return ButtonEx(label, size_arg, size_on_window ? ImGuiButtonFlags_SizeOnWindow : 0);
 }
 
 // Small buttons fits within text without additional vertical spacing.
@@ -1282,7 +1282,7 @@ void ImGui::Image(ImTextureID user_texture_id, const ImVec2& size, const ImVec2&
     }
     else
     {
-        window->DrawList->AddImage(user_texture_id, bb.Min, bb.Max, uv0, uv1, GetColorU32(tint_col));
+       window->DrawList->AddImage(user_texture_id, bb.Min, bb.Max, uv0, uv1, GetColorU32(tint_col));
     }
 }
 
@@ -1638,7 +1638,7 @@ void ImGui::Separator(float size)
         return;
 
     // Those flags should eventually be overridable by the user
-    ImGuiSeparatorFlags flags = (window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Vertical : ImGuiSeparatorFlags_Horizontal;
+    ImGuiSeparatorFlags flags = ImGuiSeparatorFlags_Horizontal;//(window->DC.LayoutType == ImGuiLayoutType_Horizontal) ? ImGuiSeparatorFlags_Horizontal/*ImGuiSeparatorFlags_Vertical*/ : ImGuiSeparatorFlags_Vertical;
     flags |= ImGuiSeparatorFlags_SpanAllColumns;
     SeparatorEx(size, flags);
 }
@@ -2149,8 +2149,8 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
     // Display items
     // FIXME-OPT: Use clipper (but we need to disable it on the appearing frame to make sure our call to SetItemDefaultFocus() is processed)
 
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
-    {
+    /*ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+    {*/
         /*ImGui::PushStyleColor(ImGuiCol_Border, ImVec4());
         {*/
         for (int i = 0; i < items_count; i++)
@@ -2160,19 +2160,23 @@ bool ImGui::Combo(const char* label, int* current_item, bool (*items_getter)(voi
             const char* item_text;
             if (!items_getter(data, i, &item_text))
                 item_text = "*Unknown item*";
-            if (Selectable(item_text, item_selected))
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
             {
-                value_changed = true;
-                *current_item = i;
+                if (Selectable(item_text, item_selected))
+                {
+                    value_changed = true;
+                    *current_item = i;
+                }
             }
+            ImGui::PopStyleVar();
             if (item_selected)
                 SetItemDefaultFocus();
             PopID();
         }
         /*}
         ImGui::PopStyleColor();*/
-    } 
-    ImGui::PopStyleVar();
+   /* } 
+    ImGui::PopStyleVar();*/
 
     EndCombo();
     return value_changed;
@@ -2249,20 +2253,24 @@ bool ImGui::MultiCombo(const char* name, std::vector<std::string> names, std::ve
 
     if (opened)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
-        {
+        /*ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+        {*/
             for (int i = 0; i < dataSize; i++) {
 
                 sprintf(buf, names[i].c_str());
 
-                if (ImGui::Selectable(buf, values->at(i), ImGuiSelectableFlags_DontClosePopups)) {
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+                {
+                    if (ImGui::Selectable(buf, values->at(i), ImGuiSelectableFlags_DontClosePopups)) {
 
-                    values->at(i) = !values->at(i);
-                    isDataChanged = true;
+                        values->at(i) = !values->at(i);
+                        isDataChanged = true;
+                    }
                 }
+                ImGui::PopStyleVar();
             }
-        }
-        ImGui::PopStyleVar();
+        /*}
+        ImGui::PopStyleVar()*/
 
         ImGui::EndCombo();
     }
@@ -2336,19 +2344,22 @@ bool ImGui::MultiCombo(const char* name, std::vector<std::string> names, std::ve
 
     if (opened)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
-        {
+        /*ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+        {*/
             for (int i = 0; i < dataSize; i++) {
 
                 sprintf(buf, names[i].c_str());
-
-                if (ImGui::Selectable(buf, *values.at(i), ImGuiSelectableFlags_DontClosePopups)) {
-                    *values.at(i) = !(*values.at(i));
-                    isDataChanged = true;
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+                {
+                    if (ImGui::Selectable(buf, *values.at(i), ImGuiSelectableFlags_DontClosePopups)) {
+                        *values.at(i) = !(*values.at(i));
+                        isDataChanged = true;
+                    }
                 }
+                ImGui::PopStyleVar();
             }
-        }
-        ImGui::PopStyleVar();
+        /*}
+        ImGui::PopStyleVar();*/
 
         ImGui::EndCombo();
     }
@@ -2507,23 +2518,26 @@ bool ImGui::MultiCombo(const char* name, const char** displayName, bool* data, i
 
     if (opened)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
-        {
+        /*ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+        {*/
             for (int i = 0; i < dataSize; i++) {
 
                 sprintf(buf, displayName[i]);
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 2));
+                {
+                    if (ImGui::Selectable(buf, data[i], ImGuiSelectableFlags_DontClosePopups)) {
 
-                if (ImGui::Selectable(buf, data[i], ImGuiSelectableFlags_DontClosePopups)) {
-
-                    data[i] = !data[i];
-                    isDataChanged = true;
+                        data[i] = !data[i];
+                        isDataChanged = true;
+                    }
                 }
+                ImGui::PopStyleVar();
             }
 
             ImGui::EndCombo();
 
-        }
-        ImGui::PopStyleVar();
+        /*}
+        ImGui::PopStyleVar();*/
     }
 
     ImGui::PopID();
@@ -3935,15 +3949,15 @@ bool ImGui::InputScalar(const char* label, ImGuiDataType data_type, void* p_data
         if (flags & ImGuiInputTextFlags_ReadOnly)
             button_flags |= ImGuiButtonFlags_Disabled;
 
-        window->DC.CursorPos = ImVec2(total_size.Max.x - button_size, total_size.Min.y);
+        window->DC.CursorPos = ImVec2(total_size.Max.x - button_size + 1.f, total_size.Min.y);
 
-        if (ButtonEx("+", ImVec2(button_size, 12.f), button_flags))
+        if (ButtonEx("+", ImVec2(button_size - 1.f, 10.f), button_flags))
         {
             DataTypeApplyOp(data_type, '+', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
         }
-        window->DC.CursorPos = ImVec2(total_size.Max.x - button_size, total_size.Min.y + 10.f + 3.f);
-        if (ButtonEx("-", ImVec2(button_size, 12.f), button_flags))
+        window->DC.CursorPos = ImVec2(total_size.Max.x - button_size + 1.f, total_size.Min.y + 10.f + 3.f);
+        if (ButtonEx("-", ImVec2(button_size - 1.f, 10.f), button_flags))
         {
             DataTypeApplyOp(data_type, '-', p_data, p_data, g.IO.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
@@ -5278,7 +5292,9 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
     if (window->SkipItems)
         return false;
 
-    float* col[4] = { &_color->get<float>(return_color::r), &_color->get<float>(return_color::g), &_color->get<float>(return_color::b), &_color->get<float>(return_color::a) };
+    if (CalcTextSize(label, FindRenderedTextEnd(label, NULL)).x == 0.f) SameLine();
+
+    float* col[4] = { &_color->color_float[0], &_color->color_float[1], &_color->color_float[2], &_color->color_float[3] };
 
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
@@ -5397,7 +5413,7 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
 
         window->DC.CursorPos = ImVec2(pos_wind.x + (size_wind_max.x - w_button - (23 + style.ItemInnerSpacing.x) - offset_scroll), pos.y);
 
-        const ImVec4 col_v4(_color->get<float>(return_color::r), _color->get<float>(return_color::g), _color->get<float>(return_color::b), alpha ? _color->get<float>(return_color::a) : 1.0f);
+        const ImVec4 col_v4(_color->color_float[0], _color->color_float[1], _color->color_float[2], alpha ? _color->color_float[3] : 1.0f);
         if (ColorButton("##ColorButton", col_v4, flags))
         {
             if (!(flags & ImGuiColorEditFlags_NoPicker))
@@ -5409,6 +5425,7 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
 
                 OpenPopup("picker");
                 SetNextWindowPos(window->DC.LastItemRect.GetBL() + ImVec2(-1, style.ItemSpacing.y));
+                //SetNextWindowSize(ImVec2(200, 0));
             }
         }
         if (!(flags & ImGuiColorEditFlags_NoOptions))
@@ -5421,6 +5438,7 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
             {
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
                 {
+                    SetNextWindowSize(ImVec2((flags & ImGuiColorEditFlags_AlphaBar) && !(flags & ImGuiColorEditFlags_NoAlpha) ? 176 : 156, 0));
                     if (BeginPopup("picker"))
                     {
                         picker_active_window = g.CurrentWindow;
@@ -5482,10 +5500,10 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
     }
     _color->inalizate_char(*col[0], *col[1], *col[2], *col[3]);
 
-    _color->get<int>(return_color::r) = *col[0] * 255.f;
-    _color->get<int>(return_color::g) = *col[1] * 255.f;
+    /*_color->get<int>(return_color::r) = *col[0] * 255f;
+    _color->get<int>(return_color::g) = *col[1] * 255;
     _color->get<int>(return_color::b) = *col[2] * 255.f;
-    _color->get<int>(return_color::a) = *col[3] * 255.f;
+    _color->get<int>(return_color::a) = *col[3] * 255.f;*/
 
     return value_changed;
 }
@@ -5496,7 +5514,7 @@ bool ImGui::ColorPicker3(const char* label, color* _color, ImGuiColorEditFlags f
     if (!ColorPicker4(label, &col4, flags | ImGuiColorEditFlags_NoAlpha))
         return false;
 
-    *_color = color(col4.get<int>(return_color::r), col4.get<int>(return_color::g), col4.get<int>(return_color::b), 255);
+    *_color = color(col4.color_char[0], col4.color_char[1], col4.color_char[2], 255);
     return true;
 }
 
@@ -5521,7 +5539,7 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
     if (window->SkipItems)
         return false;
 
-    float* col[4] = { &_color->get<float>(return_color::r), &_color->get<float>(return_color::g), &_color->get<float>(return_color::b), &_color->get<float>(return_color::a) };
+    float* col[4] = { &_color->color_float[0], &_color->color_float[1], &_color->color_float[2], &_color->color_float[3] };
 
     ImDrawList* draw_list = window->DrawList;
     ImGuiStyle& style = g.Style;
@@ -5537,8 +5555,8 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
         flags |= ImGuiColorEditFlags_NoSmallPreview;
 
     // Context menu: display and store options.
-    if (!(flags & ImGuiColorEditFlags_NoOptions))
-        ColorPickerOptionsPopup(*col, flags);
+    /*if (!(flags & ImGuiColorEditFlags_NoOptions))
+        ColorPickerOptionsPopup(*col, flags);*/
 
     // Read stored options
     if (!(flags & ImGuiColorEditFlags__PickerMask))
@@ -5556,7 +5574,7 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
     ImVec2 picker_pos = window->DC.CursorPos;
     float square_sz = GetFrameHeight();
     float bars_width = square_sz; // Arbitrary smallish width of Hue/Alpha picking bars
-    float sv_picker_size = ImMax(bars_width * 1, width - (alpha_bar ? 2 : 1) * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
+    float sv_picker_size = ImMax(bars_width * 1, width - /*(alpha_bar ? 2 : 1)*/2 * (bars_width + style.ItemInnerSpacing.x)); // Saturation/Value picking box
     float bar0_pos_x = picker_pos.x + sv_picker_size + style.ItemInnerSpacing.x;
     float bar1_pos_x = bar0_pos_x + bars_width + style.ItemInnerSpacing.x;
     float bars_triangles_half_sz = IM_FLOOR(bars_width * 0.20f);
@@ -5707,7 +5725,7 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
     bool value_changed_fix_hue_wrap = false;
     if ((flags & ImGuiColorEditFlags_NoInputs) == 0)
     {
-        PushItemWidth((alpha_bar ? bar1_pos_x : bar0_pos_x) + bars_width - picker_pos.x);
+        PushItemWidth(/*(alpha_bar ? bar1_pos_x : bar0_pos_x)*/bar1_pos_x + bars_width - picker_pos.x);
         ImGuiColorEditFlags sub_flags_to_forward = ImGuiColorEditFlags__DataTypeMask | ImGuiColorEditFlags__InputMask | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoOptions | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_AlphaPreviewHalf;
         ImGuiColorEditFlags sub_flags = (flags & sub_flags_to_forward) | ImGuiColorEditFlags_NoPicker;
         if (flags & ImGuiColorEditFlags_DisplayRGB || (flags & ImGuiColorEditFlags__DisplayMask) == 0)
@@ -5863,6 +5881,7 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
     if (value_changed)
         MarkItemEdited(window->DC.LastItemId);
 
+
     PopID();
 
     return value_changed;
@@ -5936,7 +5955,7 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
 
     // Drag and Drop Source
     // NB: The ActiveId test is merely an optional micro-optimization, BeginDragDropSource() does the same test.
-    if (g.ActiveId == id && !(flags & ImGuiColorEditFlags_NoDragDrop) && BeginDragDropSource())
+    /*if (g.ActiveId == id && !(flags & ImGuiColorEditFlags_NoDragDrop) && BeginDragDropSource())
     {
         if (flags & ImGuiColorEditFlags_NoAlpha)
             SetDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F, &col_rgb, sizeof(float) * 3, ImGuiCond_Once);
@@ -5946,7 +5965,7 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
         SameLine();
         TextEx("Color");
         EndDragDropSource();
-    }
+    }*/
 
     // Tooltip
     if (!(flags & ImGuiColorEditFlags_NoTooltip) && hovered)
@@ -6009,14 +6028,14 @@ void ImGui::ColorEditOptionsPopup(float* col, ImGuiColorEditFlags flags)
         color_copy[0] = col[0];
         color_copy[1] = col[1];
         color_copy[2] = col[2];
-        color_copy[3] = col[3];
+        if(flags & ImGuiColorEditFlags_AlphaBar) color_copy[3] = col[3];
     }
     if (Button("paste", ImVec2(50, 0)))
     {
         col[0] = color_copy[0];
         col[1] = color_copy[1];
         col[2] = color_copy[2];
-        col[3] = color_copy[3];
+        if (flags & ImGuiColorEditFlags_AlphaBar) col[3] = color_copy[3];
     }
 
 
@@ -6695,7 +6714,7 @@ bool ImGui::ListBoxHeader(const char* label, const ImVec2& size_arg)
     if (window->ScrollbarY)
         offset_scroll = style.ScrollbarSize;
 
-    ImVec2 pos_end = ImVec2(pos_wind.x + (window->Size.x - (global_offset_float * 2) + 14.f - offset_scroll), window->DC.CursorPos.y);
+    ImVec2 pos_end = ImVec2(pos_wind.x + (window->Size.x - (global_offset_float * 2) + 15.f - offset_scroll), window->DC.CursorPos.y);
 
     // Size default to hold ~7 items. Fractional number of items helps seeing that we can scroll down/up without looking at scrollbar.
     ImVec2 size = CalcItemSize(size_arg, CalcItemWidth(), GetTextLineHeightWithSpacing() * 7.4f + style.ItemSpacing.y);

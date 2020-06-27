@@ -3,29 +3,25 @@
 #include "app_system.h"
 #include "../../helpers/helpers.h"
 
-namespace vgui
-{
+namespace vgui {
     typedef unsigned long HFont;
     typedef unsigned int VPANEL;
 };
 
-enum font_feature
-{
+enum font_feature {
     FONT_FEATURE_ANTIALIASED_FONTS = 1,
     FONT_FEATURE_DROPSHADOW_FONTS = 2,
     FONT_FEATURE_OUTLINE_FONTS = 6,
 };
 
-enum font_draw_type
-{
+enum font_draw_type {
     FONT_DRAW_DEFAULT = 0,
     FONT_DRAW_NONADDITIVE,
     FONT_DRAW_ADDITIVE,
     FONT_DRAW_TYPE_COUNT = 2,
 };
 
-enum font_flags
-{
+enum font_flags {
     FONTFLAG_NONE,
     FONTFLAG_ITALIC = 0x001,
     FONTFLAG_UNDERLINE = 0x002,
@@ -41,24 +37,20 @@ enum font_flags
     FONTFLAG_BITMAP = 0x800,
 };
 
-struct int_rect
-{
+struct int_rect {
     int x0;
     int y0;
     int x1;
     int y1;
 };
 
-struct vertex_t
-{
+struct vertex_t {
     vertex_t() {}
-    vertex_t(const vec2& pos, const vec2&coord = vec2(0, 0))
-    {
+    vertex_t(const vec2& pos, const vec2&coord = vec2(0, 0)) {
         m_Position = pos;
         m_TexCoord = coord;
     }
-    void Init(const vec2&pos, const vec2&coord = vec2(0, 0))
-    {
+    void Init(const vec2&pos, const vec2&coord = vec2(0, 0)) {
         m_Position = pos;
         m_TexCoord = coord;
     }
@@ -70,8 +62,7 @@ struct vertex_t
 //-----------------------------------------------------------------------------
 // Purpose: Wraps contextless windows system functions
 //-----------------------------------------------------------------------------
-class c_surface : public c_app_system
-{
+class c_surface : public c_app_system {
 public:
     virtual void          run_frame() = 0;
     virtual vgui::VPANEL  get_embedded_panel() = 0;

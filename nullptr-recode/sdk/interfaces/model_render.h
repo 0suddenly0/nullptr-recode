@@ -1,15 +1,13 @@
 #pragma once
 #include "../../helpers/helpers.h"
 
-enum preview_image_ret_val_t
-{
+enum preview_image_ret_val_t {
     MATERIAL_PREVIEW_IMAGE_BAD = 0,
     MATERIAL_PREVIEW_IMAGE_OK,
     MATERIAL_NO_PREVIEW_IMAGE,
 };
 
-enum material_var_flags_t
-{
+enum material_var_flags_t {
     MATERIAL_VAR_DEBUG = (1 << 0),
     MATERIAL_VAR_NO_DEBUG_OVERRIDE = (1 << 1),
     MATERIAL_VAR_NO_DRAW = (1 << 2),
@@ -68,8 +66,7 @@ struct studiohwdata_t;
 struct material_lighting_state_t;
 struct color_mesh_info_t;
 
-struct draw_model_state_t
-{
+struct draw_model_state_t {
     studiohdr_t*            m_pStudioHdr;
     studiohwdata_t*         m_pStudioHWData;
     c_client_renderable*      m_pRenderable;
@@ -79,8 +76,7 @@ struct draw_model_state_t
     int                     m_lod;
 };
 
-struct static_prop_render_info_t
-{
+struct static_prop_render_info_t {
     const matrix3x4*      pModelToWorld;
     const model_t*          pModel;
     c_client_renderable*      pRenderable;
@@ -89,8 +85,7 @@ struct static_prop_render_info_t
     model_instance_handle_t   instance;
 };
 
-struct model_render_info_t
-{
+struct model_render_info_t {
     vec3                  origin;
     qangle                  angles;
 	char                    pad[4];
@@ -115,27 +110,24 @@ struct model_render_info_t
 };
 
 enum class override_type {
-    Normal = 0,
-    BuildShadows,
-    DepthWrite,
-    CustomMaterial, // weapon skins
-    SsaoDepthWrite
+    normal = 0,
+    build_shadows,
+    depth_write,
+    custom_material, // weapon skins
+    ssao_depth_write
 };
 
-struct lighting_query_t
-{
+struct lighting_query_t {
     vec3                  m_LightingOrigin;
     model_instance_handle_t   m_InstanceHandle;
     bool                    m_bAmbientBoost;
 };
 
-struct static_lighting_query_t : public lighting_query_t
-{
+struct static_lighting_query_t : public lighting_query_t {
     c_client_renderable*        m_pRenderable;
 };
 
-class c_material
-{
+class c_material {
 public:
     virtual const char*             get_name() const = 0;
     virtual const char*             get_texture_group_name() const = 0;
@@ -198,8 +190,7 @@ public:
     virtual int                     get_reference_count() const = 0;
 };
 
-class c_model_render
-{
+class c_model_render {
     std::byte pad_0[0x250];
     c_material* materialOverride;
     std::byte pad_1[0xC];
@@ -207,13 +198,10 @@ class c_model_render
 
 public:
     virtual int                     draw_model(int flags, c_client_renderable*pRenderable, model_instance_handle_t instance, int entity_index, const model_t *model, vec3 const& origin, qangle const& angles, int skin, int body, int hitboxset, const matrix3x4 *modelToWorld = NULL, const matrix3x4 *pLightingOffset = NULL) = 0;
-    virtual void                    forced_material_override(c_material *newMaterial, override_type noverride_type = override_type::Normal, int nOverrides = 0) = 0;
+    virtual void                    forced_material_override(c_material *newMaterial, override_type noverride_type = override_type::normal, int nOverrides = 0) = 0;
 
-    bool is_forced_override()
-    {
-        if (!materialOverride)
-            return override_type_t == override_type::DepthWrite || override_type_t == override_type::SsaoDepthWrite; // see CStudioRenderContext::IsForcedMaterialOverride
-
+    bool is_forced_override() {
+        if (!materialOverride) return override_type_t == override_type::depth_write || override_type_t == override_type::ssao_depth_write; // see CStudioRenderContext::IsForcedMaterialOverride
         return strstr(materialOverride->get_name(), "dev/glow");
     }
     virtual bool                    is_forced_material_override(void) = 0;

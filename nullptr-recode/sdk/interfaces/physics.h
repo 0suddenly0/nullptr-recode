@@ -1,8 +1,7 @@
 
 #pragma once
 
-struct surfacephysicsparams_t
-{
+struct surfacephysicsparams_t {
 	float friction;
 	float elasticity;
 	float density;
@@ -10,8 +9,7 @@ struct surfacephysicsparams_t
 	float dampening;
 };
 
-struct surfaceaudioparams_t
-{
+struct surfaceaudioparams_t {
 	float reflectivity; // like elasticity, but how much sound should be reflected by this surface
 	float hardnessFactor; // like elasticity, but only affects impact sound choices
 	float roughnessFactor; // like friction, but only affects scrape sound choices
@@ -23,8 +21,7 @@ struct surfaceaudioparams_t
 	float lowPitchOcclusion;
 };
 
-struct surfacesoundnames_t
-{
+struct surfacesoundnames_t {
 	unsigned short walkStepLeft;
 	unsigned short walkStepRight;
 	unsigned short	runStepLeft;
@@ -39,8 +36,7 @@ struct surfacesoundnames_t
 	unsigned short strainSound;
 };
 
-struct surfacegameprops_t
-{
+struct surfacegameprops_t {
 public:
 	float maxSpeedFactor;
 	float jumpFactor;
@@ -50,16 +46,14 @@ public:
 	BYTE climbable;
 };
 
-struct surfacedata_t
-{
+struct surfacedata_t {
 	surfacephysicsparams_t physics;
 	surfaceaudioparams_t audio;
 	surfacesoundnames_t sounds;
 	surfacegameprops_t game;
 };
 
-class c_physics_surface_props
-{
+class c_physics_surface_props {
 public:
 	virtual ~c_physics_surface_props(void) {}
 	virtual int parse_surface_data(const char *pFilename, const char *pTextfile) = 0;

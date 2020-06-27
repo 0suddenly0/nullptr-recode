@@ -2,8 +2,7 @@
 
 class c_base_handle;
 
-class c_handle_entity
-{
+class c_handle_entity {
 public:
     virtual ~c_handle_entity() {}
     virtual void set_ref_ehandle(const c_base_handle&handle) = 0;

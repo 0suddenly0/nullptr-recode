@@ -9,8 +9,7 @@ struct vcollide_t;
 struct virtualmodel_t;
 struct vertexFileHeader_t;
 
-enum mdl_cachedata_type_t
-{
+enum mdl_cachedata_type_t {
     // Callbacks to Get called when data is loaded or unloaded for these:
     MDLCACHE_STUDIOHDR = 0,
     MDLCACHE_STUDIOHWDATA,
@@ -23,8 +22,7 @@ enum mdl_cachedata_type_t
     MDLCACHE_DECODEDANIMBLOCK
 };
 
-enum mdl_cacheflush_t
-{
+enum mdl_cacheflush_t {
     MDLCACHE_FLUSH_STUDIOHDR = 0x01,
     MDLCACHE_FLUSH_STUDIOHWDATA = 0x02,
     MDLCACHE_FLUSH_VCOLLIDE = 0x04,
@@ -37,15 +35,13 @@ enum mdl_cacheflush_t
     MDLCACHE_FLUSH_ALL = 0xFFFFFFFF
 };
 
-class c_mdl_cachenotify
-{
+class c_mdl_cachenotify {
 public:
     virtual void on_data_loaded(mdl_cachedata_type_t type, mdl_handle_t handle) = 0;
     virtual void on_data_unloaded(mdl_cachedata_type_t type, mdl_handle_t handle) = 0;
 };
 
-class c_mdl_cache : public c_app_system
-{
+class c_mdl_cache : public c_app_system {
 public:
     virtual void                set_cache_notify(c_mdl_cachenotify*pNotify) = 0;
     virtual mdl_handle_t         find_mdl(const char *pMDLRelativePath) = 0;

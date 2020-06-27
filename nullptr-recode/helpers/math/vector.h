@@ -262,6 +262,12 @@ public:
 	vec3 operator+(const vec3& v) const {
 		return vec3(x + v.x, y + v.y, z + v.z);
 	}
+	vec3 operator+(float v) {
+		return vec3(x + v, y + v, z + v);
+	}
+	vec3 operator+(float v) const {
+		return vec3(x + v, y + v, z + v);
+	}
 	vec3 operator-(const vec3& v) const {
 		return vec3(x - v.x, y - v.y, z - v.z);
 	}
@@ -276,6 +282,18 @@ public:
 	}
 	vec3 operator/(const vec3& v) {
 		return vec3(x / v.x, y / v.y, z / v.z);
+	}
+	bool operator>(const vec3& v) {
+		return x > v.x && y > v.y && z > v.z;
+	}
+	bool operator>(float v) {
+		return x > v && y > v && z > v;
+	}
+	bool operator<(const vec3& v) {
+		return x < v.x&& y < v.y&& z < v.z;
+	}
+	bool operator<(float v) {
+		return x < v && y < v && z < v;
 	}
 
 	float dot(const vec3& vOther) const {

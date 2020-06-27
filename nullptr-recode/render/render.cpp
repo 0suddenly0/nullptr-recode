@@ -1,7 +1,8 @@
 #include <mutex>
 #include "render.h"
 #include "../functions/visuals/background.h"
-#include "../settings/globals.h"
+#include "../settings/settings.h"
+#include "../helpers/math/math.h"
 
 ImDrawList* draw_list_act = nullptr;
 ImDrawList* draw_list_for_render = nullptr;
@@ -111,14 +112,14 @@ namespace render {
 
 		if (outline)
 		{
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.get<float>(return_color::a))), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
 		}
 		draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y), ImGui::GetColorU32(get_vec4(clr)), text.c_str());
 
@@ -151,5 +152,20 @@ namespace render {
 
 	void draw_box_filled_multicolor(vec2 start, vec2 end, color clr, color clr_right) {
 		draw_list->AddRectFilledMultiColor(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr)));
+	}
+
+	void draw_circle_3d(vec3 pos, float points, float radius, color clr) {
+		float step = (float)M_PI * 2.0f / points;
+
+		for (float a = 0; a < (M_PI * 2.0f); a += step) {
+			vec3 start(radius * cosf(a) + pos.x, radius * sinf(a) + pos.y, pos.z);
+			vec3 end(radius * cosf(a + step) + pos.x, radius * sinf(a + step) + pos.y, pos.z);
+
+			vec2 start2d, end2d;
+			if (sdk::debug_overlay->screen_position(start, start2d) || sdk::debug_overlay->screen_position(end, end2d))
+				return;
+
+			draw_line(start2d.x, start2d.y, end2d.x, end2d.y, clr);
+		}
 	}
 }

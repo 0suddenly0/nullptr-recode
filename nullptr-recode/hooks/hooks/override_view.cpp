@@ -6,11 +6,9 @@ namespace hooks {
 
 		//grenade_prediction::view();
 
-		misc::no_smoke();
-
-		//if (sdk::engine_client->is_ingame() && view) {
-		//	visuals::third_person();
-		//}
+		if (sdk::engine_client->is_in_game() && view) {
+			visuals::thirdperson();
+		}
 
 		if (sdk::local_player && sdk::engine_client->is_in_game() && sdk::local_player->is_alive()) {
 			if (settings::misc::viewmodel::override != 0 && !sdk::local_player->is_scoped())

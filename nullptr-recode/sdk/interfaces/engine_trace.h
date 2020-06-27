@@ -130,18 +130,13 @@ public:
 // This is the one most normal traces will inherit from
 class c_trace_filter : public c_base_trace_filter {
 public:
-    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/) {
         client_class* pEntCC = ((c_client_entity*)pEntityHandle)->get_client_class();
-        if (pEntCC && ignors.size() > 0)
-        {
-            for (int i = 0; i < ignors.size(); i++)
-            {
-                if (ignors[i] != "")
-                {
+        if (pEntCC && ignors.size() > 0) {
+            for (int i = 0; i < ignors.size(); i++) {
+                if (ignors[i] != "") {
                     std::string pName = pEntCC->network_name;
-                    if (pName.find(ignors[i]))
-                    {
+                    if (pName.find(ignors[i])) {
                         return false;
                     }
                 }
@@ -150,13 +145,12 @@ public:
 
         return !(pEntityHandle == pSkip);
     }
-    virtual trace_type get_trace_type() const
-    {
+
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_EVERYTHING;
     }
 
-    void set_ignore_class(char* Class)
-    {
+    void set_ignore_class(char* Class) {
         ignors.push_back(Class);
     }
 
@@ -165,34 +159,27 @@ public:
     void* pSkip;
 };
 
-class c_trace_filter_skipentity : public c_base_trace_filter
-{
+class c_trace_filter_skipentity : public c_base_trace_filter {
 public:
-    c_trace_filter_skipentity(c_handle_entity* pEntityHandle)
-    {
+    c_trace_filter_skipentity(c_handle_entity* pEntityHandle) {
         pSkip = pEntityHandle;
     }
 
-    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/) {
         return !(pEntityHandle == pSkip);
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_EVERYTHING;
     }
     void* pSkip;
 };
 
-class c_trace_filter_entities_only : public c_base_trace_filter
-{
+class c_trace_filter_entities_only : public c_base_trace_filter {
 public:
-    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/) {
         return true;
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_ENTITIES_ONLY;
     }
 };
@@ -201,45 +188,35 @@ public:
 //-----------------------------------------------------------------------------
 // Classes need not inherit from these
 //-----------------------------------------------------------------------------
-class c_trace_filter_world_only : public c_base_trace_filter
-{
+class c_trace_filter_world_only : public c_base_trace_filter {
 public:
-    bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/) {
         return false;
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_WORLD_ONLY;
     }
 };
 
-class c_trace_filter_world_and_props_only : public c_base_trace_filter
-{
+class c_trace_filter_world_and_props_only : public c_base_trace_filter {
 public:
-    bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/) {
         return false;
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_EVERYTHING;
     }
 };
 
-class c_trace_filter_players_only_skip_one : public c_base_trace_filter
-{
+class c_trace_filter_players_only_skip_one : public c_base_trace_filter {
 public:
-    c_trace_filter_players_only_skip_one(c_client_entity* ent)
-    {
+    c_trace_filter_players_only_skip_one(c_client_entity* ent) {
         pEnt = ent;
     }
-    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/)
-    {
-        return pEntityHandle != pEnt && ((c_client_entity*)pEntityHandle)->get_client_class()->class_id == ClassId_CCSPlayer;
+    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/) {
+        return pEntityHandle != pEnt && ((c_client_entity*)pEntityHandle)->get_client_class()->class_id == class_id::c_cs_player;
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_ENTITIES_ONLY;
     }
 
@@ -247,20 +224,16 @@ private:
     c_client_entity* pEnt;
 };
 
-class c_trace_filter_skip_two_entities : public c_base_trace_filter
-{
+class c_trace_filter_skip_two_entities : public c_base_trace_filter {
 public:
-    c_trace_filter_skip_two_entities(c_client_entity* ent1, c_client_entity* ent2)
-    {
+    c_trace_filter_skip_two_entities(c_client_entity* ent1, c_client_entity* ent2) {
         pEnt1 = ent1;
         pEnt2 = ent2;
     }
-    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/)
-    {
+    bool should_hit_entity(c_handle_entity* pEntityHandle, int /*contentsMask*/) {
         return !(pEntityHandle == pEnt1 || pEntityHandle == pEnt2);
     }
-    virtual trace_type get_trace_type() const
-    {
+    virtual trace_type get_trace_type() const {
         return trace_type::TRACE_EVERYTHING;
     }
 
@@ -269,18 +242,15 @@ private:
     c_client_entity* pEnt2;
 };
 
-class c_trace_filter_hit_all : public c_base_trace_filter
-{
+class c_trace_filter_hit_all : public c_base_trace_filter {
 public:
-    virtual bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/)
-    {
+    virtual bool should_hit_entity(c_handle_entity* /*pServerEntity*/, int /*contentsMask*/) {
         return true;
     }
 };
 
 
-enum class debug_trace_counter_behavior_t
-{
+enum class debug_trace_counter_behavior_t {
     kTRACE_COUNTER_SET = 0,
     kTRACE_COUNTER_INC,
 };
@@ -288,16 +258,14 @@ enum class debug_trace_counter_behavior_t
 //-----------------------------------------------------------------------------
 // Enumeration interface for EnumerateLinkEntities
 //-----------------------------------------------------------------------------
-class c_entity_enumerator
-{
+class c_entity_enumerator {
 public:
     // This gets called with each handle
     virtual bool enum_entity(c_handle_entity* pHandleEntity) = 0;
 };
 
 
-struct vrush_side_info_t
-{
+struct vrush_side_info_t {
     vec4 plane;               // The plane of the brush side
     unsigned short bevel;    // Bevel plane?
     unsigned short thin;     // Thin?
@@ -305,8 +273,7 @@ struct vrush_side_info_t
 
 class c_phys_collide;
 
-struct vcollide_t
-{
+struct vcollide_t {
     unsigned short solidCount : 15;
     unsigned short isPacked : 1;
     unsigned short descSize;
@@ -316,16 +283,14 @@ struct vcollide_t
     void           *pUserData;
 };
 
-struct cmodel_t
-{
+struct cmodel_t {
     vec3         mins, maxs;
     vec3         origin;        // for sounds or lights
     int            headnode;
     vcollide_t     vcollisionData;
 };
 
-struct csurface_t
-{
+struct csurface_t {
     const char     *name;
     short          surfaceProps;
     unsigned short flags;         // BUGBUG: These are declared per surface, not per material, but this database is per-material now
@@ -334,8 +299,7 @@ struct csurface_t
 //-----------------------------------------------------------------------------
 // A ray...
 //-----------------------------------------------------------------------------
-struct ray_t
-{
+struct ray_t {
     veca  m_Start;  // starting point, centered within the extents
     veca  m_Delta;  // direction + length of the ray
     veca  m_StartOffset; // Add this to m_Start to Get the actual ray start
@@ -346,8 +310,7 @@ struct ray_t
 
     ray_t() : m_pWorldAxisTransform(NULL) {}
 
-    void init(vec3 const& start, vec3 const& end)
-    {
+    void init(vec3 const& start, vec3 const& end) {
         m_Delta = end - start;
 
         m_IsSwept = (m_Delta.length_sqr() != 0);
@@ -362,8 +325,7 @@ struct ray_t
         m_Start = start;
     }
 
-    void init(vec3 const& start, vec3 const& end, vec3 const& mins, vec3 const& maxs)
-    {
+    void init(vec3 const& start, vec3 const& end, vec3 const& mins, vec3 const& maxs) {
         m_Delta = end - start;
 
         m_pWorldAxisTransform = NULL;
@@ -379,8 +341,7 @@ struct ray_t
         m_Start = start + m_StartOffset;
         m_StartOffset *= -1.0f;
     }
-    vec3 inv_delta() const
-    {
+    vec3 inv_delta() const {
         vec3 vecInvDelta;
         for(int iAxis = 0; iAxis < 3; ++iAxis) {
             if(m_Delta[iAxis] != 0.0f) {
@@ -395,8 +356,7 @@ struct ray_t
 private:
 };
 
-class c_base_trace
-{
+class c_base_trace {
 public:
     bool is_disp_surface(void)           { return ((dispFlags & DISPSURF_FLAG_SURFACE) != 0); }
     bool is_disp_surface_walkable(void)  { return ((dispFlags & DISPSURF_FLAG_WALKABLE) != 0); }
@@ -423,8 +383,7 @@ public:
 
 };
 
-class c_game_trace : public c_base_trace
-{
+class c_game_trace : public c_base_trace {
 public:
     bool did_hit_world() const;
     bool did_hit_non_world_entity() const;
@@ -452,8 +411,7 @@ public:
         physicsbone(other.physicsbone),
         worldSurfaceIndex(other.worldSurfaceIndex),
         hit_entity(other.hit_entity),
-        hitbox(other.hitbox)
-    {
+        hitbox(other.hitbox) {
         startpos = other.startpos;
         endpos = other.endpos;
         plane = other.plane;
@@ -464,8 +422,7 @@ public:
         startsolid = other.startsolid;
     }
 
-    c_game_trace& operator=(const c_game_trace& other)
-    {
+    c_game_trace& operator=(const c_game_trace& other) {
         startpos = other.startpos;
         endpos = other.endpos;
         plane = other.plane;
@@ -485,18 +442,15 @@ public:
     }
 };
 
-bool c_game_trace::did_hit() const
-{
+bool c_game_trace::did_hit() const {
     return fraction < 1 || allsolid || startsolid;
 }
 
-bool c_game_trace::is_visible() const
-{
+bool c_game_trace::is_visible() const {
     return fraction > 0.97f;
 }
 
-class c_engine_trace
-{
+class c_engine_trace {
 public:
     virtual int   get_point_contents(const vec3 &vecAbsPosition, int contentsMask = MASK_ALL, c_handle_entity** ppEntity = nullptr) = 0;
     virtual int   get_point_contents_world_only(const vec3 &vecAbsPosition, int contentsMask = MASK_ALL) = 0;

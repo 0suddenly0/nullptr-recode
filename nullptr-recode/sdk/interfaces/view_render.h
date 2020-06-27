@@ -1,7 +1,6 @@
 #pragma once
 
-enum DrawFlags_t
-{
+enum DrawFlags_t {
     DF_RENDER_REFRACTION = 0x1,
     DF_RENDER_REFLECTION = 0x2,
     DF_CLIP_Z = 0x4,
@@ -33,8 +32,7 @@ struct vrect_t;
 class c_base_view_model;
 class c_material;
 
-class c_view_render
-{
+class c_view_render {
 public:
     virtual void                init(void) = 0;
     virtual void                level_init(void) = 0;

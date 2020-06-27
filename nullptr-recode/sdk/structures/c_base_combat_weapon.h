@@ -47,12 +47,12 @@ public:
 	}
 
 	bool is_grenade() {
-		return get_cs_weapondata()->weapon_type == type_grenade;
+		return get_cs_weapondata()->weapon_type == weapon_type_grenade;
 	}
 
 	bool is_knife() {
-		if (this->item().item_definition_index() == taser) return false;
-		return get_cs_weapondata()->weapon_type == type_knife;
+		if (this->item().item_definition_index() == item_definition_index::taser) return false;
+		return get_cs_weapondata()->weapon_type == weapon_type_knife;
 	}
 
 	bool is_zeus() {
@@ -67,35 +67,34 @@ public:
 
 	bool is_rifle() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case type_rifle: return true;
-		case type_submachinegun: return true;
-		case type_shotgun: return true;
-		case type_machinegun: return true;
+		case weapon_type_rifle: return true;
+		case weapon_type_submachinegun: return true;
+		case weapon_type_shotgun: return true;
+		case weapon_type_machinegun: return true;
 		default: return false;
 		}
 	}
 
 	bool is_pistol() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case type_pistol: return true;
+		case weapon_type_pistol: return true;
 		default: return false;
 		}
 	}
 
 	bool is_sniper() {
 		switch (get_cs_weapondata()->weapon_type) {
-		case type_sniper_rifle: return true;
+		case weapon_type_sniper_rifle: return true;
 		default: return false;
 		}
 	}
 
 	bool is_gun() {
-		switch (get_cs_weapondata()->weapon_type)
-		{
-		case type_c4: return false;
-		case type_grenade: return false;
-		case type_knife: return false;
-		case type_unknown: return false;
+		switch (get_cs_weapondata()->weapon_type) {
+		case weapon_type_c4: return false;
+		case weapon_type_grenade: return false;
+		case weapon_type_knife: return false;
+		case weapon_type_unknown: return false;
 		default: return true;
 		}
 	}

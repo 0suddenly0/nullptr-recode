@@ -39,19 +39,18 @@ enum observer_mode_t {
 	obs_oaming = 6
 };
 
-enum cs_weapon_type
-{
-	type_knife = 0,
-	type_pistol,
-	type_submachinegun,
-	type_rifle,
-	type_shotgun,
-	type_sniper_rifle,
-	type_machinegun,
-	type_c4,
-	type_placeholder,
-	type_grenade,
-	type_unknown
+enum cs_weapon_type {
+	weapon_type_knife = 0,
+	weapon_type_pistol,
+	weapon_type_submachinegun,
+	weapon_type_rifle,
+	weapon_type_shotgun,
+	weapon_type_sniper_rifle,
+	weapon_type_machinegun,
+	weapon_type_c4,
+	weapon_type_placeholder,
+	weapon_type_grenade,
+	weapon_type_unknown
 };
 
 struct datamap_t;
@@ -65,6 +64,7 @@ class c_base_view_model;
 class c_csgo_player_animstate;
 class c_base_player_animstate;
 class c_base_entity;
+class c_base_inferno;
 class c_base_player;
 class c_base_weapon_world_model;
 class c_hud_texture;
@@ -82,4 +82,4 @@ class c_hud_texture;
 #include "c_hud_texture.h"
 #include "c_planted_c4.h"
 #include "c_player_resource.h"
-
+#include "c_base_inferno.h"

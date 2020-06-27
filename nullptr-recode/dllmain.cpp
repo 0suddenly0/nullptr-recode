@@ -1,5 +1,7 @@
 ﻿#define NOMINMAX
 #define _CRT_SECURE_NO_WARNINGS
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include "helpers/config_sys/config_sys.h"
 #include <windows.h>
 #include "utils/utils.h"
 #include "sdk/sdk.h"
@@ -17,8 +19,10 @@ DWORD WINAPI attach(LPVOID base) {
 	utils::attach_console();
 #endif
 
-	try
-	{
+	try {
+		
+		config::skins::setup_set();
+		config::standart::setup_set();
 
 		utils::console_print("[-] injected\n");
 
@@ -39,6 +43,8 @@ DWORD WINAPI attach(LPVOID base) {
 		hooks::initialize();
 		utils::console_print("[-] all func hooked\n");
 
+		notify::add("nullptr", "injected", globals::menu_color, true, true, log_type::console, log_type::big);
+
 #ifdef _DEBUG
 		input::register_hotkey(VK_END, [base]() {
 			globals::unloading = true;
@@ -49,21 +55,22 @@ DWORD WINAPI attach(LPVOID base) {
 			globals::show_menu = !globals::show_menu;
 			});
 
+		if (skin_parser::skins.size() == 0)
+		{
+			skin_parser::initialize_kits();
+		}
 
 		while (!globals::unloading) Sleep(1000);
-
-		FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
-	}
-
-	catch (const std::exception & ex)
-	{
+		
+		FreeLibraryAndExitThread((HMODULE)(base), 1);
+	} catch (const std::exception & ex) {
 		utils::console_print("[-] an error occured during initialization:\n");
 		utils::console_print("[-] %s\n", ex.what());
 		utils::console_print("[-] Press any key to exit.\n");
 		utils::console_read_key();
 		utils::detach_console();
 
-		FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+		FreeLibraryAndExitThread((HMODULE)(base), 1);
 	}
 }
 
@@ -73,7 +80,6 @@ BOOL WINAPI detach() {
 #endif
 
 	hooks::unhook();
-
 	render::destroy();
 
 	return TRUE;
@@ -90,8 +96,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		CreateThread(0, 0, (LPTHREAD_START_ROUTINE)attach, hModule, 0, 0);
 		return TRUE;
 	case DLL_PROCESS_DETACH:
-		if (lpReserved == nullptr)
-			return detach();
+		if (lpReserved == nullptr) return detach();
 		break;
 	}
 	return TRUE;

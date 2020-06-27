@@ -1469,7 +1469,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			--nLineLen; // because it accounts for putting a terminating null-character
 
-			char* pszLine = (char*)const_cast< void* >( PeekGet() );
+			char* pszLine = (char*)( void* )( PeekGet() );
 			SeekGet( SEEK_CURRENT, nLineLen );
 
 			// Set the out args

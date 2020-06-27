@@ -3,40 +3,34 @@
 typedef int32_t HSteamPipe;
 typedef int32_t HSteamUser;
 
-enum EGCResults
-{
-	k_EGCResultOK = 0,
-	k_EGCResultNoMessage = 1,           // There is no message in the queue
-	k_EGCResultBufferTooSmall = 2,      // The buffer is too small for the requested message
-	k_EGCResultNotLoggedOn = 3,         // The client is not logged onto Steam
-	k_EGCResultInvalidMessage = 4,      // Something was wrong with the message being sent with SendMessage
+enum game_coordinator_results {
+	gc_result_ok = 0,
+	gc_result_no_message = 1,           // There is no message in the queue
+	gc_result_buffer_too_small = 2,      // The buffer is too small for the requested message
+	gc_result_not_logged_on = 3,         // The client is not logged onto Steam
+	gc_result_invalid_message = 4,      // Something was wrong with the message being sent with SendMessage
 };
 
-class c_steam_game_coordinator
-{
+class c_steam_game_coordinator {
 public:
-	virtual EGCResults gc_send_message(int unMsgType, const void* pubData, int cubData) = 0;
+	virtual game_coordinator_results gc_send_message(int unMsgType, const void* pubData, int cubData) = 0;
 	virtual bool is_message_available(int* pcubMsgSize) = 0;
-	virtual EGCResults retrieve_message(int* punMsgType, void* pubDest, int cubDest, int* pcubMsgSize) = 0;
-
+	virtual game_coordinator_results retrieve_message(int* punMsgType, void* pubDest, int cubDest, int* pcubMsgSize) = 0;
 };
 
-class CSteamID
-{
+class c_steam_id {
 public:
-	CSteamID()
-	{
+	c_steam_id() {
 		m_steamid.m_comp.m_unAccountID = 0;
 		m_steamid.m_comp.m_EAccountType = 0;
 		m_steamid.m_comp.m_EUniverse = 0;
 		m_steamid.m_comp.m_unAccountInstance = 0;
 	}
-	uint32_t GetAccountID() const { return m_steamid.m_comp.m_unAccountID; }
+	uint32_t get_account_id() const { return m_steamid.m_comp.m_unAccountID; }
 
 private:
-	union SteamID_t
-	{
-		struct SteamIDComponent_t
+	union steam_id_t {
+		struct steam_id_component_t
 		{
 			uint32_t			m_unAccountID : 32;			// unique account identifier
 			unsigned int		m_unAccountInstance : 20;	// dynamic instance ID (used for multiseat type accounts only)
@@ -48,12 +42,11 @@ private:
 	} m_steamid;
 };
 
-class c_steam_user
-{
+class c_steam_user {
 public:
 	virtual uint32_t get_hsteam_user() = 0;
 	virtual bool b_logged_on() = 0;
-	virtual CSteamID get_steam_id() = 0;
+	virtual c_steam_id get_steam_id() = 0;
 };
 
 using HTTPRequestHandle = std::uint32_t;
@@ -62,16 +55,14 @@ enum : HTTPRequestHandle { INVALID_HTTPREQUEST_HANDLE = 0 };
 using SteamAPICall_t = std::uint64_t;
 enum : SteamAPICall_t { k_uAPICallInvalid = 0 };
 
-enum class EHTTPMethod
-{
+enum class EHTTPMethod {
 	Invalid = 0,
 	GET,
 	HEAD,
 	POST
 };
 
-class c_steam_http
-{
+class c_steam_http {
 public:
 	virtual HTTPRequestHandle     create_http_request(EHTTPMethod eHTTPRequestMethod, const char* pchAbsoluteURL) = 0;
 	virtual bool                  set_http_request_context_value(HTTPRequestHandle hRequest, std::uint64_t ulContextValue) = 0;
@@ -94,29 +85,24 @@ public:
 
 class c_steam_friends;
 
-class c_steam_client
-{
+class c_steam_client {
 public:
-	c_steam_user* get_user(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion)
-	{
+	c_steam_user* get_user(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion) {
 		typedef c_steam_user* (__stdcall * func)(HSteamUser, HSteamPipe, const char*);
 		return call_vfunction<func>(this, 5)(hSteamUser, hSteamPipe, pchVersion);
 	}
 
-	c_steam_friends* get_friends(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion)
-	{
+	c_steam_friends* get_friends(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion) {
 		typedef c_steam_friends* (__stdcall * func)(HSteamUser, HSteamPipe, const char*);
 		return call_vfunction<func>(this, 8)(hSteamUser, hSteamPipe, pchVersion);
 	}
 
-	c_steam_game_coordinator* get_coordinator(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion)
-	{
+	c_steam_game_coordinator* get_coordinator(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion) {
 		typedef c_steam_game_coordinator* (__stdcall * func)(HSteamUser, HSteamPipe, const char*);
 		return call_vfunction<func>(this, 12)(hSteamUser, hSteamPipe, pchVersion);
 	}
 
-	c_steam_http* get_http(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion)
-	{
+	c_steam_http* get_http(HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char* pchVersion) {
 		typedef c_steam_http* (__stdcall * func)(HSteamUser, HSteamPipe, const char*);
 		return call_vfunction<func>(this, 23)(hSteamUser, hSteamPipe, pchVersion);
 	}

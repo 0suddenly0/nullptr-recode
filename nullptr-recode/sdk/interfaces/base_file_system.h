@@ -7,7 +7,6 @@
 
 class c_base_file_system {
 public:
-
     int read(void* output, int size, void* file) {
         return call_vfunction<int(__thiscall*)(void*, void*, int, void*)>(this, 0)(this, output, size, file);
     }

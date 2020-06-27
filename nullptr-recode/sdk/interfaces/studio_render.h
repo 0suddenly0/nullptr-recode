@@ -111,16 +111,12 @@ public:
 	 call_vfunction< OrigFn >( this, 27 )( this, pColor );
   }
 
-  void forced_material_override( c_material* material, override_type noverride_type = override_type::Normal )
-  {
+  void forced_material_override( c_material* material, override_type noverride_type = override_type::normal) {
       call_virtual_method<void>(this, 33, material, noverride_type, -1);
   }
 
-  bool is_forced_material_override() noexcept
-  {
-      if (!m_pForcedMaterial)
-          return m_nForcedMaterialType == override_type::DepthWrite || m_nForcedMaterialType == override_type::SsaoDepthWrite; // see CStudioRenderContext::IsForcedMaterialOverride
-
+  bool is_forced_material_override() {
+      if (!m_pForcedMaterial) return m_nForcedMaterialType == override_type::depth_write || m_nForcedMaterialType == override_type::ssao_depth_write; // see CStudioRenderContext::IsForcedMaterialOverride
       return strstr(m_pForcedMaterial->get_name(), "dev/glow");
   }
 };

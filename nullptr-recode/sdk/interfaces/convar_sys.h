@@ -15,8 +15,7 @@ class con_command;
 class con_command_base;
 struct characterset_t;
 
-class c_command
-{
+class c_command {
 public:
     c_command();
     c_command(int nArgC, const char **ppArgV);
@@ -38,8 +37,7 @@ public:
     static characterset_t* default_break_set();
 
 private:
-    enum
-    {
+    enum {
         COMMAND_MAX_ARGC = 64,
         COMMAND_MAX_LENGTH = 512,
     };
@@ -51,33 +49,27 @@ private:
     const char*	m_ppArgv[COMMAND_MAX_ARGC];
 };
 
-int c_command::max_command_length()
-{
+int c_command::max_command_length() {
     return COMMAND_MAX_LENGTH - 1;
 }
 
-int c_command::arg_c() const
-{
+int c_command::arg_c() const {
     return m_nArgc;
 }
 
-const char ** c_command::arg_v() const
-{
+const char ** c_command::arg_v() const {
     return m_nArgc ? (const char**)m_ppArgv : NULL;
 }
 
-const char * c_command::arg_s() const
-{
+const char * c_command::arg_s() const {
     return m_nArgv0Size ? &m_pArgSBuffer[m_nArgv0Size] : "";
 }
 
-const char * c_command::get_command_string() const
-{
+const char * c_command::get_command_string() const {
     return m_nArgc ? m_pArgSBuffer : "";
 }
 
-const char * c_command::arg(int nIndex) const
-{
+const char * c_command::arg(int nIndex) const {
     // FIXME: Many command handlers appear to not be particularly careful
     // about checking for valid argc range. For now, we're going to
     // do the extra check and return an empty string if it's out of range
@@ -86,8 +78,7 @@ const char * c_command::arg(int nIndex) const
     return m_ppArgv[nIndex];
 }
 
-const char * c_command::operator[](int nIndex) const
-{
+const char * c_command::operator[](int nIndex) const {
     return arg(nIndex);
 }
 
@@ -95,8 +86,7 @@ const char * c_command::operator[](int nIndex) const
 // Any executable that wants to use convars need to implement one of
 // these to hook up access to console variables.
 //-----------------------------------------------------------------------------
-class i_con_command_base_accessor
-{
+class i_con_command_base_accessor {
 public:
     // Flags is a combination of FCVAR flags in cvar.h.
     // hOut is filled in with a handle to the variable.
@@ -121,14 +111,12 @@ typedef int(*FnCommandCompletionCallback)(const char *partial, char commands[COM
 //-----------------------------------------------------------------------------
 // Interface version
 //-----------------------------------------------------------------------------
-class i_command_callback
-{
+class i_command_callback {
 public:
     virtual void command_callback(const c_command &command) = 0;
 };
 
-class i_command_completion_callback
-{
+class i_command_completion_callback {
 public:
     virtual int  command_completion_callback(const char *pPartial, c_utl_vector<CUtlString> &commands) = 0;
 };
@@ -136,8 +124,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: The base console invoked command/cvar interface
 //-----------------------------------------------------------------------------
-class con_command_base
-{
+class con_command_base {
     friend class c_cvar;
     friend class c_convar;
     friend class con_command;
@@ -200,8 +187,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: The console invoked command
 //-----------------------------------------------------------------------------
-class con_command : public con_command_base
-{
+class con_command : public con_command_base {
     friend class c_cvar;
 
 public:
@@ -230,15 +216,13 @@ public:
     // in mod code.
 
     // Call this function when executing the command
-    union
-    {
+    union {
         FnCommandCallbackV1_t       m_fnCommandCallbackV1;
         FnCommandCallback_t         m_fnCommandCallback;
         i_command_callback*           m_pCommandCallback;
     };
 
-    union
-    {
+    union {
         FnCommandCompletionCallback m_fnCompletionCallback;
         i_command_completion_callback* m_pCommandCompletionCallback;
     };
@@ -252,8 +236,7 @@ public:
 //-----------------------------------------------------------------------------
 // Purpose: A console variable
 //-----------------------------------------------------------------------------
-class convar : public con_command_base, public c_convar
-{
+class convar : public con_command_base, public c_convar {
     friend class CCvar;
     friend class convarRef;
     friend class SplitScreenconvarRef;
@@ -322,20 +305,17 @@ public:
     float                           get_max_value() const;
     const char*                     get_default(void) const;
 
-    struct c_vvalue_t
-    {
+    struct c_vvalue_t {
         char*   m_pszString;
         int     m_StringLength;
         float   m_fValue;
         int     m_nValue;
     };
 
-    FORCEINLINE_CVAR c_vvalue_t &get_raw_value()
-    {
+    FORCEINLINE_CVAR c_vvalue_t &get_raw_value() {
         return m_Value;
     }
-    FORCEINLINE_CVAR const c_vvalue_t &get_raw_value() const
-    {
+    FORCEINLINE_CVAR const c_vvalue_t &get_raw_value() const {
         return m_Value;
     }
 
@@ -370,8 +350,7 @@ public:
 // Purpose: Return convar value as a float
 // Output : float
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR float convar::get_float(void) const
-{
+FORCEINLINE_CVAR float convar::get_float(void) const {
     uint32_t xored = *(uint32_t*)&m_pParent->m_Value.m_fValue ^ (uint32_t)this;
     return *(float*)&xored;
 }
@@ -380,8 +359,7 @@ FORCEINLINE_CVAR float convar::get_float(void) const
 // Purpose: Return convar value as an int
 // Output : int
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR int convar::get_int(void) const
-{
+FORCEINLINE_CVAR int convar::get_int(void) const {
     return (int)(m_pParent->m_Value.m_nValue ^ (int)this);
 }
 
@@ -389,8 +367,7 @@ FORCEINLINE_CVAR int convar::get_int(void) const
 // Purpose: Return convar value as a color
 // Output : Color
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR color convar::get_color(void) const
-{
+FORCEINLINE_CVAR color convar::get_color(void) const {
     int value = get_int();
     unsigned char *pColorElement = ((unsigned char *)&value);
     return color(pColorElement[0], pColorElement[1], pColorElement[2], pColorElement[3]);
@@ -412,8 +389,7 @@ template <> FORCEINLINE_CVAR const char*    convar::get<const char *>(char const
 // Purpose: Return convar value as a string, return "" for bogus string pointer, etc.
 // Output : const char *
 //-----------------------------------------------------------------------------
-FORCEINLINE_CVAR const char * convar::get_string(void) const
-{
+FORCEINLINE_CVAR const char * convar::get_string(void) const {
     if(m_nFlags & FCVAR_NEVER_AS_STRING)
         return "FCVAR_NEVER_AS_STRING";
     char const *str = m_pParent->m_Value.m_pszString;

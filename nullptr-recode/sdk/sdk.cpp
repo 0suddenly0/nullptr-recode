@@ -2,23 +2,21 @@
 #include "structures/structures.h"
 
 create_interface_fn get_module_factory(HMODULE module) {
-	return reinterpret_cast<create_interface_fn>(GetProcAddress(module, "CreateInterface"));
+	return (create_interface_fn)(GetProcAddress(module, "CreateInterface"));
 }
 
 template<typename T>
 T* get_interface(create_interface_fn f, const char* szInterfaceVersion) {
-	auto result = reinterpret_cast<T*>(f(szInterfaceVersion, nullptr));
+	auto result = (T*)(f(szInterfaceVersion, nullptr));
 
-	if (!result) {
-		throw std::runtime_error(std::string("[get_interface] Failed to GetOffset interface: ") + szInterfaceVersion);
-	}
+	if (!result)
+		throw std::runtime_error(std::string("[get_interface] failed to get_offset interface: ") + szInterfaceVersion);
 
 	return result;
 }
 
 template <typename T>
-T get_steam_interface(const char* version)
-{
+T get_steam_interface(const char* version) {
 	static const auto steam_api = GetModuleHandleA("steam_api.dll");
 	return reinterpret_cast<T(__cdecl*)(void)>(GetProcAddress(steam_api, version))();
 }

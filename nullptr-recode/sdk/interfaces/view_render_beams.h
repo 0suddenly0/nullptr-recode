@@ -7,8 +7,7 @@ class c_trace_filter;
 //---------------------------------------------------------------------------—
 // Purpose: Popcorn trail for Beam Follow rendering...
 //---------------------------------------------------------------------------—
-enum
-{
+enum {
 	FBEAM_STARTENTITY = 0x00000001,
 	FBEAM_ENDENTITY = 0x00000002,
 	FBEAM_FADEIN = 0x00000004,
@@ -28,8 +27,7 @@ enum
 	FBEAM_REVERSED = 0x00010000,
 	NUM_BEAM_FLAGS = 17 // KEEP THIS UPDATED!
 };
-enum
-{
+enum {
 	TE_BEAMPOINTS = 0x00, // beam effect between two points
 	TE_SPRITE = 0x01, // additive sprite, plays 1 cycle
 	TE_BEAMDISK = 0x02, // disk that expands to max radius over lifetime
@@ -41,8 +39,8 @@ enum
 	TE_BEAMLASER = 0x08, // Fades according to viewpoint
 	TE_BEAMTESLA = 0x09,
 };
-struct beam_trail_t
-{
+
+struct beam_trail_t {
 	// NOTE: Don't add user defined fields except after these four fields.
 	beam_trail_t* next;
 	float die;
@@ -53,8 +51,7 @@ struct beam_trail_t
 //---------------------------------------------------------------------------—
 // Data type for beams.
 //---------------------------------------------------------------------------—
-struct beam_info_t
-{
+struct beam_info_t {
 	int m_nType;
 
 	// Entities
@@ -101,8 +98,7 @@ struct beam_info_t
 	float m_flStartRadius;
 	float m_flEndRadius;
 
-	beam_info_t()
-	{
+	beam_info_t() {
 		m_nType = TE_BEAMPOINTS;
 		m_nSegments = -1;
 		m_pszModelName = NULL;
@@ -117,8 +113,7 @@ struct beam_info_t
 //---------------------------------------------------------------------------—
 // Purpose: Declare client .dll beam entity interface
 //---------------------------------------------------------------------------—
-class c_view_render_beams
-{
+class c_view_render_beams {
 public:
 	virtual void init_beams(void) = 0;
 	virtual void shutdown_beams(void) = 0;

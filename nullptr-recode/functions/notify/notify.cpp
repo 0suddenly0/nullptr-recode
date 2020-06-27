@@ -1,5 +1,5 @@
 #include "notify.h"
-#include "../../settings/globals.h"
+#include "../../settings/settings.h"
 #include <map>
 
 struct notify_t {
@@ -22,8 +22,28 @@ std::deque<notify_t> notifications_standart;
 std::deque<notify_t> notifications_big;
 
 namespace notify {
+	void add(std::string pre, std::string body, log_settings_t log, int life_time) {
+		if (log.enable_console) add(pre, body, log.using_custom_color ? log.custm_color : log.using_menu_color ? globals::menu_color : log.color, color(255, 255, 255, 255), life_time, log_type::console);
+		if (log.enable_screen) add(pre, body, log.using_custom_color ? log.custm_color : log.using_menu_color ? globals::menu_color : log.color, color(255, 255, 255, 255), life_time, log.screen_type);
+	}
+
+	void add(std::string pre, std::string body, color color_pre, bool first, bool two, log_type first_type, log_type two_type, int life_time) {
+		if (first) add(pre, body, color_pre, color(255, 255, 255, 255), life_time, first_type);
+		if (two)   add(pre, body, color_pre, color(255, 255, 255, 255), life_time, two_type);
+	}
+
 	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type) {
 		switch (type) {
+		case console: 
+			if (!sdk::engine_client || !sdk::cvar)
+				return;
+
+			sdk::cvar->console_dprintf("[ ");
+			sdk::cvar->console_color_printf(color_pre, pre.data());
+			sdk::cvar->console_dprintf(" ] ");
+			sdk::cvar->console_color_printf(color_body, body.data());
+			sdk::cvar->console_dprintf("\n");
+			break;
 		case standart:
 			notifications_standart.push_front(notify_t{ pre, body, color_pre, color_body, (float)life_time });
 			break;

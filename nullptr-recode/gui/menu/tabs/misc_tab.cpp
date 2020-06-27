@@ -12,10 +12,9 @@ char* clantag_tabs[] =
 namespace menu {
 	void misc_tab() {
 		null_gui::create_columns(2);
-		static int testr;
-		null_gui::begin_group("misc", vec2(0, 300)); {
 
-			null_gui::color_edit("menu color", &globals::menu_color);
+		null_gui::begin_group("misc", vec2(0, 444)); {
+			null_gui::color_edit("menu color", &globals::menu_color, false);
 			null_gui::check_box("watermark", &settings::misc::watermark);
 			null_gui::check_box("obs bypass", &settings::misc::obs_bypass);
 			null_gui::check_box("bhop", &settings::misc::bhop::enable);	
@@ -33,7 +32,7 @@ namespace menu {
 			null_gui::check_box("fake latency", &settings::misc::fake_latency::enable);
 			null_gui::slider_int("amont##fake latency", &settings::misc::fake_latency::amount, 0, 1000);
 
-			null_gui::check_box("ingame radar", &settings::visuals::ingame_radar);
+			null_gui::check_box("ingame radar", &settings::visuals::ingame_radar);//dont work
 			null_gui::tooltip("shows enemies on game radar");
 
 			null_gui::tooltip_items("view model", []() {
@@ -73,11 +72,13 @@ namespace menu {
 			null_gui::end_group();
 		}
 
+		null_gui::next_column();
+
 		null_gui::begin_group("clantag##misc_tab", vec2(0, 212));
 		{
 			null_gui::horizontal(settings::misc::clantag::clantag_type, clantag_tabs);
 
-			ImGui::Checkbox("enable##clantag", &settings::misc::clantag::enable);
+			null_gui::check_box("enable##clantag", &settings::misc::clantag::enable);
 
 			switch (settings::misc::clantag::clantag_type)
 			{
@@ -124,11 +125,10 @@ namespace menu {
 				}
 				break;
 			case 2:
-				static std::string local_tag;
-				null_gui::text_input("clantag##misc_clantag", &local_tag);
+				null_gui::text_input("clantag##misc_clantag", &temp_clantag);
 				if (null_gui::button("apply##clan", true)) {
-					settings::misc::clantag::clantag = local_tag;
-					settings::misc::clantag::clantag_visible = local_tag;
+					settings::misc::clantag::clantag = temp_clantag;
+					settings::misc::clantag::clantag_visible = temp_clantag;
 				}
 
 				null_gui::combo("animation", &settings::misc::clantag::custom_type, std::vector<std::string>{"none", "type 1", "type 2"});
@@ -142,7 +142,10 @@ namespace menu {
 
 		null_gui::begin_group("windows", vec2(0, 100)); {
 
-			null_gui::check_box("bind window", &settings::misc::bind_window);
+			null_gui::check_box("bind window", &settings::windows::bind_window_show);
+			null_gui::tooltip_items("##bind_window_settings", []() {
+				null_gui::slider_int("window alpha##bind_window", &settings::windows::bind_window_alpha, 0, 255);
+				});
 
 			null_gui::end_group();
 		}
