@@ -294,7 +294,8 @@ namespace skin_changer {
 			if (config->stat_trak) {
 				item->fallback_stat_trak() = settings::changers::skin::statrack_items[config->definition_index].statrack_new.counter;
 				item->item().entity_quality() = 9;
-			} else {
+			}
+			else {
 				item->item().entity_quality() = is_knife(config->definition_index) ? 3 : 0;
 			}
 			item->fallback_wear() = config->wear;
@@ -314,7 +315,8 @@ namespace skin_changer {
 						icon_override_map[original_item.icon] = replacement_item.icon;
 					}
 				}
-			} else {
+			}
+			else {
 				erase_override_if_exists_by_index(definition_index);
 			}
 		}
@@ -347,16 +349,18 @@ namespace skin_changer {
 
 			weapon_name cur_gloves = { 0, "" };
 			weapon_name cur_knifes = { 0, "" };
-			if(is_glove) cur_gloves = is_ct ? ct_glove_names.at(definition_override_vector_index) : t_glove_names.at(definition_override_vector_index);
-			if(is_knife) cur_knifes = is_ct ? ct_knife_names.at(definition_override_vector_index) : t_knife_names.at(definition_override_vector_index);
+			if (is_glove) cur_gloves = is_ct ? ct_glove_names.at(definition_override_vector_index) : t_glove_names.at(definition_override_vector_index);
+			if (is_knife) cur_knifes = is_ct ? ct_knife_names.at(definition_override_vector_index) : t_knife_names.at(definition_override_vector_index);
 
 			if (is_weapon) {
 				selected_skin_name = weapon_names.at(menu::definition_vector_index).skin_name.c_str();
 				selected_weapon_name = weapon_names.at(menu::definition_vector_index)._weapon_name.c_str();
-			} else if (is_knife) {
+			}
+			else if (is_knife) {
 				selected_skin_name = cur_knifes.skin_name.c_str();
 				selected_weapon_name = cur_knifes._weapon_name.c_str();
-			} else if (is_glove) {
+			}
+			else if (is_glove) {
 				selected_skin_name = cur_gloves.skin_name.c_str();
 				selected_weapon_name = cur_gloves._weapon_name.c_str();
 			}
@@ -387,14 +391,14 @@ namespace skin_changer {
 				}
 			}
 
-			if(!dont_draw)
+			if (!dont_draw)
 				return skin_texture;
 		}
 	}
 
 	void update() {
 		static auto clear_hud_weapon_icon_fn = (std::int32_t(__thiscall*)(void*, std::int32_t))(
-				utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 51 53 56 8B 75 08 8B D9 57 6B FE 2C 89 5D FC"));
+			utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 51 53 56 8B 75 08 8B D9 57 6B FE 2C 89 5D FC"));
 
 		auto element = find_hud_element<std::uintptr_t*>("CCSGO_HudWeaponSelection");
 
@@ -478,11 +482,12 @@ namespace skin_changer {
 					*wearable_handle = entry | serial << 16;
 					glove_handle = wearables[0];
 				}
-				// Thanks, Beakers
+
 				glove->set_glove_model_index(-1);
 				deeps::apply_config_on_attributable_item(glove, glove_config, player_info.xuid_low);
 			}
-		} else if (stage == frame_stage_t::net_update_post_data_update_start) {
+		}
+		else if (stage == frame_stage_t::net_update_post_data_update_start) {
 			auto weapons = local->my_weapons();
 			for (int i = 0; weapons[i].is_valid(); i++) {
 				c_base_attributable_item* weapon = (c_base_attributable_item*)sdk::entity_list->get_client_entity_from_handle(weapons[i]);

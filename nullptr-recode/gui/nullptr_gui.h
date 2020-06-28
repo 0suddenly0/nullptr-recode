@@ -82,12 +82,15 @@ namespace null_gui {
         void set_next_window_size(vec2 size, bool once = true);
         void set_menu_color(color clr);
         void set_window_pos(vec2 pos);
+        void set_window_pos(const char* name, vec2 pos, bool once = true);
         void set_window_size(vec2 size);
         void set_window_hidden(bool hidden);
         void set_next_window_alpha(float alpha);
         void set_next_window_focus();
 
         void get_window_pos_and_size(vec2* pos, vec2* size);
+        vec2 get_window_pos();
+        vec2 get_window_size();
     }
 
     void text(const char* text, ...);

@@ -72,14 +72,13 @@ namespace menu {
 			std::vector<weapon_name>& cur_knifes = this_ct(selected_entry.definition_index) ? skin_changer::deeps::ct_knife_names : skin_changer::deeps::t_knife_names;
 			std::vector<weapon_name>& cur_gloves = this_ct(selected_entry.definition_index) ? skin_changer::deeps::ct_glove_names : skin_changer::deeps::t_glove_names;
 
-			if (!this_knife(selected_entry.definition_index) && !this_glove(selected_entry.definition_index)) 
+			if (!this_knife(selected_entry.definition_index) && !this_glove(selected_entry.definition_index))
 				skin_changer::deeps::weapon_names.at(definition_vector_index)._weapon_name = skin_changer::deeps::weapon_names_preview[definition_vector_index].name;
-			else if (this_glove(selected_entry.definition_index)) 
+			else if (this_glove(selected_entry.definition_index))
 				cur_gloves.at(selected_entry.definition_override_vector_index)._weapon_name = skin_changer::deeps::glove_names_preview.at(selected_entry.definition_override_vector_index).name;
 			else if (this_knife(selected_entry.definition_index))
 				cur_knifes.at(selected_entry.definition_override_vector_index)._weapon_name = skin_changer::deeps::knife_names_preview.at(selected_entry.definition_override_vector_index).name;
 
-			static int test_daun;
 			if (selected_tab_skins == 0) {
 				null_gui::check_box("skin preview", &settings::changers::skin::skin_preview);
 				null_gui::check_box("stattrak##enable", &selected_entry.stat_trak);
@@ -98,7 +97,8 @@ namespace menu {
 						selected_entry.definition_override_index = cur_knifes.at(selected_entry.definition_override_vector_index).definition_index;
 					}
 					null_gui::end_list_box();
-				} else if (this_glove(selected_entry.definition_index)) {
+				}
+				else if (this_glove(selected_entry.definition_index)) {
 					null_gui::begin_list_box("glove##list_gloves", vec2(0, 202)); {
 						for (int i = 0; i < cur_gloves.size(); i++) {
 							if (null_gui::selectable(cur_gloves[i].name.c_str(), selected_entry.definition_override_vector_index == i)) {
@@ -109,19 +109,21 @@ namespace menu {
 						selected_entry.definition_override_index = cur_gloves.at(selected_entry.definition_override_vector_index).definition_index;
 					}
 					null_gui::end_list_box();
-				} else {
+				}
+				else {
 					selected_entry.definition_override_vector_index = 0;
 				}
-			} else if (selected_tab_skins == 1) {
+			}
+			else if (selected_tab_skins == 1) {
 				if (skin_parser::skins_parsed) {
 					static std::string filter;
 
 					int cur_weapidx = 0;
-					if (!this_glove(selected_entry.definition_index) && !this_knife(selected_entry.definition_index)) 
+					if (!this_glove(selected_entry.definition_index) && !this_knife(selected_entry.definition_index))
 						cur_weapidx = skin_changer::deeps::weapon_names[definition_vector_index].definition_index;
 					else if (this_glove(selected_entry.definition_index))
 						cur_weapidx = cur_gloves.at(selected_entry.definition_override_vector_index).definition_index;
-					else if (this_knife(selected_entry.definition_index)) 
+					else if (this_knife(selected_entry.definition_index))
 						cur_weapidx = cur_knifes.at(selected_entry.definition_override_vector_index).definition_index;
 
 
@@ -164,7 +166,8 @@ namespace menu {
 									}
 								}
 							}
-						} else {
+						}
+						else {
 
 							if (null_gui::selectable(" - ", selected_entry.paint_kit_index == -1)) {
 								selected_entry.paint_kit_vector_index = -1;
@@ -196,7 +199,8 @@ namespace menu {
 						}
 					}
 					null_gui::end_list_box();
-				} else {
+				}
+				else {
 					null_gui::text("skins parsing, wait...");
 				}
 			}

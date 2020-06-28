@@ -79,7 +79,7 @@ class c_hud_texture;
 #include "c_csgo_player_animstate.h"
 #include "c_econ_item_view.h"
 #include "c_game_rules.h"
+#include "c_base_inferno.h"
 #include "c_hud_texture.h"
 #include "c_planted_c4.h"
 #include "c_player_resource.h"
-#include "c_base_inferno.h"

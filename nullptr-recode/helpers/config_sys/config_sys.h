@@ -72,7 +72,7 @@ public:
 };
 
 namespace config {
-	namespace c_utils {
+	namespace config_utils {
 		std::string split_line(std::string temp);
 
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<int_v>& vars, std::string name, int& var);
@@ -92,7 +92,29 @@ namespace config {
 		bool load(std::string path, std::string name, std::vector<int_v>& ints, std::vector<bool_v>& bools, std::vector<float_v>& floats, std::vector<color_v>& colors, std::vector<bind_v>& binds, std::vector<string_v>& strings, std::vector<window_v>& windows);
 	}
 
-	namespace standart {
+	class c_config {
+	public:
+		c_config(std::string _dir_name) {
+			dir_name = _dir_name;
+		}
+
+		void clear() {
+			config.clear();
+
+			ints.clear();
+			bools.clear();
+			binds.clear();
+			floats.clear();
+			colors.clear();
+			strings.clear();
+			windows.clear();
+
+			cur_line = 0;
+			cur_group = 0;
+		}
+
+		std::string dir_name;
+
 		int cur_group = 0;
 		int cur_line = 0;
 
@@ -105,61 +127,32 @@ namespace config {
 		std::vector<color_v> colors;
 		std::vector<string_v> strings;
 		std::vector<window_v> windows;
+	};
 
-		void setup_set();
+	namespace standart {
+		config::c_config _config = config::c_config("standart");
 
-		void add_var(std::string name, int& var);
-		void add_var(std::string name, bool& var);
-		void add_var(std::string name, float& var);
-		void add_var(std::string name, color& var);
-		void add_var(std::string name, key_bind_t& var);
-		void add_var(std::string name, std::string& var);
-		void add_var(std::string name, std::string wind, float& x, float& y);
-
-		void add_space();
-
-		void add_group(std::string name);
-		void end_group();
-
-		void clear();
-
+		void setup_vars();
 		bool save(std::string name);
 		bool load(std::string name);
 	}
 
 	namespace skins {
-		int cur_group = 0;
-		int cur_line = 0;
+		config::c_config _config = config::c_config("skins");
 
-		std::vector<std::string> config;
-
-		std::vector<int_v> ints;
-		std::vector<bind_v> binds;
-		std::vector<bool_v> bools;
-		std::vector<float_v> floats;
-		std::vector<color_v> colors;
-		std::vector<string_v> strings;
-		std::vector<window_v> windows;
-
-
-		void setup_set();
-
-		void add_var(std::string name, int& var);
-		void add_var(std::string name, bool& var);
-		void add_var(std::string name, float& var);
-		void add_var(std::string name, color& var);
-		void add_var(std::string name, key_bind_t& var);
-		void add_var(std::string name, std::string& var);
-		void add_var(std::string name, std::string wind, float& x, float& y);
-
-		void add_space();
-
-		void add_group(std::string name);
-		void end_group();
-
-		void clear();
-
+		void setup_vars();
 		bool save(std::string name);
 		bool load(std::string name);
 	}
+
+	void push_cur_config(c_config* cfg);
+	void add_var(std::string name, int& var);
+	void add_var(std::string name, bool& var);
+	void add_var(std::string name, float& var);
+	void add_var(std::string name, color& var);
+	void add_var(std::string name, key_bind_t& var);
+	void add_var(std::string name, std::string& var);
+	void add_var(std::string name, std::string wind, float& x, float& y);
+	void add_group(std::string name);
+	void end_group();
 }

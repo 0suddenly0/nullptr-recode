@@ -4,10 +4,11 @@
 #include "../../functions/notify/notify.h"
 //#include "../features/changers/skin/item_definitions.h"
 
+config::c_config* current_config = new config::c_config("cur_config");
 char line_splited = '/';
 
 namespace config {
-	namespace c_utils {
+	namespace config_utils {
 		std::string split_line(std::string temp) {
 			std::string new_t = "";
 
@@ -23,70 +24,70 @@ namespace config {
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<window_v>& vars, std::string name, std::string wind, float& x, float& y) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = x-" + std::to_string((int)x) + " y-" + std::to_string((int)y) + ";";
+			std::string full = utils::snprintf("%s = x-%.0f y-%.0f;", name.c_str(), x, y);
 
-			vars.push_back(window_v{ full, name + " = ", wind, x, y, cur_line, cur_group });
-			config.push_back(name + " = x-" + std::to_string((int)x) + " y-" + std::to_string((int)y) + ";" + "\n");
+			vars.push_back(window_v{ full, utils::snprintf("%s = ", name.c_str()), wind, x, y, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<string_v>& vars, std::string name, std::string& var) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = '" + var + "';";
+			std::string full = utils::snprintf("%s = '%s';", name.c_str(), var.c_str());
 
-			vars.push_back(string_v{ full, name + " = ", var, cur_line, cur_group });
-			config.push_back(name + " = '" + var + "';" + "\n");
+			vars.push_back(string_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<int_v>& vars, std::string name, int& var) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = " + std::to_string(var) + ";";
+			std::string full = utils::snprintf("%s = %d;", name.c_str(), var);
 
-			vars.push_back(int_v{ full, name + " = ", var, cur_line, cur_group });
-			config.push_back(name + " = " + std::to_string(var) + ";" + "\n");
+			vars.push_back(int_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<float_v>& vars, std::string name, float& var) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = " + std::to_string(var) + ";";
+			std::string full = utils::snprintf("%s = %.3f;", name.c_str(), var);
 
-			vars.push_back(float_v{ full, name + " = ", var, cur_line, cur_group });
-			config.push_back(name + " = " + std::to_string(var) + ";" + "\n");
+			vars.push_back(float_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<bind_v>& vars, std::string name, key_bind_t& var) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = " + std::to_string(var.key_id) + "-" + std::to_string(var.bind_type) + "-" + (var.enable ? "true" : "false") + ";";
+			std::string full = utils::snprintf("%s = %d-%d-%s;" , name.c_str(), var.key_id, var.bind_type, var.enable ? "true" : "false");
 
-			vars.push_back(bind_v{ full, name + " = ", var, cur_line, cur_group });
-			config.push_back(name + " = " + std::to_string(var.key_id) + "-" + std::to_string(var.bind_type) + "-" + (var.enable ? "true" : "false") + ";" + "\n");
+			vars.push_back(bind_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<bool_v>& vars, std::string name, bool& var) {
 			add_space(cur_group, config);
 
-			std::string full = name + " = " + (var ? "true" : "false") + ";";
+			std::string full = utils::snprintf("%s = %s;", name.c_str(), var ? "true" : "false");
 
-			vars.push_back(bool_v{ full, name + " = ", var, cur_line, cur_group });
-			config.push_back(name + " = " + (var ? "true" : "false") + ";" + "\n");
+			vars.push_back(bool_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<color_v>& vars, std::string name, color& var) {
 			add_space(cur_group, config);
 
-			std::string full = utils::snprintf("%s = %i-%i-%i", name.c_str(), var.color_char[0], var.color_char[1], var.color_char[2], var.color_char[3]);
+			std::string full = utils::snprintf("%s = %d-%d-%d-%d;", name.c_str(), var.color_char[0], var.color_char[1], var.color_char[2], var.color_char[3]);
 
 			vars.push_back(color_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
-			config.push_back(utils::snprintf("%s;\n", full.c_str()));
+			config.push_back(utils::snprintf("%s\n", full.c_str()));
 
 			cur_line++;
 		}
@@ -157,7 +158,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(bools[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, bools[i].text.length());
 					new_t.erase(new_t.length() - 1, 1);
 
@@ -170,7 +171,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(ints[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, ints[i].text.length());
 					new_t.erase(new_t.length() - 1, 1);
 
@@ -184,7 +185,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(floats[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, floats[i].text.length());
 					new_t.erase(new_t.length() - 1, 1);
 
@@ -197,7 +198,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(strings[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, strings[i].text.length() + 1);
 					new_t.erase(new_t.length() - 2, 2);
 
@@ -210,7 +211,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(colors[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, colors[i].text.length());
 
 					std::string color = "";
@@ -250,7 +251,7 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(binds[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, binds[i].text.length());
 
 					std::string value = "";
@@ -282,10 +283,10 @@ namespace config {
 					std::string temp = config;
 					temp.erase(0, temp.find(windows[i].text));
 
-					std::string new_t = c_utils::split_line(temp);
+					std::string new_t = config_utils::split_line(temp);
 					new_t.erase(0, windows[i].text.length() + 2);
 
-					ImVec2 local_pos = ImVec2(0, 0);
+					vec2 local_pos = vec2(0, 0);
 
 					char split = ' ';
 					char endl = ';';
@@ -307,7 +308,7 @@ namespace config {
 						}
 					}
 
-					ImGui::SetWindowPos(windows[i].window_name.c_str(), local_pos);
+					null_gui::deep::set_window_pos(windows[i].window_name.c_str(), local_pos, false);
 				}
 
 			}
@@ -317,23 +318,9 @@ namespace config {
 	}
 
 	namespace standart {
-		void clear() {
-			config.clear();
-
-			ints.clear();
-			bools.clear();
-			binds.clear();
-			floats.clear();
-			colors.clear();
-			strings.clear();
-			windows.clear();
-
-			cur_line = 0;
-			cur_group = 0;
-		}
-
-		void setup_set() {
-			clear();
+		void setup_vars() {
+			push_cur_config(&_config);
+			_config.clear();
 
 			add_group("visuals"); {
 				add_group("general"); {
@@ -439,92 +426,35 @@ namespace config {
 
 			}
 			end_group();
-
-		}
-
-		void add_var(std::string name, std::string wind, float& x, float& y) {
-			c_utils::add_var(cur_line, cur_group, config, windows, name, wind, x, y);
-		}
-		void add_var(std::string name, std::string& var) {
-			c_utils::add_var(cur_line, cur_group, config, strings, name, var);
-		}
-		void add_var(std::string name, int& var) {
-			c_utils::add_var(cur_line, cur_group, config, ints, name, var);
-		}
-		void add_var(std::string name, float& var) {
-			c_utils::add_var(cur_line, cur_group, config, floats, name, var);
-		}
-		void add_var(std::string name, key_bind_t& var) {
-			c_utils::add_var(cur_line, cur_group, config, binds, name, var);
-		}
-		void add_var(std::string name, bool& var) {
-			c_utils::add_var(cur_line, cur_group, config, bools, name, var);
-		}
-
-		void add_var(std::string name, color& var) {
-			c_utils::add_var(cur_line, cur_group, config, colors, name, var);
-		}
-
-		void add_space() {
-			c_utils::add_space(cur_group, config);
-		}
-
-		void add_group(std::string name) {
-			c_utils::add_group(cur_line, cur_group, config, name);
-		}
-
-		void end_group() {
-			c_utils::end_group(cur_group);
 		}
 
 		bool save(std::string name) {
 			if (name.empty()) return false;
 
-			setup_set();
+			setup_vars();
 
-			return c_utils::save("standart", config, name);
+			return config_utils::save(_config.dir_name, _config.config, name);
 		}
 
 		bool load(std::string name) {
-			return c_utils::load("standart", name, ints, bools, floats, colors, binds, strings, windows);
+			return config_utils::load(_config.dir_name, name, _config.ints, _config.bools, _config.floats, _config.colors, _config.binds, _config.strings, _config.windows);
 		}
 	}
 
-	namespace skins
-	{
-		void clear()
-		{
-			config.clear();
+	namespace skins {
+		void setup_vars() {
+			push_cur_config(&_config);
+			_config.clear();
 
-			ints.clear();
-			bools.clear();
-			binds.clear();
-			floats.clear();
-			colors.clear();
-			strings.clear();
-			windows.clear();
-
-			cur_line = 0;
-			cur_group = 0;
-		}
-
-		void setup_set()
-		{
-			clear();
-
-			add_group("general");
-			{
+			add_group("general"); {
 				add_var("[general] show skins for selected weapon", settings::changers::skin::show_cur);
 				add_var("[general] skin preview", settings::changers::skin::skin_preview);
 			}
 			end_group();
 
-			add_group("skinchanger");
-			{
-				for (auto& val : skin_changer::deeps::weapon_names)
-				{
-					add_group(val.name);
-					{
+			add_group("skinchanger"); {
+				for (auto& val : skin_changer::deeps::weapon_names) {
+					add_group(val.name); {
 						auto& settings_cur = settings::changers::skin::m_items[val.definition_index];
 
 						add_var("[" + val.name + "] paint kit", settings_cur.paint_kit_index);
@@ -537,14 +467,10 @@ namespace config {
 			}
 			end_group();
 
-			add_group("skin preview");
-			{
-				for (int i = 0; i < skin_changer::deeps::weapon_names.size(); i++)
-				{
-					if (i > 3)
-					{
-						add_group(skin_changer::deeps::weapon_names[i].name);
-						{
+			add_group("skin preview"); {
+				for (int i = 0; i < skin_changer::deeps::weapon_names.size(); i++) {
+					if (i > 3) {
+						add_group(skin_changer::deeps::weapon_names[i].name); {
 							add_var("[skin preview] [" + skin_changer::deeps::weapon_names[i].name + "] name", skin_changer::deeps::weapon_names[i]._weapon_name);
 							add_var("[skin preview] [" + skin_changer::deeps::weapon_names[i].name + "] name skin", skin_changer::deeps::weapon_names[i].skin_name);
 						}
@@ -552,14 +478,10 @@ namespace config {
 					}
 				}
 
-				add_group("ct side");
-				{
-					for (int i = 0; i < skin_changer::deeps::ct_knife_names.size(); i++)
-					{
-						if (i > 2)
-						{
-							add_group(skin_changer::deeps::ct_knife_names[i].name);
-							{
+				add_group("ct side"); {
+					for (int i = 0; i < skin_changer::deeps::ct_knife_names.size(); i++) {
+						if (i > 2) {
+							add_group(skin_changer::deeps::ct_knife_names[i].name); {
 								add_var("[ct skin preview]-[ct side]-[" + skin_changer::deeps::ct_knife_names[i].name + "] name", skin_changer::deeps::ct_knife_names[i]._weapon_name);
 								add_var("[ct skin preview]-[ct side]-[" + skin_changer::deeps::ct_knife_names[i].name + "] name skin", skin_changer::deeps::ct_knife_names[i].skin_name);
 							}
@@ -567,12 +489,9 @@ namespace config {
 						}
 					}
 
-					for (int i = 0; i < skin_changer::deeps::ct_glove_names.size(); i++)
-					{
-						if (i > 2)
-						{
-							add_group(skin_changer::deeps::ct_glove_names[i].name);
-							{
+					for (int i = 0; i < skin_changer::deeps::ct_glove_names.size(); i++) {
+						if (i > 2) {
+							add_group(skin_changer::deeps::ct_glove_names[i].name); {
 								add_var("[skin preview]-[ct side]-[" + skin_changer::deeps::ct_glove_names[i].name + "] name", skin_changer::deeps::ct_glove_names[i]._weapon_name);
 								add_var("[skin preview]-[ct side]-[" + skin_changer::deeps::ct_glove_names[i].name + "] name skin", skin_changer::deeps::ct_glove_names[i].skin_name);
 							}
@@ -582,14 +501,10 @@ namespace config {
 				}
 				end_group();
 
-				add_group("t side");
-				{
-					for (int i = 0; i < skin_changer::deeps::t_knife_names.size(); i++)
-					{
-						if (i > 2)
-						{
-							add_group(skin_changer::deeps::t_knife_names[i].name);
-							{
+				add_group("t side"); {
+					for (int i = 0; i < skin_changer::deeps::t_knife_names.size(); i++) {
+						if (i > 2) {
+							add_group(skin_changer::deeps::t_knife_names[i].name); {
 								add_var("[skin preview]-[t side]-[" + skin_changer::deeps::t_knife_names[i].name + "] name", skin_changer::deeps::t_knife_names[i]._weapon_name);
 								add_var("[skin preview]-[t side]-[" + skin_changer::deeps::t_knife_names[i].name + "] name skin", skin_changer::deeps::t_knife_names[i].skin_name);
 							}
@@ -597,12 +512,9 @@ namespace config {
 						}
 					}
 
-					for (int i = 0; i < skin_changer::deeps::t_glove_names.size(); i++)
-					{
-						if (i > 2)
-						{
-							add_group(skin_changer::deeps::t_glove_names[i].name);
-							{
+					for (int i = 0; i < skin_changer::deeps::t_glove_names.size(); i++) {
+						if (i > 2) {
+							add_group(skin_changer::deeps::t_glove_names[i].name); {
 								add_var("[skin preview]-[t side]-[" + skin_changer::deeps::t_glove_names[i].name + "] name", skin_changer::deeps::t_glove_names[i]._weapon_name);
 								add_var("[skin preview]-[t side]-[" + skin_changer::deeps::t_glove_names[i].name + "] name skin", skin_changer::deeps::t_glove_names[i].skin_name);
 							}
@@ -613,65 +525,49 @@ namespace config {
 				end_group();
 			}
 			end_group();
-
-		}
-		void add_var(std::string name, std::string wind, float& x, float& y)
-		{
-			c_utils::add_var(cur_line, cur_group, config, windows, name, wind, x, y);
-		}
-		void add_var(std::string name, std::string& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, strings, name, var);
-		}
-		void add_var(std::string name, int& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, ints, name, var);
-		}
-		void add_var(std::string name, float& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, floats, name, var);
-		}
-		void add_var(std::string name, key_bind_t& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, binds, name, var);
-		}
-		void add_var(std::string name, bool& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, bools, name, var);
 		}
 
-		void add_var(std::string name, color& var)
-		{
-			c_utils::add_var(cur_line, cur_group, config, colors, name, var);
-		}
-
-		void add_space()
-		{
-			c_utils::add_space(cur_group, config);
-		}
-
-		void add_group(std::string name)
-		{
-			c_utils::add_group(cur_line, cur_group, config, name);
-		}
-
-		void end_group()
-		{
-			c_utils::end_group(cur_group);
-		}
-
-		bool save(std::string name)
-		{
+		bool save(std::string name) {
 			if (name.empty()) return false;
 
-			setup_set();
+			setup_vars();
 
-			return c_utils::save("skins", config, name);
+			return config_utils::save(_config.dir_name, _config.config, name);
 		}
 
-		bool load(std::string name)
-		{
-			return c_utils::load("skins", name, ints, bools, floats, colors, binds, strings, windows);
+		bool load(std::string name) {
+			return config_utils::load(_config.dir_name, name, _config.ints, _config.bools, _config.floats, _config.colors, _config.binds, _config.strings, _config.windows);
 		}
+	}
+
+	void push_cur_config(c_config* cfg) {
+		current_config = cfg;
+	}
+	void add_var(std::string name, std::string wind, float& x, float& y) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->windows, name, wind, x, y);
+	}
+	void add_var(std::string name, std::string& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->strings, name, var);
+	}
+	void add_var(std::string name, int& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->ints, name, var);
+	}
+	void add_var(std::string name, float& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->floats, name, var);
+	}
+	void add_var(std::string name, key_bind_t& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->binds, name, var);
+	}
+	void add_var(std::string name, bool& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->bools, name, var);
+	}
+	void add_var(std::string name, color& var) {
+		config_utils::add_var(current_config->cur_line, current_config->cur_group, current_config->config, current_config->colors, name, var);
+	}
+	void add_group(std::string name) {
+		config_utils::add_group(current_config->cur_line, current_config->cur_group, current_config->config, name);
+	}
+	void end_group() {
+		config_utils::end_group(current_config->cur_group);
 	}
 }

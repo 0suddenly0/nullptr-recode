@@ -218,7 +218,6 @@
     <ClCompile Include="sdk\misc\utl_buffer.cpp" />
     <ClCompile Include="sdk\misc\utl_string.cpp" />
     <ClCompile Include="sdk\sdk.cpp" />
-    <ClCompile Include="sdk\structures\c_base_inferno.h" />
     <ClCompile Include="settings\settings.cpp" />
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
@@ -324,6 +323,7 @@
     <ClInclude Include="sdk\structures\c_base_attributable_item.h" />
     <ClInclude Include="sdk\structures\c_base_combat_weapon.h" />
     <ClInclude Include="sdk\structures\c_base_entity.h" />
+    <ClInclude Include="sdk\structures\c_base_inferno.h" />
     <ClInclude Include="sdk\structures\c_base_player.h" />
     <ClInclude Include="sdk\structures\c_base_view_model.h" />
     <ClInclude Include="sdk\structures\c_base_weapon_world_model.h" />

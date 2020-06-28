@@ -16,6 +16,8 @@ namespace menu {
 
 		null_gui::begin_window("bind's", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
 
+			settings::windows::bind_window_pos = null_gui::deep::get_window_pos();
+
 			null_gui::deep::set_window_hidden(!show_window);
 
 			null_gui::create_columns(2); {

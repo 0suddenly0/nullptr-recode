@@ -55,6 +55,10 @@ namespace null_gui {
             ImGui::SetWindowPos(ImVec2(pos.x, pos.y));
         }
 
+        void set_window_pos(const char* name, vec2 pos, bool once) {
+            ImGui::SetWindowPos(name, ImVec2(pos.x, pos.y), once ? ImGuiCond_Once : 0);
+        }
+
         void set_window_size(vec2 size) {
             ImGui::SetWindowSize(ImVec2(size.x, size.y));
         }
@@ -74,6 +78,14 @@ namespace null_gui {
         void get_window_pos_and_size(vec2* pos, vec2* size) {
             *pos = vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
             *size = vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+        }
+
+        vec2 get_window_pos() {
+            return vec2(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y);
+        }
+
+        vec2 get_window_size() {
+            return vec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
         }
     }
 

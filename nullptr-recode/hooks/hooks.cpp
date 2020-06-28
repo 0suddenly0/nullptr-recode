@@ -29,7 +29,7 @@ namespace hooks {
 	vfunc_hook client_mode_vhook;
 	vfunc_hook sound_vhook;
 	vfunc_hook engine_vhook;
-	vfunc_hook game_coordinator_vhook;
+	vfunc_hook game_coordinator_vhook; 
 
 	void initialize() {
 		wndproc::o_wnd_proc = (wndproc::WNDPROC)SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::hook);
