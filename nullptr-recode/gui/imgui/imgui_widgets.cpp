@@ -1821,7 +1821,7 @@ bool ImGui::BeginComboMulti(const char* label, const char* preview_value, ImGuiC
     float offset_x = 19 + style.ItemInnerSpacing.x;
     ImVec2 offset = ImVec2(offset_x, 0.f);
 
-    ImVec2 pos_end = ImVec2(window->DC.CursorPos.x + (window->Size.x - (offset_x * 2) - 1.f - offset_scroll) + 7.f, window->DC.CursorPos.y);
+    ImVec2 pos_end = ImVec2(window->DC.CursorPos.x + (window->Size.x - (offset_x * 2) - offset_scroll) + 7.f, window->DC.CursorPos.y);
 
     const ImVec2 Global_offset = ImVec2(offset_x, /*local*/label_size.y + 2);
 

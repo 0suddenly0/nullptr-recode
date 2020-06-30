@@ -24,13 +24,14 @@ struct log_settings_t {
 };
 
 namespace notify {
-	void add(std::string pre, std::string body, color color_pre, bool first, bool two, log_type first_type, log_type two_type, int life_time = 7500);
-	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type);
+	color get_log_color(log_settings_t log);
+	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type, std::vector<render::multicolor_t> multi_items = { });
+	void add(std::string pre, std::string body, log_settings_t log, int life_time = 7500, std::vector<render::multicolor_t> multi_items = {});
+	void add(std::string pre, std::vector<render::multicolor_t> multi_items, log_settings_t log, int life_time = 7500);
+	void add(std::string pre, std::string body, color color_pre, color color_body = color(255, 255, 255, 255));
 	void add(std::string pre, std::string body, color color_pre, int life_time, log_type type);
-	void add(std::string pre, std::string body, log_settings_t log, int life_time = 7500);
 	void add(std::string pre, std::string body, color color_pre, log_type type);
 	void add(std::string pre, std::string body, log_type type);
-	void add(std::string pre, std::string body, color color_pre, color color_body = color(255,255,255,255));
 	void add(std::string pre, std::string body, int life_time);
 	void add(std::string pre, std::string body);
 	void add(std::string body, int life_time);

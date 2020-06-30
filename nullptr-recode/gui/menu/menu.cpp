@@ -14,7 +14,7 @@ namespace menu {
 		null_gui::push_style_var(ImGuiStyleVar_WindowPadding, vec2(8, 5));
 		null_gui::deep::set_next_window_alpha(settings::windows::bind_window_alpha / 255.f);
 
-		null_gui::begin_window("bind's", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
+		null_gui::begin_window("binds", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
 
 			settings::windows::bind_window_pos = null_gui::deep::get_window_pos();
 

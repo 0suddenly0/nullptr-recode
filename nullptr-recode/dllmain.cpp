@@ -43,7 +43,7 @@ DWORD WINAPI attach(LPVOID base) {
 		hooks::initialize();
 		utils::console_print("[-] all func hooked\n");
 
-		notify::add("nullptr", "injected", globals::menu_color, true, true, log_type::console, log_type::big);
+		//notify::add("nullptr", "injected", globals::menu_color, true, true, log_type::console, log_type::big);
 
 #ifdef _DEBUG
 		input::register_hotkey(VK_END, [base]() {

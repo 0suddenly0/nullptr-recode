@@ -22,7 +22,7 @@ namespace menu {
 		auto& entries = settings::changers::skin::m_items;
 		null_gui::create_columns(2);
 		null_gui::begin_group("weapon select##skin window"); {
-			null_gui::begin_list_box("weapons##sjinstab", vec2(0, 368)); {
+			null_gui::begin_list_box("weapons##sjinstab", vec2(0, 370)); {
 				for (int i = 0; i < skin_changer::deeps::weapon_names.size(); i++) {
 					null_gui::push_style_color(ImGuiCol_Text, color(153, 153, 153, 255));
 					switch (i) {
@@ -87,7 +87,7 @@ namespace menu {
 				null_gui::slider_float("wear", &selected_entry.wear, FLT_MIN, 1.f, "%.10f", 5);
 
 				if (this_knife(selected_entry.definition_index)) {
-					null_gui::begin_list_box("knife##list_kinfes", vec2(0, 202)); {
+					null_gui::begin_list_box("knife##list_kinfes", vec2(0, 204)); {
 						for (int i = 0; i < cur_knifes.size(); i++) {
 							if (null_gui::selectable(cur_knifes[i].name.c_str(), selected_entry.definition_override_vector_index == i)) {
 								selected_entry.definition_override_vector_index = i;
@@ -97,9 +97,8 @@ namespace menu {
 						selected_entry.definition_override_index = cur_knifes.at(selected_entry.definition_override_vector_index).definition_index;
 					}
 					null_gui::end_list_box();
-				}
-				else if (this_glove(selected_entry.definition_index)) {
-					null_gui::begin_list_box("glove##list_gloves", vec2(0, 202)); {
+				} else if (this_glove(selected_entry.definition_index)) {
+					null_gui::begin_list_box("glove##list_gloves", vec2(0, 204)); {
 						for (int i = 0; i < cur_gloves.size(); i++) {
 							if (null_gui::selectable(cur_gloves[i].name.c_str(), selected_entry.definition_override_vector_index == i)) {
 								selected_entry.definition_override_vector_index = i;
@@ -109,12 +108,10 @@ namespace menu {
 						selected_entry.definition_override_index = cur_gloves.at(selected_entry.definition_override_vector_index).definition_index;
 					}
 					null_gui::end_list_box();
-				}
-				else {
+				} else {
 					selected_entry.definition_override_vector_index = 0;
 				}
-			}
-			else if (selected_tab_skins == 1) {
+			} else if (selected_tab_skins == 1) {
 				if (skin_parser::skins_parsed) {
 					static std::string filter;
 
@@ -135,7 +132,7 @@ namespace menu {
 
 					auto cs_weapon_name = get_cs_weapon_name(cur_weapidx);
 
-					null_gui::begin_list_box("skins##list", vec2(0, 323)); {
+					null_gui::begin_list_box("skins##list", vec2(0, 325)); {
 						if (selected_entry.definition_index != item_definition_index::glove_t_side && selected_entry.definition_index != item_definition_index::glove_ct_side) {
 							if (null_gui::selectable(" - ", selected_entry.paint_kit_index == -1)) {
 								selected_entry.paint_kit_vector_index = -1;
@@ -166,8 +163,7 @@ namespace menu {
 									}
 								}
 							}
-						}
-						else {
+						} else {
 
 							if (null_gui::selectable(" - ", selected_entry.paint_kit_index == -1)) {
 								selected_entry.paint_kit_vector_index = -1;
@@ -199,8 +195,7 @@ namespace menu {
 						}
 					}
 					null_gui::end_list_box();
-				}
-				else {
+				} else {
 					null_gui::text("skins parsing, wait...");
 				}
 			}

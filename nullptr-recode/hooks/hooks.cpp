@@ -1,5 +1,6 @@
 #include "hooks.h"
 #include "../functions/changers/profile changer/profile_changer.h"
+#include "../functions/misc/events.h"
 
 __declspec(naked) void __fastcall create_move_hook_proxy(void* _this, int, int sequence_number, float input_sample_frametime, bool active)
 {
@@ -59,6 +60,8 @@ namespace hooks {
 
 		game_coordinator_vhook.setup(sdk::game_coordinator);
 		game_coordinator_vhook.hook_index(indexes::retrieve_message, retrieve_message::hook);
+
+		event_manager::initialization();
 	}
 
 	void unhook() {
@@ -72,6 +75,7 @@ namespace hooks {
 		engine_vhook.unhook_all();
 		game_coordinator_vhook.unhook_all();
 
+		event_manager::shutdown();
 		profile_changer::send_update_messages();
 
 		SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::o_wnd_proc);

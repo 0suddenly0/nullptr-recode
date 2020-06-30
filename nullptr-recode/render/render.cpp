@@ -102,6 +102,32 @@ namespace render {
 		return draw_list_for_render;
 	}
 
+	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline, bool center, int size) {
+		float cur_x = pos.x - (center ? get_multicolor_size(items, size).x / 2 : 0);
+
+		for (auto& item : items) {
+			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
+			draw_text(item.text, vec2(cur_x, pos.y), item.clr, outline, false, size);
+			cur_x += text_size.x;
+
+			//if (item.text.at(item.text.length() - 1) == ' ') cur_x += 1;
+		}
+	}
+
+	vec2 get_multicolor_size(std::vector<multicolor_t> items, int size) {
+		vec2 cur_size = vec2(0, 0);
+
+		for (auto& item : items) {
+			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
+			cur_size.x += text_size.x;
+			cur_size.y = text_size.y;
+
+			//if (item.text.at(item.text.length() - 1) == ' ') cur_size.x += 1;
+		}
+
+		return cur_size;
+	}
+
 	void draw_text(std::string text, vec2 pos, color clr, bool outline, bool center, int size) {
 		ImVec2 textSize = default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, text.c_str());
 		if (!default_font->ContainerAtlas) return;

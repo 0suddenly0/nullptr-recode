@@ -3,6 +3,14 @@
 #include "../../sdk/structures/structures.h"
 
 namespace math {
+	vec2 to_vec2(ImVec2 vec) {
+		return vec2(vec.x, vec.y);
+	}
+
+	ImVec2 to_imvec2(vec2 vec) {
+		return ImVec2(vec.x, vec.y);
+	}
+
 	int clamp(int a, int min, int max) {
 		if (a < min) return min;
 		if (a > max) return max;

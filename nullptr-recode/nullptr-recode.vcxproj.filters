@@ -244,6 +244,9 @@
     <ClCompile Include="functions\changers\skin changer\skins.cpp">
       <Filter>sources\functions\changers\skins</Filter>
     </ClCompile>
+    <ClCompile Include="functions\misc\events.cpp">
+      <Filter>sources\functions\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">
@@ -590,6 +593,9 @@
     </ClInclude>
     <ClInclude Include="sdk\structures\c_base_inferno.h">
       <Filter>sources\sdk\structures</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\misc\events.h">
+      <Filter>sources\functions\misc</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

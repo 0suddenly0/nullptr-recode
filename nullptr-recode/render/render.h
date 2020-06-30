@@ -3,7 +3,6 @@
 #include "../helpers/helpers.h"
 #include "../gui/nullptr_gui.h"
 #include "fonts/fonts.h"
-#include "../functions/notify/notify.h"
 #include "../functions/visuals/visuals.h"
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -12,6 +11,34 @@
 
 
 namespace render {
+
+	class multicolor_t {
+	public:	
+		multicolor_t(const char* _text, color _clr) {
+			text = _text;
+			clr = _clr;
+		}
+		multicolor_t(std::string _text, color _clr) {
+			text = _text;
+			clr = _clr;
+		}
+		multicolor_t(int _text, color _clr) {
+			text = std::to_string(_text);
+			clr = _clr;
+		}
+		multicolor_t(float _text, color _clr) {
+			text = std::to_string(_text);
+			clr = _clr;
+		}
+		multicolor_t(bool _text, color _clr) {
+			text = std::to_string(_text);
+			clr = _clr;
+		}
+
+		std::string text;
+		color clr;
+	};
+
 	extern ImFont* menu_bar_font;
 	extern ImFont* menu_big_font;
 	extern ImFont* default_font;
@@ -30,15 +57,19 @@ namespace render {
 		return ImVec4(clr.color_float[0], clr.color_float[1], clr.color_float[2], clr.color_float[3]);
 	}
 
-	void draw_polugin(std::vector<ImVec2> points, color clr) {
-		draw_list->AddConvexPolyFilled(points.data(), points.size(), ImGui::GetColorU32(get_vec4(clr)));
-	}
 
 	template <typename T>
-	void draw_text(std::string text, T x, T y, color clr, bool outline = true, bool center = true, int size = 12) {
+	void draw_text_multicolor(std::vector<multicolor_t> items, T x, T y, bool outline = true, bool center = false, int size = 12) {
+		draw_text_multicolor(items, vec2(x, y), outline, center, size);
+	}
+	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline = true, bool center = false, int size = 12);
+	vec2 get_multicolor_size(std::vector<multicolor_t> items, int size = 12);
+
+	template <typename T>
+	void draw_text(std::string text, T x, T y, color clr, bool outline = true, bool center = false, int size = 12) {
 		draw_text(text, vec2(x, y), clr, outline, center, size);
 	}
-	void draw_text(std::string text, vec2 pos, color clr, bool outline = true, bool center = true, int size = 12);
+	void draw_text(std::string text, vec2 pos, color clr, bool outline = true, bool center = false, int size = 12);
 
 	template <typename T>
 	void draw_line(T x_start, T y_start, T x_end, T y_end, color clr, int thickness = 1) {

@@ -172,6 +172,7 @@
     <ClCompile Include="functions\changers\skin changer\parser.cpp" />
     <ClCompile Include="functions\changers\skin changer\skins.cpp" />
     <ClCompile Include="functions\misc\engine_prediction.cpp" />
+    <ClCompile Include="functions\misc\events.cpp" />
     <ClCompile Include="functions\misc\misc.cpp" />
     <ClCompile Include="functions\notify\notify.cpp" />
     <ClCompile Include="functions\visuals\background.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="functions\changers\skin changer\parser.h" />
     <ClInclude Include="functions\changers\skin changer\skins.h" />
     <ClInclude Include="functions\misc\engine_prediction.h" />
+    <ClInclude Include="functions\misc\events.h" />
     <ClInclude Include="functions\misc\misc.h" />
     <ClInclude Include="functions\notify\notify.h" />
     <ClInclude Include="functions\visuals\background.h" />

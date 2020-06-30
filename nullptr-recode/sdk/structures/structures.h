@@ -53,6 +53,12 @@ enum cs_weapon_type {
 	weapon_type_unknown
 };
 
+struct client_hit_verify_t {
+	vec3 pos;
+	float time;
+	float expires;
+};
+
 struct datamap_t;
 class c_game_rules;
 class c_player_resource;

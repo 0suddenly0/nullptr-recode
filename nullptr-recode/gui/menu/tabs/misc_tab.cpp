@@ -74,7 +74,7 @@ namespace menu {
 
 		null_gui::next_column();
 
-		null_gui::begin_group("clantag##misc_tab", vec2(0, 212));
+		null_gui::begin_group("clantag##misc_tab", vec2(0, 211));
 		{
 			null_gui::horizontal(settings::misc::clantag::clantag_type, clantag_tabs);
 

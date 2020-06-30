@@ -104,13 +104,14 @@ public:
 		SetAbsOrigin(this, origin);
 	}
 
-	matrix3x4 get_bone_matrix(int BoneID);
-
 	std::array<float, 24> pose_parameter() const {
 		static int _pose_parameter = netvar::get_offset("DT_BaseAnimating", "m_flPoseParameter");
 		return *(std::array<float, 24>*)((uintptr_t)this + _pose_parameter);
 	}
 
+	c_utl_vector<client_hit_verify_t>& get_client_impacts() {
+		return *(c_utl_vector<client_hit_verify_t>*)((uintptr_t)((c_base_player*)this) + 0xBC00);
+	}
 
 	c_user_cmd*& current_command() {
 		static auto currentCommand = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "89 BE ? ? ? ? E8 ? ? ? ? 85 FF") + 2);

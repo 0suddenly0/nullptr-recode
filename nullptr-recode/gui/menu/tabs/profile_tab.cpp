@@ -115,7 +115,7 @@ static char* modes[] =
 namespace menu {
 	void profile_tab() {
 		null_gui::create_columns(2);
-		null_gui::begin_group("general##profile tab", vec2(0, 201)); {
+		null_gui::begin_group("general##profile tab", vec2(0, 200)); {
 			null_gui::horizontal(settings::changers::profile::mode_id, modes);
 
 			if (settings::changers::profile::mode_id == 2) null_gui::combo("rank", &settings::changers::profile::profile_items[settings::changers::profile::mode_id].rank_id, ranks_dz);
@@ -135,13 +135,13 @@ namespace menu {
 
 		null_gui::next_column();
 
-		null_gui::begin_group("comment's##profile tab", vec2(0, 157)); {
+		null_gui::begin_group("comment's##profile tab", vec2(0, 156)); {
 			null_gui::int_input("friendly", &settings::changers::profile::friendly, 1, 10);
 			null_gui::int_input("teacher", &settings::changers::profile::teacher, 1, 10);
 			null_gui::int_input("leader", &settings::changers::profile::leader, 1, 10);
 		}
 		null_gui::end_group();
-		null_gui::begin_group("ban##profile tab", vec2(0, 145)); {
+		null_gui::begin_group("ban##profile tab", vec2(0, 144)); {
 			null_gui::combo("ban type", &settings::changers::profile::ban_type, bans);
 			null_gui::combo("time type", &settings::changers::profile::ban_time_type, std::vector<std::string>{"sec", "min", "hour", "days"});
 			null_gui::int_input("time", &settings::changers::profile::ban_time, 1, 100);

@@ -1,16 +1,17 @@
 #include "../menu.h"
 #include "../../../helpers/config_sys/config_sys.h"
 
-static bool is_configs_loaded = false;
-static bool is_configs_loaded_skin = false;
-static std::string current_config;
-static std::string current_config_skin;
-static bool load_request_skin = false;
-static bool load_request = false;
-static bool save_request_skin = false;
-static bool save_request = false;
-static bool del_request_skin = false;
-static bool del_request = false;
+color log_color = notify::get_log_color(settings::visuals::logs::config);
+bool is_configs_loaded = false;
+bool is_configs_loaded_skin = false;
+std::string current_config;
+std::string current_config_skin;
+bool load_request_skin = false;
+bool load_request = false;
+bool save_request_skin = false;
+bool save_request = false;
+bool del_request_skin = false;
+bool del_request = false;
 
 namespace file_sys = std::experimental::filesystem;
 
@@ -46,8 +47,13 @@ bool check_config_load(bool skin) {
 			if (!skin) {
 				if (!current_config.empty())
 				{
-					if (config::standart::load(current_config))
-						notify::add("config", utils::snprintf("%s loaded", current_config.c_str()), settings::visuals::logs::config);
+					if (config::standart::load(current_config)) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ " loaded", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 					menu::temp_clantag = settings::misc::clantag::clantag.c_str();
 					settings::misc::clantag::clantag_visible = menu::temp_clantag;
 				}
@@ -56,8 +62,13 @@ bool check_config_load(bool skin) {
 			} else {
 				if (!current_config_skin.empty())
 				{
-					if(config::skins::load(current_config_skin)) 
-						notify::add("config", utils::snprintf("%s loaded", current_config_skin.c_str()), settings::visuals::logs::config);
+					if (config::skins::load(current_config_skin)) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ " loaded", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 				}
 
 				load_request_skin = false;
@@ -91,16 +102,26 @@ bool check_config_save(bool skin) {
 		if (null_gui::button("yes", false, vec2(70, 0), false)) {
 			if (!skin) {
 				if (!current_config.empty()) {
-					if(config::standart::save(current_config))
-						notify::add("config", utils::snprintf("%s saved", current_config.c_str()), settings::visuals::logs::config);
+					if (config::standart::save(current_config)) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ " saved", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 				}
 
 				save_request = false;
 			} else {
 				if (!current_config_skin.empty())
 				{
-					if(config::skins::save(current_config_skin))
-						notify::add("config", utils::snprintf("%s saved", current_config_skin.c_str()), settings::visuals::logs::config);
+					if (config::skins::save(current_config_skin)) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ " saved", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 				}
 
 				save_request_skin = false;
@@ -134,8 +155,13 @@ bool check_config_del(bool skin) {
 		if (null_gui::button("yes", false, vec2(70, 0), false)) {
 			if (!skin) {
 				if (!current_config.empty()) {
-					if(file_sys::remove("C:\\nullptr\\standart\\" + current_config + ".null"))
-						notify::add("config", utils::snprintf("%s deleted", current_config.c_str()), settings::visuals::logs::config);
+					if (file_sys::remove("C:\\nullptr\\standart\\" + current_config + ".null")) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ " deleted", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 					current_config.clear();
 					is_configs_loaded = false;
 				}
@@ -143,8 +169,13 @@ bool check_config_del(bool skin) {
 				del_request = false;
 			} else {
 				if (!current_config_skin.empty()) {
-					if (file_sys::remove("C:\\nullptr\\skins\\" + current_config_skin + ".null"))
-						notify::add("config", utils::snprintf("%s deleted", current_config_skin.c_str()), settings::visuals::logs::config);
+					if (file_sys::remove("C:\\nullptr\\skins\\" + current_config_skin + ".null")) {
+						std::vector<render::multicolor_t> items = {
+							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ " deleted", color(255, 255, 255, 255)},
+						};
+						notify::add("config", items, settings::visuals::logs::config);
+					}
 					current_config_skin.clear();
 					is_configs_loaded_skin = false;
 				}
@@ -172,6 +203,7 @@ bool check_config_del(bool skin) {
 
 namespace menu {
 	void configs_tab() {
+		log_color = notify::get_log_color(settings::visuals::logs::config);
 		bool can_open = !load_request && !load_request_skin && !save_request && !save_request_skin && !del_request && !del_request_skin;
 
 		null_gui::create_columns(2);
@@ -189,13 +221,18 @@ namespace menu {
 			if (null_gui::button("create", true)) {
 				current_config = config_name;
 
-				if(config::standart::save(current_config))
-					notify::add("config", utils::snprintf("%s created", current_config.c_str()), settings::visuals::logs::config);
+				if (config::standart::save(current_config)) {
+					std::vector<render::multicolor_t> items = {
+						render::multicolor_t{ current_config, log_color},
+						render::multicolor_t{ " created", color(255, 255, 255, 255)},
+					};
+					notify::add("config", items, settings::visuals::logs::config);
+				}
 				is_configs_loaded = false;
 			}
 
 
-			if(null_gui::begin_list_box("configs##config_list", vec2(0, 278))) {
+			if(null_gui::begin_list_box("configs##config_list", vec2(0, 279))) {
 				for (std::string& cur_config : configs) {
 					if (null_gui::selectable(cur_config.c_str(), cur_config == current_config)) {
 						current_config = cur_config;
@@ -211,8 +248,14 @@ namespace menu {
 									std::string old_name = "C:\\nullptr\\standart\\" + cur_config + ".null";
 									std::string new_name = "C:\\nullptr\\standart\\" + config_rename + ".null";
 
-									if(rename(old_name.c_str(), new_name.c_str()) == 0)
-										notify::add("config", utils::snprintf("%s renamed to %s", cur_config.c_str(), config_rename.c_str()), settings::visuals::logs::config);
+									if (rename(old_name.c_str(), new_name.c_str()) == 0) {
+										std::vector<render::multicolor_t> items = {
+											render::multicolor_t{ cur_config, log_color},
+											render::multicolor_t{ " renamed to ", color(255, 255, 255, 255)},
+											render::multicolor_t{ config_rename, log_color}
+										};
+										notify::add("config", items, settings::visuals::logs::config);
+									}
 
 									cur_config = config_rename;
 
@@ -266,12 +309,17 @@ namespace menu {
 			if (null_gui::button("create##skins", true)) {
 				current_config_skin = config_name;
 
-				if(config::skins::save(current_config_skin))
-					notify::add("config", utils::snprintf("%s created", current_config_skin.c_str()), settings::visuals::logs::config);
+				if (config::skins::save(current_config_skin)) {
+					std::vector<render::multicolor_t> items = {
+						render::multicolor_t{ current_config_skin, log_color},
+						render::multicolor_t{ " created", color(255, 255, 255, 255)},
+					};
+					notify::add("config", items, settings::visuals::logs::config);
+				}
 				is_configs_loaded_skin = false;
 			}
 
-			null_gui::begin_list_box("configs##skins", vec2(0, 278)); {
+			null_gui::begin_list_box("configs##skins", vec2(0, 279)); {
 				for (auto& cur_config : configs) {
 					if (null_gui::selectable(cur_config.c_str(), cur_config == current_config_skin)) {
 						current_config_skin = cur_config;
@@ -287,8 +335,14 @@ namespace menu {
 									std::string old_name = "C:\\nullptr\\skins\\" + cur_config + ".null";
 									std::string new_name = "C:\\nullptr\\skins\\" + config_rename + ".null";
 
-									if (rename(old_name.c_str(), new_name.c_str()) == 0)
-										notify::add("config", utils::snprintf("%s renamed to %s", cur_config.c_str(), config_rename.c_str()), settings::visuals::logs::config);
+									if (rename(old_name.c_str(), new_name.c_str()) == 0) {
+										std::vector<render::multicolor_t> items = {
+											render::multicolor_t{ cur_config, log_color},
+											render::multicolor_t{ " renamed to ", color(255, 255, 255, 255)},
+											render::multicolor_t{ config_rename, log_color}
+										};
+										notify::add("config", items, settings::visuals::logs::config);
+									}
 
 									cur_config = config_rename;
 

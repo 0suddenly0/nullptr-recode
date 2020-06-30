@@ -4825,7 +4825,7 @@ bool ImGui::BeginChild(const char* str_id, const ImVec2& size_arg, bool border, 
 
     if (extra_flags & ImGuiWindowFlags_ChildTitleBarLine || extra_flags & ImGuiWindowFlags_ListboxTitleBarLine && !no_title)
     {
-        ImGui::Dummy(ImVec2(0, 12.f));
+        ImGui::Dummy(ImVec2(0, 11.f));
     }
 
     return ret_value;
@@ -7253,7 +7253,7 @@ bool ImGui::ToggleButton(const char* label, bool* v, const ImVec2& size_arg, int
         window->DrawList->AddRectFilled(bb.Min, bb.Max + ImVec2(1, 0), col, 0.f);
         break;
     case 1:
-        window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding, ImDrawCornerFlags_Left);
+        window->DrawList->AddRectFilled(bb.Min, bb.Max + ImVec2(1, 0), col, style.FrameRounding, ImDrawCornerFlags_Left);
         break;
     case 2:
         window->DrawList->AddRectFilled(bb.Min - ImVec2(1, 0), bb.Max, col, style.FrameRounding, ImDrawCornerFlags_Right);
@@ -7277,7 +7277,7 @@ bool ImGui::ToggleButton(const char* label, bool* v, const ImVec2& size_arg, int
             window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max + ImVec2(1, 0), ImGui::GetColorU32(ImGuiCol_nullptr_color), 0.f);
             break;
         case 1:
-            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotLeft);
+            window->DrawList->AddRectFilled(ImVec2(bb.Min.x, bb.Max.y - 4), bb.Max + ImVec2(1, 0), ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotLeft);
             break;
         case 2:
             window->DrawList->AddRectFilled(ImVec2(bb.Min.x - 1, bb.Max.y - 4), bb.Max, ImGui::GetColorU32(ImGuiCol_nullptr_color), style.FrameRounding, ImDrawCornerFlags_BotRight);

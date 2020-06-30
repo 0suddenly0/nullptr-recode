@@ -6,4 +6,5 @@ namespace visuals {
 	void draw_watermark();
 	void entity_loop();
 	void thirdperson();
+	void impact();
 }

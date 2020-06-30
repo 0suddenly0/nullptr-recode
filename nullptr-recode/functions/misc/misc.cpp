@@ -418,8 +418,7 @@ namespace misc {
 
 					utils::set_clantag(clantag.substr(0, pos).c_str());
 					pos++;
-				}
-				else if (settings::misc::clantag::custom_type == 2) {
+				} else if (settings::misc::clantag::custom_type == 2) {
 
 					static float last_change_time = 0.f;
 
@@ -448,18 +447,15 @@ namespace misc {
 			if (!jumped_last_tick && should_fake_jump) {
 				should_fake_jump = false;
 				cmd->buttons |= IN_JUMP;
-			}
-			else if (cmd->buttons & IN_JUMP) {
+			} else if (cmd->buttons & IN_JUMP) {
 				if (sdk::local_player->m_flags() & entity_flags::on_ground) {
 					jumped_last_tick = true;
 					should_fake_jump = true;
-				}
-				else {
+				} else {
 					cmd->buttons &= ~IN_JUMP;
 					jumped_last_tick = false;
 				}
-			}
-			else {
+			} else {
 				jumped_last_tick = false;
 				should_fake_jump = false;
 			}
@@ -503,27 +499,22 @@ namespace misc {
 						if (-(retrack) <= velocity_delta || speed <= 15.0f) {
 							wish_angle.yaw += side * ideal_strafe;
 							cmd->sidemove = cl_sidespeed->get_float() * side;
-						}
-						else {
+						} else {
 							wish_angle.yaw = velocity_direction.yaw - retrack;
 							cmd->sidemove = cl_sidespeed->get_float();
 						}
-					}
-					else {
+					} else {
 						wish_angle.yaw = velocity_direction.yaw + retrack;
 						cmd->sidemove = -cl_sidespeed->get_float();
 					}
 
 					math::movement_fix(cmd, wish_angle, cmd->viewangles);
-				}
-				else if (yaw_delta > 0.0f) {
+				} else if (yaw_delta > 0.0f) {
 					cmd->sidemove = -cl_sidespeed->get_float();
-				}
-				else if (yaw_delta < 0.0f) {
+				} else if (yaw_delta < 0.0f) {
 					cmd->sidemove = cl_sidespeed->get_float();
 				}
-			}
-			else if (settings::misc::bhop::strafe_type == 2) {
+			} else if (settings::misc::bhop::strafe_type == 2) {
 				static bool is_bhopping;
 				static float calculated_direction;
 				static bool in_transition;
@@ -571,17 +562,13 @@ namespace misc {
 
 				if (cmd->buttons & IN_FORWARD) {
 					wish_direction = base.yaw + directions::FORWARDS;
-				}
-				else if (cmd->buttons & IN_BACK) {
+				} else if (cmd->buttons & IN_BACK) {
 					wish_direction = base.yaw + directions::BACKWARDS;
-				}
-				else if (cmd->buttons & IN_MOVELEFT) {
+				} else if (cmd->buttons & IN_MOVELEFT) {
 					wish_direction = base.yaw + directions::LEFT;
-				}
-				else if (cmd->buttons & IN_MOVERIGHT) {
+				} else if (cmd->buttons & IN_MOVERIGHT) {
 					wish_direction = base.yaw + directions::RIGHT;
-				}
-				else {
+				} else {
 
 					cmd->buttons |= IN_FORWARD;
 					wish_direction = base.yaw + directions::FORWARDS;
@@ -599,16 +586,13 @@ namespace misc {
 
 						if (fabsf(math::normalize_yaw(wish_direction - add)) >= fabsf(math::normalize_yaw(wish_direction - sub))) {
 							calculated_direction -= step;
-						}
-						else {
+						} else {
 							calculated_direction += step;
 						}
-					}
-					else {
+					} else {
 						in_transition = false;
 					}
-				}
-				else {
+				} else {
 					rough_direction = get_rough_direction(true_direction);
 					calculated_direction = rough_direction;
 

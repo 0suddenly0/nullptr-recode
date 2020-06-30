@@ -340,7 +340,7 @@ namespace config {
 
 			add_group("windows"); {
 				add_var("[windows] bind window show", settings::windows::bind_window_show);
-				add_var("[windows] bind window pos", "bind's", settings::windows::bind_window_pos.x, settings::windows::bind_window_pos.y);
+				add_var("[windows] bind window pos", "binds", settings::windows::bind_window_pos.x, settings::windows::bind_window_pos.y);
 				add_var("[windows] bind window alpha", settings::windows::bind_window_alpha);
 			}
 			end_group();

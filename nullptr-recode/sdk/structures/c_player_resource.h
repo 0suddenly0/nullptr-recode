@@ -19,11 +19,9 @@ public:
 	NETVAR(int_65, ranking, "DT_CSPlayerResource", "m_iCompetitiveRanking");
 	NETVAR(int_65, wins, "DT_CSPlayerResource", "m_iCompetitiveWins");
 	NETVAR(int_65, team_color,"DT_CSPlayerResource", "m_iCompTeammateColor");
-	NETVAR(char6516, clantag, "DT_CSPlayerResource" /*"CCSPlayerResource"*/, "m_szClan");
-	/*const char* clantag(int index) {
-		static int _m_flPoseParameter = netvar::get_offset("DT_CSPlayerResource", "m_szClan");
-		return (const char*)((uintptr_t)this + _m_flPoseParameter + index * 16);
-	}*/
+	NETVAR(char6516, clantag, "DT_CSPlayerResource", "m_szClan");
+	NETVAR(vec3, b_side_center, "DT_CSPlayerResource", "m_bombsiteCenterB");
+	NETVAR(vec3, a_side_center, "DT_CSPlayerResource", "m_bombsiteCenterA");
 	NETVAR(unsigned65, coin, "DT_CSPlayerResource", "m_nActiveCoinRank");
 	NETVAR(unsigned65, musik_kit, "DT_CSPlayerResource", "m_nMusicID");
 };

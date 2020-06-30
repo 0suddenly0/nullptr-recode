@@ -4,6 +4,7 @@
 
 namespace visuals {
 	void render() {
+		impact();
 		draw_watermark();
 		entity_loop();
 	}
@@ -30,7 +31,7 @@ namespace visuals {
 		render::draw_box_filled_rounded(bar_start_position, bar_end_position, color(globals::menu_color, 255), rounding, 3);  // draw top line
 		render::draw_box_filled_rounded(main_start_position, main_end_position, color(50, 50, 50, 100), rounding, 12); // draw watermark body
 
-		render::draw_text(watermark_text, main_start_position + vec2(offsets_text.x / 2, offsets_text.y / 2), color(255,255,255,255), false, false);
+		render::draw_text(watermark_text, main_start_position + vec2(offsets_text.x / 2, offsets_text.y / 2), color(255,255,255,255), false);
 	}
 
 	void entity_loop() {
@@ -44,7 +45,7 @@ namespace visuals {
 
 				render::draw_circle_3d(inferno->vec_origin(), 50, inferno->fire_count() * 10.f, color(255,255,255,255));
 
-				render::draw_text(utils::snprintf("%d : %.0f", inferno->fire_count(), ((float)inferno->fire_count() * 10.f)), vec2(100, 10), color(255, 255, 255, 255), true, false);
+				render::draw_text(utils::snprintf("%d : %.0f", inferno->fire_count(), ((float)inferno->fire_count() * 10.f)), vec2(100, 10), color(255, 255, 255, 255), true);
 			}
 		}
 	}
@@ -119,5 +120,38 @@ namespace visuals {
 			}
 			sdk::input->m_fCameraInThirdPerson = false;
 		}
+	}
+
+	void impact() {
+		if (!sdk::local_player || !sdk::local_player->is_alive() || !sdk::engine_client->is_connected()) return;
+
+		for (int i = 0; i < globals::server_impacts.size(); i++) {
+			bullet_impact_t cur_impact = globals::server_impacts[i];
+			sdk::debug_overlay->add_box_overlay(cur_impact.pos, vec3(-cur_impact.size, -cur_impact.size, -cur_impact.size), vec3(cur_impact.size, cur_impact.size, cur_impact.size), qangle(0, 0, 0), cur_impact.clr.color_char[0], cur_impact.clr.color_char[1], cur_impact.clr.color_char[2], cur_impact.clr.color_char[3], cur_impact.time_life);
+
+			if (sdk::global_vars->curtime - cur_impact.time_del < 0)
+				globals::server_impacts.erase(globals::server_impacts.begin() + i);
+		}
+
+		static int last_count = 0;
+		auto& client_impact_list = sdk::local_player->get_client_impacts();
+
+		for (auto i = client_impact_list.Count(); i > last_count; i--) {
+			if (settings::visuals::impacts::client::enable) {
+				sdk::debug_overlay->add_box_overlay(
+					client_impact_list[i - 1].pos,
+					vec3(-settings::visuals::impacts::client::size, -settings::visuals::impacts::client::size, -settings::visuals::impacts::client::size),
+					vec3(settings::visuals::impacts::client::size, settings::visuals::impacts::client::size, settings::visuals::impacts::client::size),
+					qangle(0, 0, 0),
+					settings::visuals::impacts::client::clr.color_char[0],
+					settings::visuals::impacts::client::clr.color_char[1],
+					settings::visuals::impacts::client::clr.color_char[2],
+					settings::visuals::impacts::client::clr.color_char[3],
+					settings::visuals::impacts::client::show_time);
+			}
+		}
+
+		if (client_impact_list.Count() != last_count)
+			last_count = client_impact_list.Count();
 	}
 }

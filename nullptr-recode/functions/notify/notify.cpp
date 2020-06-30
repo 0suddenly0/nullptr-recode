@@ -11,6 +11,8 @@ struct notify_t {
 	float time_del;
 	float time_life = 0;
 
+	std::vector<render::multicolor_t> multicolor_items = { };
+
 	float x_body = 0;
 	float x_main = 0;
 	float y = 0;
@@ -22,17 +24,21 @@ std::deque<notify_t> notifications_standart;
 std::deque<notify_t> notifications_big;
 
 namespace notify {
-	void add(std::string pre, std::string body, log_settings_t log, int life_time) {
-		if (log.enable_console) add(pre, body, log.using_custom_color ? log.custm_color : log.using_menu_color ? globals::menu_color : log.color, color(255, 255, 255, 255), life_time, log_type::console);
-		if (log.enable_screen) add(pre, body, log.using_custom_color ? log.custm_color : log.using_menu_color ? globals::menu_color : log.color, color(255, 255, 255, 255), life_time, log.screen_type);
+	color get_log_color(log_settings_t log) {
+		return log.using_custom_color ? log.custm_color : log.using_menu_color ? globals::menu_color : log.color;
 	}
 
-	void add(std::string pre, std::string body, color color_pre, bool first, bool two, log_type first_type, log_type two_type, int life_time) {
-		if (first) add(pre, body, color_pre, color(255, 255, 255, 255), life_time, first_type);
-		if (two)   add(pre, body, color_pre, color(255, 255, 255, 255), life_time, two_type);
+	void add(std::string pre, std::string body, log_settings_t log, int life_time, std::vector<render::multicolor_t> multi_items) {
+		if (log.enable_console) add(pre, body, get_log_color(log), color(255, 255, 255, 255), life_time, log_type::console);
+		if (log.enable_screen) add(pre, body, get_log_color(log), color(255, 255, 255, 255), life_time, log.screen_type);
 	}
 
-	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type) {
+	void add(std::string pre, std::vector<render::multicolor_t> multi_items, log_settings_t log, int life_time) {
+		if (log.enable_console) add(pre, "", get_log_color(log), color(255, 255, 255, 255), life_time, log_type::console, multi_items);
+		if (log.enable_screen) add(pre, "", get_log_color(log), color(255, 255, 255, 255), life_time, log.screen_type, multi_items);
+	}
+
+	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type, std::vector<render::multicolor_t> multi_items) {
 		switch (type) {
 		case console: 
 			if (!sdk::engine_client || !sdk::cvar)
@@ -41,14 +47,21 @@ namespace notify {
 			sdk::cvar->console_dprintf("[ ");
 			sdk::cvar->console_color_printf(color_pre, pre.data());
 			sdk::cvar->console_dprintf(" ] ");
-			sdk::cvar->console_color_printf(color_body, body.data());
+			if (multi_items.size() > 0) {
+				for (auto& item : multi_items) {
+					sdk::cvar->console_color_printf(item.clr, item.text.data());
+				}
+			}
+			else {
+				sdk::cvar->console_color_printf(color_body, body.data());
+			}
 			sdk::cvar->console_dprintf("\n");
 			break;
 		case standart:
-			notifications_standart.push_front(notify_t{ pre, body, color_pre, color_body, (float)life_time });
+			notifications_standart.push_front(notify_t{ pre, body, color_pre, color_body, (float)life_time, 0, multi_items });
 			break;
 		case big:
-			notifications_big.push_front(notify_t{ "", body, color_pre, color(0,0,0,0), (float)life_time });
+			notifications_big.push_front(notify_t{ "", body, color_pre, color(0,0,0,0), (float)life_time, 0, multi_items });
 			break;
 		}
 	}
@@ -96,14 +109,17 @@ namespace notify {
 			for (size_t i = 0; i < notifications_standart.size(); i++) {
 				auto& notify = notifications_standart.at(i);
 
+				bool this_multicolor = notify.multicolor_items.size() > 0;
+
 				int left_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, "[ ").x;
 				int right_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, " ]").x;
 				int space_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, "  ").x;
 
 				std::string all_text = utils::snprintf("[ %s ] %s", notify.s_pre.c_str(), notify.s_body.c_str());
+				std::string all_for_multi_text = utils::snprintf("[ %s ]", notify.s_pre.c_str());
 
-				ImVec2 pre_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_pre.c_str());
-				ImVec2 all_text_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, all_text.c_str());
+				vec2 pre_size = math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_pre.c_str()));
+				vec2 all_text_size = this_multicolor ? vec2(render::get_multicolor_size(notify.multicolor_items).x + render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, all_for_multi_text.c_str()).x, render::get_multicolor_size(notify.multicolor_items).y) : math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, all_text.c_str()));
 				notify.max_x = all_text_size.x + 10;
 
 				notify.y = utils::lerp(notify.y, i * (all_text_size.y + 3), 0.03f);
@@ -142,10 +158,13 @@ namespace notify {
 				render::draw_box_filled(0.f, notify.y, notify.x_body, notify.y + all_text_size.y + 3, color(0, 0, 0, 100));
 				render::draw_box_filled(notify.x_body, notify.y, notify.x_main, notify.y + all_text_size.y + 3, color(notify.c_pre, 255));
 
-				render::draw_text("[", vec2(start_text, notify.y + 2.f), color(255, 255, 255, 255), false, false);
-				render::draw_text(" ]", vec2(start_text + pre_size.x + left_size + 1, notify.y + 1), color(255, 255, 255, 255), false, false);
-				render::draw_text(notify.s_pre, vec2(start_text + left_size + 1, notify.y + 2), notify.c_pre, false, false);
-				render::draw_text(notify.s_body, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), notify.c_body, false, false);
+				render::draw_text("[", vec2(start_text, notify.y + 2.f), color(255, 255, 255, 255), false);
+				render::draw_text(" ]", vec2(start_text + pre_size.x + left_size + 1, notify.y + 1), color(255, 255, 255, 255), false);
+				render::draw_text(notify.s_pre, vec2(start_text + left_size + 1, notify.y + 2), notify.c_pre, false);
+				if (!this_multicolor)
+					render::draw_text(notify.s_body, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), notify.c_body, false);
+				else 
+					render::draw_text_multicolor(notify.multicolor_items, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), false);
 			}
 		}
 
@@ -153,9 +172,11 @@ namespace notify {
 			for (size_t i = 0; i < notifications_big.size(); i++) {
 				auto& notify = notifications_big.at(i);
 
+				bool this_multicolor = notify.multicolor_items.size() > 0;
+
 				float round = ImGui::GetStyle().FrameRounding;
 
-				ImVec2 text_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_body.c_str());
+				vec2 text_size = this_multicolor ? render::get_multicolor_size(notify.multicolor_items) : math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_body.c_str()));
 
 				float box_size_x = 50.f + text_size.x;
 				float box_size_y = 40.f;
@@ -196,7 +217,10 @@ namespace notify {
 				render::draw_box_filled_rounded(notify.x_body - box_size_x - 4.f, notify.y - box_size_y, notify.x_body - box_size_x, notify.y, color(notify.c_pre, 255), round, 5);
 				render::draw_box_filled        (notify.x_body - box_size_x,       notify.y - opacity, notify.x_body - box_size_x + 2.f, notify.y, color(notify.c_pre, 255));
 
-				render::draw_text(notify.s_body, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2) - (text_size.y / 2), color(255, 255, 255, 255), false, true);
+				if (!this_multicolor)
+					render::draw_text(notify.s_body, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2) - (text_size.y / 2), color(255, 255, 255, 255), false, true);
+				else
+					render::draw_text_multicolor(notify.multicolor_items, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2) - (text_size.y / 2), false, true);
 			}
 		}
 

@@ -5,6 +5,7 @@
 #include "qangle.h"
 #include "matrix.h"
 #include "../../sdk/sdk.h"
+#include "../../gui/nullptr_gui.h"
 
 #define RAD2DEG(x) DirectX::XMConvertToDegrees(x)
 #define DEG2RAD(x) DirectX::XMConvertToRadians(x)
@@ -15,6 +16,8 @@
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
 namespace math {
+	vec2 to_vec2(ImVec2 vec);
+	ImVec2 to_imvec2(vec2 vec);
 	int clamp(int a, int min, int max);
 	float clamp(float a, float min, float max);
 	void clamp_angles(qangle& angles);

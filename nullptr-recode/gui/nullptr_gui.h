@@ -156,8 +156,7 @@ namespace null_gui {
     inline void horizontal(int& tab, char* (&tabs)[T], tabs_type type = tabs_type::standart) {
         auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x - (type == tabs_type::spac ? (6 * _countof(tabs)) : 0)) / _countof(tabs);
 
-        switch (type)
-        {
+        switch (type) {
         case tabs_type::standart:
             ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0)); {
                 render_tabs(tabs, tab, tabs_w, 20.f);

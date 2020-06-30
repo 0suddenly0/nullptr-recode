@@ -27,13 +27,28 @@ namespace settings {
 
 		namespace logs {
 			bool enable = true;
-
 			log_settings_t hurt       = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(255, 100, 100, 255), log_type::standart };
 			log_settings_t player_buy = log_settings_t{ false, false, false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
 			log_settings_t planting   = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
 			log_settings_t defusing   = log_settings_t{ true,  true,  false, false, color(255,255,255,255), color(100, 100, 255, 255), log_type::standart };
 			log_settings_t config     = log_settings_t{ true,  true,  true,  false, color(255,255,255,255), globals::menu_color,       log_type::big };
 			log_settings_t lua        = log_settings_t{ true,  true,  true,  false, color(255,255,255,255), globals::menu_color,       log_type::big };
+		}
+
+		namespace impacts{
+			namespace client {
+				bool enable = false;
+				color clr = color(255, 0, 0, 127);
+				int size = 2;
+				int show_time = 4;
+			}
+
+			namespace server {
+				bool enable = false;
+				color clr = color(0, 0, 255, 127);
+				int size = 2;
+				int show_time = 4;
+			}
 		}
 	}
 

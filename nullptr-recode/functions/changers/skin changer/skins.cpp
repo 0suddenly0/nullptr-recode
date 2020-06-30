@@ -285,17 +285,13 @@ namespace skin_changer {
 		void apply_config_on_attributable_item(c_base_attributable_item* item, const item_setting_t* config, const unsigned xuid_low) {
 			item->item().item_id_high() = -1;
 			item->item().account_id() = xuid_low;
-			if (config->custom_name[0])
-				strcpy_s(item->item().custom_name(), config->custom_name);
-			if (config->paint_kit_index)
-				item->fallback_paint_kit() = config->paint_kit_index;
-			if (config->seed)
-				item->fallback_seed() = config->seed;
+			if (config->custom_name[0]) strcpy_s(item->item().custom_name(), config->custom_name);
+			if (config->paint_kit_index) item->fallback_paint_kit() = config->paint_kit_index;
+			if (config->seed) item->fallback_seed() = config->seed;
 			if (config->stat_trak) {
 				item->fallback_stat_trak() = settings::changers::skin::statrack_items[config->definition_index].statrack_new.counter;
 				item->item().entity_quality() = 9;
-			}
-			else {
+			} else {
 				item->item().entity_quality() = is_knife(config->definition_index) ? 3 : 0;
 			}
 			item->fallback_wear() = config->wear;
@@ -315,8 +311,7 @@ namespace skin_changer {
 						icon_override_map[original_item.icon] = replacement_item.icon;
 					}
 				}
-			}
-			else {
+			} else {
 				erase_override_if_exists_by_index(definition_index);
 			}
 		}
@@ -355,12 +350,10 @@ namespace skin_changer {
 			if (is_weapon) {
 				selected_skin_name = weapon_names.at(menu::definition_vector_index).skin_name.c_str();
 				selected_weapon_name = weapon_names.at(menu::definition_vector_index)._weapon_name.c_str();
-			}
-			else if (is_knife) {
+			} else if (is_knife) {
 				selected_skin_name = cur_knifes.skin_name.c_str();
 				selected_weapon_name = cur_knifes._weapon_name.c_str();
-			}
-			else if (is_glove) {
+			} else if (is_glove) {
 				selected_skin_name = cur_gloves.skin_name.c_str();
 				selected_weapon_name = cur_gloves._weapon_name.c_str();
 			}
