@@ -5,9 +5,6 @@ namespace hooks {
 		static auto panelId = vgui::VPANEL{ 0 };
 		static auto o_paint_traverse = panel_vhook.get_original<fn>(indexes::paint_traverse);
 
-		if (settings::misc::disable_zoom_border && !strcmp("HudZoom", sdk::vgui_panel->get_name(panel)) && sdk::local_player->is_alive()) 
-			return;
-
 		o_paint_traverse(sdk::vgui_panel, panel, forceRepaint, allowForce);
 
 		if (!panelId) {

@@ -227,6 +227,72 @@ namespace visuals {
 		null_gui::end_window();
 	}
 
+	void night_mode() {
+		static bool night_mode_done = false;
+
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player) {
+			night_mode_done = false;
+			return;
+		}
+
+		static std::string mapname = sdk::engine_client->get_level_name_short();
+		if (mapname != sdk::engine_client->get_level_name_short()) {
+			night_mode_done = false;
+			mapname = sdk::engine_client->get_level_name_short();
+		}
+
+		static bool old_value = settings::visuals::night_mode;
+		if (old_value != settings::visuals::night_mode || globals::unloading)
+			night_mode_done = false;
+
+		if (!night_mode_done) {
+			static const auto load_named_sky = (void(__fastcall*)(const char*))(utils::pattern_scan(GetModuleHandleW(L"engine.dll"), "55 8B EC 81 EC ? ? ? ? 56 57 8B F9 C7 45"));
+			static auto sv_skyname = sdk::cvar->find_var("sv_skyname");
+			static auto r_3dsky = sdk::cvar->find_var("r_3dsky");
+
+			load_named_sky(settings::visuals::night_mode && !globals::unloading ? "sky_csgo_night02" : sv_skyname->get_string());
+			r_3dsky->set_value(!settings::visuals::night_mode);
+			for (material_handle_t i = sdk::mat_system->first_material(); i != sdk::mat_system->invalid_material(); i = sdk::mat_system->next_material(i)) {
+				auto material = sdk::mat_system->get_material(i);
+				if (!material) continue;
+
+				if (strstr(material->get_texture_group_name(), "World")) {
+					if (settings::visuals::night_mode && !globals::unloading) material->color_modulate(0.18, 0.18, 0.15);
+					else material->color_modulate(1.0f, 1.0f, 1.0f);
+				}
+			}
+			night_mode_done = true;
+		}
+
+		old_value = settings::visuals::night_mode;
+	}
+
+	void asus_props() {
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player) return;
+
+		static convar* r_drawstaticprops = sdk::cvar->find_var("r_drawstaticprops");
+		if (settings::visuals::props::enable && !globals::unloading) {
+			r_drawstaticprops->m_fnChangeCallbacks.m_Size = 0; 
+			r_drawstaticprops->set_value(3);
+		} else {
+			r_drawstaticprops->m_fnChangeCallbacks.m_Size = 0;
+			r_drawstaticprops->set_value(1);
+		}
+
+		if (settings::visuals::props::request || globals::unloading) {
+			for (material_handle_t i = sdk::mat_system->first_material(); i != sdk::mat_system->invalid_material(); i = sdk::mat_system->next_material(i)) {
+				auto material = sdk::mat_system->get_material(i);
+				if (!material) continue;
+
+				if (strstr(material->get_texture_group_name(), "StaticProp")) {
+					if (settings::visuals::props::request && !globals::unloading) material->alpha_modulate(settings::visuals::props::alpha / 255.f);
+					else material->alpha_modulate(1.0f);
+				}
+			}
+			settings::visuals::props::request = false;
+		}
+	}
+
 	void entity_loop() {
 		for (int i = 1; i < sdk::entity_list->get_highest_entity_index(); ++i) {
 			c_base_entity* ent = c_base_entity::get_entity_by_index(i);
@@ -250,10 +316,10 @@ namespace visuals {
 			bool in_attack = (buttons & IN_ATTACK);
 			bool in_attack2 = (buttons & IN_ATTACK2);
 
-			act = (in_attack && in_attack2) ? ACT_DROP :
-				(in_attack2) ? ACT_THROW :
-				(in_attack) ? ACT_LOB :
-				ACT_NONE;
+			act = (in_attack && in_attack2) ? act_drop :
+				(in_attack2) ? act_throw :
+				(in_attack) ? act_lob :
+				act_none;
 		}
 
 		void view() {
@@ -262,7 +328,7 @@ namespace visuals {
 			auto weapon = sdk::local_player->active_weapon().get();
 			if (!weapon) return;
 
-			if ((weapon->is_grenade()) && act != ACT_NONE) {
+			if ((weapon->is_grenade()) && act != act_none) {
 				qangle Angles;
 				sdk::engine_client->get_view_angles(&Angles);
 
@@ -279,7 +345,7 @@ namespace visuals {
 			auto weapon = sdk::local_player->active_weapon().get();
 			if (!weapon) return;
 
-			if ((type) && path.size() > 1 && other_collisions.size() > 0 && act != ACT_NONE && weapon->is_grenade()) {
+			if ((type) && path.size() > 1 && other_collisions.size() > 0 && act != act_none && weapon->is_grenade()) {
 				vec2 ab, cd;
 				vec3 prev = path[0];
 				for (auto it = path.begin(), end = path.end(); it != end; ++it) {
@@ -484,7 +550,6 @@ namespace visuals {
 			if (onground) {
 				move.z = (vel.z + basevel.z) * frametime;
 			} else {
-				// Game calls GetActualGravity( this );
 				float gravity = 800.0f * 0.4f;
 
 				float newZ = vel.z - (gravity * frametime);

@@ -247,6 +247,9 @@
     <ClCompile Include="functions\misc\events.cpp">
       <Filter>sources\functions\misc</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\draw_set_color.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">

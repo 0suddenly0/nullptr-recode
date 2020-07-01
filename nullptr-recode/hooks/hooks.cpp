@@ -42,11 +42,12 @@ namespace hooks {
 		panel_vhook.hook_index(indexes::paint_traverse, paint_traverse::hook);
 
 		surface_vhook.setup(sdk::vgui_surface);
-		surface_vhook.hook_index(indexes::lock_cursor, lock_cursor::hook);
+		surface_vhook.hook_index(indexes::draw_set_color, draw_set_color::hook);
+		surface_vhook.hook_index(indexes::lock_cursor,    lock_cursor::hook);
 
 		client_vhook.setup(sdk::chl_client);
-		client_vhook.hook_index(indexes::create_move, create_move_hook_proxy);
 		client_vhook.hook_index(indexes::frame_stage_notify, frame_stage_notify::hook);
+		client_vhook.hook_index(indexes::create_move,        create_move_hook_proxy);
 
 		client_mode_vhook.setup(sdk::client_mode);
 		client_mode_vhook.hook_index(indexes::override_view, override_view::hook);

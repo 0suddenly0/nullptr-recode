@@ -198,6 +198,7 @@
     <ClCompile Include="helpers\netvars.cpp" />
     <ClCompile Include="hooks\hooks.cpp" />
     <ClCompile Include="hooks\hooks\create_move.cpp" />
+    <ClCompile Include="hooks\hooks\draw_set_color.cpp" />
     <ClCompile Include="hooks\hooks\emit_sound.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />

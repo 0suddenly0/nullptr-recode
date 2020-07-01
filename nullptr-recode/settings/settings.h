@@ -23,6 +23,7 @@ struct profile_settings_t {
 
 namespace settings {
 	namespace visuals {
+		bool night_mode = false;
 		bool ingame_radar = false;
 
 		namespace logs {
@@ -49,6 +50,12 @@ namespace settings {
 				int size = 2;
 				int show_time = 4;
 			}
+		}
+
+		namespace props {
+			bool enable = false;
+			int alpha = 255;
+			bool request = false;
 		}
 
 		namespace grenade_prediction

@@ -184,8 +184,8 @@ namespace render {
 			vec3 end(radius * cosf(a + step) + pos.x, radius * sinf(a + step) + pos.y, pos.z);
 
 			vec2 start2d, end2d;
-			if (sdk::debug_overlay->screen_position(start, start2d) || sdk::debug_overlay->screen_position(end, end2d))
-				return;
+			if (!math::world2screen(start, start2d) && !math::world2screen(end, end2d))
+				continue;
 
 			draw_line(start2d, end2d, clr);
 		}

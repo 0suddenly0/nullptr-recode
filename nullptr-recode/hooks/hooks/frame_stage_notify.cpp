@@ -20,6 +20,11 @@ namespace hooks {
 		misc::fog();
 		skin_changer::on_frame_stage_notify(stage);
 
+		if (stage == frame_stage_t::render_start) {
+			visuals::night_mode();
+			visuals::asus_props();
+		}
+
 		return o_frame_stage_notify(sdk::chl_client, stage);
 	}
 }

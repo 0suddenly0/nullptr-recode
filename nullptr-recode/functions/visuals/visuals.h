@@ -7,14 +7,16 @@ namespace visuals {
 	void thirdperson();
 	void impact();
 	void spectator_list();
+	void night_mode();
+	void asus_props();
 	void entity_loop();
 
-	enum ACT
+	enum act
 	{
-		ACT_NONE,
-		ACT_THROW,
-		ACT_LOB,
-		ACT_DROP,
+		act_none,
+		act_throw,
+		act_lob,
+		act_drop,
 	};
 
 	namespace grenade_prediction {
@@ -43,10 +45,10 @@ namespace visuals {
 
 		enum
 		{
-			ACT_NONE,
-			ACT_LOB,
-			ACT_DROP,
-			ACT_THROW
+			act_none,
+			act_lob,
+			act_drop,
+			act_throw
 		};
 	};
 }

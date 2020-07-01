@@ -14,8 +14,13 @@ namespace hooks {
 			if (settings::misc::viewmodel::override != 0 && !sdk::local_player->is_scoped())
 				view->fov = settings::misc::viewmodel::override;
 
-			if (settings::misc::disable_zoom && sdk::local_player->is_scoped())
+			static convar* zoom_sensitivity_ratio_mouse = sdk::cvar->find_var("zoom_sensitivity_ratio_mouse");
+			if (settings::misc::disable_zoom && sdk::local_player->is_scoped()) {
 				view->fov = (settings::misc::viewmodel::override == 0) ? 90 : settings::misc::viewmodel::override;
+				zoom_sensitivity_ratio_mouse->set_value(0);
+			} else {
+				zoom_sensitivity_ratio_mouse->set_value(1);
+			}
 
 			auto view_model = (c_base_player*)(sdk::entity_list->get_client_entity_from_handle(sdk::local_player->view_model()));
 			if (view_model)

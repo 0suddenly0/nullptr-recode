@@ -15,7 +15,16 @@ namespace menu {
 			break;
 		case 4:
 			null_gui::begin_group("general"); {
-
+				null_gui::check_box("night mode", &settings::visuals::night_mode);
+				null_gui::check_box("asus props", &settings::visuals::props::enable);
+				if (settings::visuals::props::enable) {
+					null_gui::tooltip_items("##asus props", []() {
+						null_gui::slider_int("alpha##asus props", &settings::visuals::props::alpha, 0, 255);
+						if (null_gui::button("set##asus props")) {
+							settings::visuals::props::request = true;
+						}
+						});
+				}
 				null_gui::check_box("grenade prediction", &settings::visuals::grenade_prediction::enable);
 				null_gui::tooltip_items("##grenade prediction settings", []() {
 					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);
@@ -28,9 +37,7 @@ namespace menu {
 					null_gui::color_edit("line color##genpred", &settings::visuals::grenade_prediction::main);
 					null_gui::color_edit("colision box color##genpred", &settings::visuals::grenade_prediction::main_box);
 					null_gui::color_edit("end colision box color##genpred", &settings::visuals::grenade_prediction::end_box);
-
 					});
-
 				null_gui::check_box("client impact", &settings::visuals::impacts::client::enable);
 				null_gui::tooltip_items("##client impact settings", []() {
 					null_gui::color_edit("color##client impact", &settings::visuals::impacts::client::clr);
@@ -43,7 +50,6 @@ namespace menu {
 					null_gui::slider_int("show time##server impact", &settings::visuals::impacts::server::show_time, 1, 10);
 					null_gui::slider_int("size##server impact", &settings::visuals::impacts::server::size, 1, 10);
 					});
-
 				null_gui::check_box("enable logs##logs", &settings::visuals::logs::enable);
 				null_gui::tooltip_items("##log settings", []() {
 					null_gui::check_box("use custom color for hurt", &settings::visuals::logs::hurt.using_custom_color);

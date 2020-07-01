@@ -35,6 +35,7 @@ namespace hooks {
 		int emit_sound = 5;
 		int is_playing_demo = 82;
 		int retrieve_message = 2;
+		int draw_set_color = 15;
 	}
 
 	void initialize();
@@ -98,6 +99,11 @@ namespace hooks {
 	namespace retrieve_message {
 		using fn = game_coordinator_results(__thiscall*)(void*, uint32_t*, void*, uint32_t, uint32_t*);
 		game_coordinator_results __stdcall hook(uint32_t* punMsgType, void* pubDest, uint32_t cubDest, uint32_t* pcubMsgSize);
+	}
+
+	namespace draw_set_color {
+		using fn = void(__thiscall*)(c_surface*, int, int, int, int);
+		void __stdcall hook(int r, int g, int b, int a);
 	}
 
 	namespace wndproc {
