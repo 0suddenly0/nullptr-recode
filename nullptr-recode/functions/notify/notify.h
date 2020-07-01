@@ -29,6 +29,7 @@ namespace notify {
 	void add(std::string pre, std::string body, log_settings_t log, int life_time = 7500, std::vector<render::multicolor_t> multi_items = {});
 	void add(std::string pre, std::vector<render::multicolor_t> multi_items, log_settings_t log, int life_time = 7500);
 	void add(std::string pre, std::string body, color color_pre, color color_body = color(255, 255, 255, 255));
+	void add(std::string pre, color clr_pre, std::vector<render::multicolor_t> multi_items, log_type type);
 	void add(std::string pre, std::string body, color color_pre, int life_time, log_type type);
 	void add(std::string pre, std::string body, color color_pre, log_type type);
 	void add(std::string pre, std::string body, log_type type);

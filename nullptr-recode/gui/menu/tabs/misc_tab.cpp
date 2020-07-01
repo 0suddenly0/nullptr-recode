@@ -111,7 +111,7 @@ namespace menu {
 							tags.push_back(user_tag);
 
 							if (player->get_index() != sdk::local_player->get_index()) {
-								if (null_gui::selectable(utils::snprintf("%s : %s [%d]", user_name.c_str(), user_tag.c_str(), player->get_index()).c_str())) {
+								if (null_gui::selectable(utils::snprintf("%s : %s", user_name.c_str(), user_tag.c_str()).c_str())) {
 									misc::clan_tag::user_index = i;
 								}
 							}
@@ -141,13 +141,15 @@ namespace menu {
 		null_gui::end_group();
 
 		null_gui::begin_group("windows", vec2(0, 100)); {
-
 			null_gui::check_box("bind window", &settings::windows::bind_window_show);
-			null_gui::tooltip_items("##bind_window_settings", []() {
-				null_gui::slider_int("window alpha##bind_window", &settings::windows::bind_window_alpha, 0, 255);
+			null_gui::tooltip_items("##bind window settings", []() {
+				null_gui::slider_int("window alpha##bind window", &settings::windows::bind_window_alpha, 0, 255);
 				});
-
-			null_gui::end_group();
+			null_gui::check_box("spectator list window", &settings::windows::spectator_list_show);
+			null_gui::tooltip_items("##spectator list settings", []() {
+				null_gui::slider_int("window alpha##spectator list", &settings::windows::spectator_list_alpha, 0, 255);
+				});
 		}
+		null_gui::end_group();
 	}
 }

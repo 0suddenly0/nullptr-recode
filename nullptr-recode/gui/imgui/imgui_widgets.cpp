@@ -241,7 +241,6 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
         // Render (we don't hide text after ## in this end-user function)
         RenderTextWrapped(bb.Min, text_begin, text_end, wrap_width);
     }
-
 }
 
 void ImGui::TextUnformatted(const char* text, const char* text_end)

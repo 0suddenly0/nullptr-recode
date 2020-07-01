@@ -106,7 +106,7 @@ namespace null_gui {
     bool float_input(const char* text, float* value, float step_low = 1.f, float step_big = 100.f, const char* format = "%.1f");
     bool color_edit(const char* text, color* color, bool alpha = true);
     bool text_input(const char* text, std::string* value);
-    void image(IDirect3DTexture9* texture, vec2 size);
+    void image(IDirect3DTexture9* texture, vec2 min, vec2 max);
     bool combo(const char* text, int* value, std::vector<std::string>& items);
     bool functional_combo(const char* text, const char* prev_item, std::function<void()> function);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values);

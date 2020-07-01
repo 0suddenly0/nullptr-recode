@@ -100,6 +100,12 @@ public:
 	vec2 operator+(const vec2& v) {
 		return vec2(x + v.x, y + v.y);
 	}
+	vec2 operator+(const float v) {
+		return vec2(x + v, y + v);
+	}
+	vec2 operator-(const float v) {
+		return vec2(x - v, y - v);
+	}
 	vec2 operator-(const vec2& v) {
 		return vec2(x - v.x, y - v.y);
 	}
@@ -296,6 +302,10 @@ public:
 		return x < v && y < v && z < v;
 	}
 
+	void zero() {
+		x = y = z = 0.0f;
+	}
+
 	float dot(const vec3& vOther) const {
 		return (x * vOther.x + y * vOther.y + z * vOther.z);
 	}
@@ -322,7 +332,7 @@ public:
 		return delta.length();
 	}
 
-	float length() {
+	float length() const {
 		return (float)sqrt(x * x + y * y + z * z);
 	}
 
@@ -355,6 +365,18 @@ public:
 		}
 
 		return vec3(deg(atan2f(-z, sqrtf(x * x + y * y))), deg(atan2f(y, x)), roll);
+	}
+
+	void mul_add(const vec3& a, const vec3& b, float scalar) {
+		x = a.x + b.x * scalar;
+		y = a.y + b.y * scalar;
+		z = a.z + b.z * scalar;
+	}
+
+	void mul(float scalar) {
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
 	}
 
 	float x, y, z;

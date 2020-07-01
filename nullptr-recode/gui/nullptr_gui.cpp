@@ -166,8 +166,8 @@ namespace null_gui {
         return return_value;
     }
 
-    void image(IDirect3DTexture9* texture, vec2 size) {
-        ImGui::Image(texture, ImVec2(size.x, size.y));
+    void image(IDirect3DTexture9* texture, vec2 min, vec2 max) {
+        ImGui::GetWindowDrawList()->AddImage(texture, ImVec2(min.x, min.y), ImVec2(max.x, max.y));
     }
 
     bool combo(const char* text, int* value, std::vector<std::string>& items) {

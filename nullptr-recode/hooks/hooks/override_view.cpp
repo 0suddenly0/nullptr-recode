@@ -4,7 +4,7 @@ namespace hooks {
 	void __stdcall override_view::hook(c_view_setup* view) {
 		static auto o_override_view = client_mode_vhook.get_original<fn>(indexes::override_view);
 
-		//grenade_prediction::view();
+		visuals::grenade_prediction::view();
 
 		if (sdk::engine_client->is_in_game() && view) {
 			visuals::thirdperson();

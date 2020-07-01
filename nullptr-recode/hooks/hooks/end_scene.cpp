@@ -48,6 +48,7 @@ namespace hooks {
 
 		menu::draw_bind_window();
 		menu::draw_main_window();
+		visuals::spectator_list();
 
 		ImGui::Render(render::get_list_for_render());
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());

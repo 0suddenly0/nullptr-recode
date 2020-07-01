@@ -38,6 +38,10 @@ namespace notify {
 		if (log.enable_screen) add(pre, "", get_log_color(log), color(255, 255, 255, 255), life_time, log.screen_type, multi_items);
 	}
 
+	void add(std::string pre, color clr_pre, std::vector<render::multicolor_t> multi_items, log_type type) {
+		add(pre, "", clr_pre, color(255, 255, 255, 255), 7500, type, multi_items);
+	}
+
 	void add(std::string pre, std::string body, color color_pre, color color_body, int life_time, log_type type, std::vector<render::multicolor_t> multi_items) {
 		switch (type) {
 		case console: 

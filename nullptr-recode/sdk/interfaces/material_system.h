@@ -290,11 +290,11 @@ public:
     virtual void                            reload_textures() = 0;
     virtual void                            reload_materials(const char *pSubString = NULL) = 0;
     virtual c_material*                      create_material(const char *pMaterialName, key_values *pVMTkey_values) = 0;
-    virtual c_material*                      find_material(char const* pMaterialName, const char *pTextureGroupName, bool complain = true, const char *pComplainPrefix = NULL) = 0;
-    virtual material_handle_t                first_material() const = 0;
-    virtual material_handle_t                next_material(material_handle_t h) const = 0;
-    virtual material_handle_t                invalid_material() const = 0;
-    virtual c_material*                      get_material(material_handle_t h) const = 0;
+    virtual c_material*                      _find_material(char const* pMaterialName, const char *pTextureGroupName, bool complain = true, const char *pComplainPrefix = NULL) = 0;
+    virtual material_handle_t                _first_material() const = 0;
+    virtual material_handle_t                _next_material(material_handle_t h) const = 0;
+    virtual material_handle_t                _invalid_material() const = 0;
+    virtual c_material*                      _get_material(material_handle_t h) const = 0;
     virtual int                             get_num_materials() const = 0;
     virtual c_texture*                       find_texture(char const* pTextureName, const char *pTextureGroupName, bool complain = true) = 0;
     virtual bool                            is_texture_loaded(char const* pTextureName) const = 0;
@@ -305,4 +305,30 @@ public:
     virtual c_texture*                       create_named_render_target_texture_ex(const char *pRTName, int w, int h, render_target_size_mode_t sizeMode, image_format format, material_render_target_depth_t depth = MATERIAL_RT_DEPTH_SHARED, unsigned int textureFlags = TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT, unsigned int renderTargetFlags = 0) = 0;
     virtual c_texture*                       create_named_render_target_texture(const char *pRTName, int w, int h, render_target_size_mode_t sizeMode, image_format format, material_render_target_depth_t depth = MATERIAL_RT_DEPTH_SHARED, bool bClampTexCoords = true, bool bAutoMipMap = false) = 0;
     virtual c_texture*                       create_named_render_target_texture_ex2(const char *pRTName, int w, int h, render_target_size_mode_t sizeMode, image_format format, material_render_target_depth_t depth = MATERIAL_RT_DEPTH_SHARED, unsigned int textureFlags = TEXTUREFLAGS_CLAMPS | TEXTUREFLAGS_CLAMPT, unsigned int renderTargetFlags = 0) = 0;
+
+    c_material* find_material(char const* pMaterialName, const char* pTextureGroupName, bool complain = true, const char* pComplainPrefix = NULL) {
+        typedef c_material* (__thiscall* o_find_material)(PVOID, char const*, char const*, bool, char const*);
+        return call_vfunction< o_find_material >(this, 84)(this, pMaterialName, pTextureGroupName, complain, pComplainPrefix);
+    }
+
+
+    material_handle_t first_material() {
+        typedef material_handle_t(__thiscall* o_first_material)(void*);
+        return call_vfunction<o_first_material>(this, 86)(this);
+    }
+
+    material_handle_t next_material(material_handle_t h) {
+        typedef material_handle_t(__thiscall* o_next_material)(void*, material_handle_t);
+        return call_vfunction<o_next_material>(this, 87)(this, h);
+    }
+
+    material_handle_t invalid_material() {
+        typedef material_handle_t(__thiscall* o_invalid_material)(void*);
+        return call_vfunction<o_invalid_material>(this, 88)(this);
+    }
+
+    c_material* get_material(material_handle_t h) {
+        typedef c_material* (__thiscall* o_get_material)(void*, material_handle_t);
+        return call_vfunction<o_get_material>(this, 89)(this, h);
+    }
 };

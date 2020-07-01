@@ -36,7 +36,7 @@ enum observer_mode_t {
 	obs_fixed = 3,
 	obs_in_eye = 4,
 	obs_chase = 5,
-	obs_oaming = 6
+	obs_roaming = 6
 };
 
 enum cs_weapon_type {

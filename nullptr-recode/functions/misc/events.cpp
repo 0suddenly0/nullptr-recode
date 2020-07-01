@@ -95,8 +95,6 @@ std::map<std::string, std::string> fix_by_item_names = {
 class c_event : public c_game_event_listener {
 private:
 	virtual void fire_game_event(c_game_event* event) {
-		//notify::add("debug", event->get_name());
-
 		if (strstr(event->get_name(), "player_hurt")) {
 			int userid = event->get_int("userid");
 			int attacker = event->get_int("attacker");
@@ -272,19 +270,8 @@ private:
 						imp.size = settings::visuals::impacts::server::size;
 						imp.clr = settings::visuals::impacts::server::clr;
 						globals::server_impacts.push_back(imp);
-						//sdk::debug_overlay->add_box_overlay(position, vec3(2, 2, 2), vec3(-2, -2, -2), qangle(0, 0, 0), 255, 0, 0, 127, 5);
 					}
 				}
-
-				/*if (pl->team_num() == g_local_player->team_num() && pl != g_local_player && settings::visuals::bullet_impact::line::teammates)
-				{
-					visuals::draw_bullet_tracer(pl->get_eye_pos(), position, settings::visuals::bullet_impact::line::color_teammates);
-				}
-
-				if (pl->team_num() != g_local_player->team_num() && settings::visuals::bullet_impact::line::enemies)
-				{
-					visuals::draw_bullet_tracer(pl->get_eye_pos(), position, settings::visuals::bullet_impact::line::color_enemies);
-				}*/
 			}
 		}
 	}

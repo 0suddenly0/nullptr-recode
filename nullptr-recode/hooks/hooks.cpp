@@ -21,7 +21,6 @@ __declspec(naked) void __fastcall create_move_hook_proxy(void* _this, int, int s
 }
 
 namespace hooks {
-
 	vfunc_hook d3d9device_vhook;
 	vfunc_hook panel_vhook;
 	vfunc_hook surface_vhook;

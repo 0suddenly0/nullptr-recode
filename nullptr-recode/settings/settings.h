@@ -50,6 +50,21 @@ namespace settings {
 				int show_time = 4;
 			}
 		}
+
+		namespace grenade_prediction
+		{
+			bool enable = false;
+			bool radius = true;
+
+			float line_thickness = 2.f;
+			float colision_box_size = 2.f;
+			float main_colision_box_size = 3.f;
+
+			color radius_color = color(0, 0, 0, 255);
+			color main = color(0, 0, 0, 255);
+			color main_box = color(0, 0, 0, 255);
+			color end_box = color(0, 0, 0, 255);
+		}
 	}
 
 	namespace misc {
@@ -166,5 +181,9 @@ namespace settings {
 		bool bind_window_show = false;
 		int bind_window_alpha = 255;
 		vec2 bind_window_pos = vec2(100, 100);
+
+		bool spectator_list_show = false;
+		int spectator_list_alpha = 255;
+		vec2 spectator_list_pos = vec2(300, 100);
 	}
 }

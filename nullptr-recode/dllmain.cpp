@@ -43,7 +43,13 @@ DWORD WINAPI attach(LPVOID base) {
 		hooks::initialize();
 		utils::console_print("[-] all func hooked\n");
 
-		//notify::add("nullptr", "injected", globals::menu_color, true, true, log_type::console, log_type::big);
+		std::vector<render::multicolor_t> items = {
+			render::multicolor_t{ "nullptr", globals::menu_color },
+			render::multicolor_t{ " injected", color(255,255,255,255) }
+		};
+
+		notify::add("nullptr", globals::menu_color, items, log_type::big);
+		notify::add("nullptr", globals::menu_color, items, log_type::console);
 
 #ifdef _DEBUG
 		input::register_hotkey(VK_END, [base]() {

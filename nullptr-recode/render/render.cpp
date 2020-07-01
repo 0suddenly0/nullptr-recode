@@ -109,8 +109,6 @@ namespace render {
 			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
 			draw_text(item.text, vec2(cur_x, pos.y), item.clr, outline, false, size);
 			cur_x += text_size.x;
-
-			//if (item.text.at(item.text.length() - 1) == ' ') cur_x += 1;
 		}
 	}
 
@@ -121,8 +119,6 @@ namespace render {
 			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
 			cur_size.x += text_size.x;
 			cur_size.y = text_size.y;
-
-			//if (item.text.at(item.text.length() - 1) == ' ') cur_size.x += 1;
 		}
 
 		return cur_size;
@@ -191,7 +187,7 @@ namespace render {
 			if (sdk::debug_overlay->screen_position(start, start2d) || sdk::debug_overlay->screen_position(end, end2d))
 				return;
 
-			draw_line(start2d.x, start2d.y, end2d.x, end2d.y, clr);
+			draw_line(start2d, end2d, clr);
 		}
 	}
 }

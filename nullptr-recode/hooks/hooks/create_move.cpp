@@ -33,6 +33,7 @@ namespace hooks {
 		misc::clan_tag::init();
 
 		engine_prediction::begin(cmd); {
+			visuals::grenade_prediction::tick(cmd->buttons);
 			misc::edge_jump(cmd, old_flags);
 			misc::block_bot(cmd);
 

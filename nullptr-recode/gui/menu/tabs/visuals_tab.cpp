@@ -16,6 +16,21 @@ namespace menu {
 		case 4:
 			null_gui::begin_group("general"); {
 
+				null_gui::check_box("grenade prediction", &settings::visuals::grenade_prediction::enable);
+				null_gui::tooltip_items("##grenade prediction settings", []() {
+					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);
+					null_gui::color_edit("##radiuscolor_genpred", &settings::visuals::grenade_prediction::radius_color);
+
+					null_gui::slider_float("line thickness##genpred", &settings::visuals::grenade_prediction::line_thickness, 0.f, 5.f, "%.1f");
+					null_gui::slider_float("colision box size##genpred", &settings::visuals::grenade_prediction::colision_box_size, 0.f, 10.f, "%.1f");
+					null_gui::slider_float("main colision box size##genpred", &settings::visuals::grenade_prediction::main_colision_box_size, 0.f, 10.f, "%.1f");
+
+					null_gui::color_edit("line color##genpred", &settings::visuals::grenade_prediction::main);
+					null_gui::color_edit("colision box color##genpred", &settings::visuals::grenade_prediction::main_box);
+					null_gui::color_edit("end colision box color##genpred", &settings::visuals::grenade_prediction::end_box);
+
+					});
+
 				null_gui::check_box("client impact", &settings::visuals::impacts::client::enable);
 				null_gui::tooltip_items("##client impact settings", []() {
 					null_gui::color_edit("color##client impact", &settings::visuals::impacts::client::clr);

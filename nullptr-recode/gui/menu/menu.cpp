@@ -10,15 +10,12 @@ namespace menu {
 		input::create_binds();
 
 		bool show_window = input::binds.size() > 0 && settings::windows::bind_window_show;
-
-		null_gui::push_style_var(ImGuiStyleVar_WindowPadding, vec2(8, 5));
 		null_gui::deep::set_next_window_alpha(settings::windows::bind_window_alpha / 255.f);
 
 		null_gui::begin_window("binds", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
-
 			settings::windows::bind_window_pos = null_gui::deep::get_window_pos();
-
 			null_gui::deep::set_window_hidden(!show_window);
+			null_gui::deep::set_cursor_y(22);
 
 			null_gui::create_columns(2); {
 				null_gui::text_no_space("bind name");
@@ -48,8 +45,6 @@ namespace menu {
 
 			null_gui::end_window();
 		}
-
-		null_gui::pop_style_var();
 	}
 	void draw_main_window() {
 		if (!globals::show_menu) return;
@@ -114,7 +109,13 @@ namespace menu {
 		null_gui::deep::set_next_window_pos(vec2(main_window_pos.x + main_window_size.x + 10, main_window_pos.y), false);
 
 		null_gui::begin_window("##preview skins", (bool*)0, vec2(272, 212)); {
-			null_gui::image(image, vec2(256, 192));
+			vec2 pos = null_gui::deep::get_window_pos();
+			vec2 size = null_gui::deep::get_window_size();
+
+			vec2 min = vec2(pos.x + 8, pos.y + 3);
+			vec2 max = vec2(pos.x + size.x - (8 * 2), pos.y + size.y - (3 * 2));
+
+			null_gui::image(image, min, max);
 		}
 		null_gui::end_window();
 
