@@ -25,6 +25,9 @@ namespace settings {
 	namespace visuals {
 		bool night_mode = false;
 		bool ingame_radar = false;
+		bool sniper_crosshair = false;
+		bool bomb_timer = false;
+		int bomb_timer_pos = 0;
 
 		namespace logs {
 			bool enable = true;
@@ -87,7 +90,6 @@ namespace settings {
 		bool disable_smoke = false;
 		bool disable_zoom = false;
 		bool disable_zoom_border = false;
-		bool sniper_crosshair = false;
 
 		namespace fog {
 			bool enable = false;

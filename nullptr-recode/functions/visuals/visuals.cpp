@@ -6,8 +6,91 @@ struct spectator_t {
 	observer_mode_t mode;
 };
 
+float get_defuse_time(c_planted_c4* bomb) {
+	static float defuse_time = -1;
+	if (!bomb) return 0;
+	if (!bomb->bomb_defuser()) defuse_time = -1;
+	else if (defuse_time == -1) defuse_time = sdk::global_vars->curtime + bomb->defuse_length();
+	if (defuse_time > -1 && bomb->bomb_defuser()) return defuse_time - sdk::global_vars->curtime;
+	return 0;
+}
+
+c_base_player* get_bomb_player() {
+	for (int i = 1; i <= sdk::entity_list->get_highest_entity_index(); ++i) {
+		c_base_player* entity = c_base_player::get_player_by_index(i);
+		if (!entity || entity->is_player() || entity->is_dormant() || entity == sdk::local_player)
+			continue;
+
+		if (entity->is_planted_c4())
+			return entity;
+	}
+
+	return nullptr;
+}
+
+c_planted_c4* get_bomb() {
+	c_base_entity* entity;
+	for (int i = 1; i <= sdk::entity_list->get_max_entities(); ++i) {
+		entity = c_base_entity::get_entity_by_index(i);
+		if (entity && !entity->is_dormant() && entity->is_planted_c4())
+			return (c_planted_c4*)(entity);
+	}
+
+	return nullptr;
+}
+
+c_base_player* get_damage_player() {
+	if (sdk::local_player->is_alive()) {
+		return sdk::local_player;
+	} else {
+		if (sdk::local_player->observer_mode() == observer_mode_t::obs_roaming) {
+			return nullptr;
+		} else {
+			c_base_player* spectated_ent = sdk::local_player->observer_target();
+			if (!spectated_ent) return nullptr;
+			return spectated_ent;
+		}
+	}
+
+	return sdk::local_player;
+}
+
+float get_bomb_damage() {
+	c_base_player* bomb = get_bomb_player();
+
+	if (!bomb)
+		return 0.f;
+
+	float armor = get_damage_player()->armor_value();
+	float distance = get_damage_player()->get_eye_pos().dist_to(bomb->get_abs_origin());
+
+	float a = 450.7f;
+	float b = 75.68f;
+	float c = 789.2f;
+	float d = ((distance - b) / c);
+	float damage = a * exp(-d * d);
+
+	float dmg = damage;
+
+	if (armor > 0)
+	{
+		float _new = dmg * 0.5f;
+		float armor = (dmg - _new) * 0.5f;
+
+		if (armor > (float)(armor))
+		{
+			armor = float(armor) * (1.f / 0.5f);
+			_new = dmg - armor;
+		}
+
+		damage = _new;
+	}
+	return damage;
+}
+
 namespace visuals {
 	void render() {
+		bomb_indicator();
 		impact();
 		grenade_prediction::paint();
 		draw_watermark();
@@ -25,7 +108,7 @@ namespace visuals {
 
 		vec2 screen_size = utils::get_screen_size();
 		std::string watermark_text = utils::snprintf("nullptr | %s | fps: %i", utils::current_date_time().c_str(), null_gui::deep::get_framerate());
-		vec2 watermark_text_size = vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, watermark_text.c_str()).x, render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, watermark_text.c_str()).y);
+		vec2 watermark_text_size = render::get_text_size(watermark_text);	
 
 		vec2 bar_start_position  = vec2(screen_size.x - offsets.x - watermark_text_size.x - offsets_text.x, offsets.y);
 		vec2 bar_end_position    = vec2(screen_size.x - offsets.x                                         , offsets.y + bar_size);
@@ -123,9 +206,9 @@ namespace visuals {
 		}
 
 		static int last_count = 0;
-		auto& client_impact_list = sdk::local_player->get_client_impacts();
+		c_utl_vector<client_hit_verify_t>& client_impact_list = sdk::local_player->get_client_impacts();
 
-		for (auto i = client_impact_list.Count(); i > last_count; i--) {
+		for (int i = client_impact_list.Count(); i > last_count; i--) {
 			if (settings::visuals::impacts::client::enable) {
 				sdk::debug_overlay->add_box_overlay(
 					client_impact_list[i - 1].pos,
@@ -200,7 +283,7 @@ namespace visuals {
 
 			null_gui::create_columns(2); {
 				for (int i = 0; i < spectators.size(); i++) {
-					auto& spec = spectators[i];
+					spectator_t& spec = spectators[i];
 
 					null_gui::text_no_space(spec.name.c_str());
 
@@ -247,13 +330,13 @@ namespace visuals {
 
 		if (!night_mode_done) {
 			static const auto load_named_sky = (void(__fastcall*)(const char*))(utils::pattern_scan(GetModuleHandleW(L"engine.dll"), "55 8B EC 81 EC ? ? ? ? 56 57 8B F9 C7 45"));
-			static auto sv_skyname = sdk::cvar->find_var("sv_skyname");
-			static auto r_3dsky = sdk::cvar->find_var("r_3dsky");
+			static convar* sv_skyname = sdk::cvar->find_var("sv_skyname");
+			static convar* r_3dsky = sdk::cvar->find_var("r_3dsky");
 
 			load_named_sky(settings::visuals::night_mode && !globals::unloading ? "sky_csgo_night02" : sv_skyname->get_string());
 			r_3dsky->set_value(!settings::visuals::night_mode);
 			for (material_handle_t i = sdk::mat_system->first_material(); i != sdk::mat_system->invalid_material(); i = sdk::mat_system->next_material(i)) {
-				auto material = sdk::mat_system->get_material(i);
+				c_material* material = sdk::mat_system->get_material(i);
 				if (!material) continue;
 
 				if (strstr(material->get_texture_group_name(), "World")) {
@@ -281,7 +364,7 @@ namespace visuals {
 
 		if (settings::visuals::props::request || globals::unloading) {
 			for (material_handle_t i = sdk::mat_system->first_material(); i != sdk::mat_system->invalid_material(); i = sdk::mat_system->next_material(i)) {
-				auto material = sdk::mat_system->get_material(i);
+				c_material* material = sdk::mat_system->get_material(i);
 				if (!material) continue;
 
 				if (strstr(material->get_texture_group_name(), "StaticProp")) {
@@ -291,6 +374,79 @@ namespace visuals {
 			}
 			settings::visuals::props::request = false;
 		}
+	}
+
+	void bomb_indicator() {
+		if (!sdk::engine_client->is_connected() || !sdk::local_player || !settings::visuals::bomb_timer) return;
+		int x, y;
+		sdk::engine_client->get_screen_size(x, y);
+
+		c_planted_c4* bomb = get_bomb();
+		if (!bomb) return;
+		float bomb_timer = bomb->c4_blow() - sdk::global_vars->curtime;
+		if (bomb_timer < 0) return;
+
+		vec2 window_pos = vec2(0, y - 430);
+		static vec2 window_size(96, 15);// 3 item - 35 | 2 item - 25 | 1 item - 15
+
+		if (settings::visuals::bomb_timer_pos == 1) {
+			if (!get_bomb_player()) return;
+			if (!math::world2screen(get_bomb_player()->get_abs_origin(), window_pos)) return;
+
+			window_pos.x -= window_size.x / 2;
+			window_pos.y -= window_size.y / 2;
+		}
+
+		render::draw_box_filled(window_pos, window_pos + window_size, color(0, 0, 0, 100));
+		render::draw_box_filled(window_pos, window_pos + vec2(2.f, window_size.y), globals::menu_color);
+		render::draw_text(bomb->bomb_defused() ? "defused" : utils::snprintf("bomb: %s", bomb_timer >= 0 ? utils::snprintf("%.3f", bomb_timer).c_str() : "0"), vec2(window_pos.x + 4, window_pos.y + 2), color(255, 255, 255, 255), false);
+	
+		float time = get_defuse_time(bomb);
+		float bomb_damage = get_bomb_damage();
+
+		if (bomb->bomb_defused()) {
+			window_size.y = 15;
+			return;
+		}
+
+		if (get_defuse_time(bomb) > 0) {
+			bool def_kits = bomb->bomb_defuser()->has_defuser_kit();
+
+			std::vector<render::multicolor_t> items = {
+				render::multicolor_t{"defuse: ", color(255, 255, 255, 255)},
+				render::multicolor_t{utils::snprintf("%.3f", time), bomb_timer < time ? color(255, 50, 50, 255) : color(50, 255, 50, 255)}
+			};
+			render::draw_text_multicolor(items, vec2(window_pos.x + 4, window_pos.y + 12), false);
+
+			if (bomb_damage > 1 && bomb_timer >= 0) {
+				render::draw_text(utils::snprintf("damage: %s", bomb_damage < 100 ? utils::snprintf("%.0f", bomb_damage).c_str() : "you dead"), vec2(window_pos.x + 4, window_pos.y + 22), color(255, 255, 255, 255), false);
+				window_size.y = 35;
+			} else {
+				window_size.y = 25;
+			}
+
+			float box_w = (float)fabs(0 - window_size.x);
+			float width;
+
+			if (def_kits) {
+				width = (((box_w * time) / 5.f));
+			} else {
+				width = (((box_w * time) / 10.f));
+			}
+
+			render::draw_box_filled(window_pos + vec2(0.f, window_size.y + 2.f), window_pos + vec2(width, window_size.y + 4.f), color(50, 50, 255, 255));
+		} else if (get_defuse_time(bomb) <= 0) {
+			if (bomb_damage > 1 && bomb_timer >= 0) {
+				render::draw_text(utils::snprintf("damage: %s", bomb_damage < 100 ? utils::snprintf("%.0f", bomb_damage).c_str() : "you dead"), vec2(window_pos.x + 4, window_pos.y + 12), color(255, 255, 255, 255), false);
+				window_size.y = 25;
+			} else {
+				window_size.y = 15;
+			}
+		}
+
+		float box_w = (float)fabs(0 - window_size.x);
+		float width = (((box_w * bomb_timer) / sdk::cvar->find_var("mp_c4timer")->get_float()));
+		render::draw_box_filled(window_pos + vec2(0.f, window_size.y), window_pos + vec2(width, window_size.y + 2), color(255, 100, 100, 255));
 	}
 
 	void entity_loop() {
@@ -342,7 +498,7 @@ namespace visuals {
 		void paint() {
 			if (!settings::visuals::grenade_prediction::enable) return;
 			if (!sdk::local_player) return;
-			auto weapon = sdk::local_player->active_weapon().get();
+			c_base_combat_weapon* weapon = sdk::local_player->active_weapon().get();
 			if (!weapon) return;
 
 			if ((type) && path.size() > 1 && other_collisions.size() > 0 && act != act_none && weapon->is_grenade()) {
@@ -366,7 +522,7 @@ namespace visuals {
 				}
 
 				std::string EntName;
-				auto bestdmg = 0;
+				int bestdmg = 0;
 
 				vec3 endpos = path[path.size() - 1];
 				vec3 absendpos = endpos;

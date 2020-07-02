@@ -11,6 +11,7 @@ public:
 
 	NETVAR(observer_mode_t, observer_mode, "DT_BasePlayer", "m_iObserverMode")
 	NETVAR(bool, is_defusing, "DT_CSPlayer", "m_bIsDefusing");
+	NETVAR(bool, has_defuser_kit, "DT_CSPlayer", "m_bHasDefuser")
 	NETVAR(bool, gun_game_immunity, "DT_CSPlayer", "m_bGunGameImmunity");
 	NETVAR(int32_t, shots_fired, "DT_CSPlayer", "m_iShotsFired");
 	NETVAR(qangle, eye_angles, "DT_CSPlayer", "m_angEyeAngles[0]");

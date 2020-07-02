@@ -8,5 +8,5 @@ public:
 	NETVAR(float, timer_length, "DT_PlantedC4", "m_flTimerLength");
 	NETVAR(float, defuse_length, "DT_PlantedC4", "m_flDefuseLength");
 	NETVAR(float, defuse_count_down, "DT_PlantedC4", "m_flDefuseCountDown");
-	NETVAR(c_handle<c_base_player>, m_hBombDefuser, "DT_PlantedC4", "m_hBombDefuser");
+	NETVAR(c_handle<c_base_player>, bomb_defuser, "DT_PlantedC4", "m_hBombDefuser");
 };

@@ -250,6 +250,9 @@
     <ClCompile Include="hooks\hooks\draw_set_color.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\weapon_spread.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">

@@ -102,11 +102,15 @@ namespace render {
 		return draw_list_for_render;
 	}
 
+	vec2 get_text_size(std::string text, ImFont* font, int text_size) {
+		return math::to_vec2(font->CalcTextSizeA(text_size, FLT_MAX, 0, text.c_str()));
+	}
+
 	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline, bool center, int size) {
 		float cur_x = pos.x - (center ? get_multicolor_size(items, size).x / 2 : 0);
 
 		for (auto& item : items) {
-			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
+			vec2 text_size = get_text_size(item.text, default_font, size);
 			draw_text(item.text, vec2(cur_x, pos.y), item.clr, outline, false, size);
 			cur_x += text_size.x;
 		}
@@ -116,7 +120,7 @@ namespace render {
 		vec2 cur_size = vec2(0, 0);
 
 		for (auto& item : items) {
-			vec2 text_size = vec2(default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).x, default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, item.text.c_str()).y);
+			vec2 text_size = get_text_size(item.text, default_font, size);
 			cur_size.x += text_size.x;
 			cur_size.y = text_size.y;
 		}
@@ -132,8 +136,7 @@ namespace render {
 		if (center)
 			pos.x -= textSize.x / 2.0f;
 
-		if (outline)
-		{
+		if (outline) {
 			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
 			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
 			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
@@ -184,7 +187,7 @@ namespace render {
 			vec3 end(radius * cosf(a + step) + pos.x, radius * sinf(a + step) + pos.y, pos.z);
 
 			vec2 start2d, end2d;
-			if (!math::world2screen(start, start2d) && !math::world2screen(end, end2d))
+			if (!math::world2screen(start, start2d) || !math::world2screen(end, end2d))
 				continue;
 
 			draw_line(start2d, end2d, clr);

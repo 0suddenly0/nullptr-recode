@@ -325,7 +325,7 @@ namespace config {
 			add_group("visuals"); {
 				add_group("general"); {
 					add_group("misc"); {
-						add_var("[sniper crosshair] enable", settings::misc::sniper_crosshair);
+						add_var("[sniper crosshair] enable", settings::visuals::sniper_crosshair);
 
 						add_group("fog"); {
 

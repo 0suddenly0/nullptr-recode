@@ -21,6 +21,7 @@ namespace hooks {
 	extern vfunc_hook sound_vhook;
 	extern vfunc_hook engine_vhook;
 	extern vfunc_hook game_coordinator_vhook;
+	extern vfunc_hook weapon_spread_vhook;
 
 	namespace indexes {
 		int send_net_msg = 40;
@@ -36,6 +37,7 @@ namespace hooks {
 		int is_playing_demo = 82;
 		int retrieve_message = 2;
 		int draw_set_color = 15;
+		int cvar_get_bool = 13;
 	}
 
 	void initialize();
@@ -104,6 +106,11 @@ namespace hooks {
 	namespace draw_set_color {
 		using fn = void(__thiscall*)(c_surface*, int, int, int, int);
 		void __stdcall hook(int r, int g, int b, int a);
+	}
+
+	namespace weapon_spread {
+		using fn = int(__thiscall*)(void*);
+		int __fastcall hook(void* ecx, void* edx);
 	}
 
 	namespace wndproc {

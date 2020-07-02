@@ -13,7 +13,7 @@
 namespace render {
 
 	class multicolor_t {
-	public:	
+	public:
 		multicolor_t(const char* _text, color _clr) {
 			text = _text;
 			clr = _clr;
@@ -57,6 +57,7 @@ namespace render {
 		return ImVec4(clr.color_float[0], clr.color_float[1], clr.color_float[2], clr.color_float[3]);
 	}
 
+	vec2 get_text_size(std::string text, ImFont* font = default_font, int text_size = 12);
 
 	template <typename T>
 	void draw_text_multicolor(std::vector<multicolor_t> items, T x, T y, bool outline = true, bool center = false, int size = 12) {

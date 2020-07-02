@@ -141,6 +141,7 @@ namespace menu {
 			null_gui::int_input("leader", &settings::changers::profile::leader, 1, 10);
 		}
 		null_gui::end_group();
+
 		null_gui::begin_group("ban##profile tab", vec2(0, 144)); {
 			null_gui::combo("ban type", &settings::changers::profile::ban_type, bans);
 			null_gui::combo("time type", &settings::changers::profile::ban_time_type, std::vector<std::string>{"sec", "min", "hour", "days"});

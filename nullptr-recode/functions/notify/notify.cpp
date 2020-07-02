@@ -93,17 +93,16 @@ namespace notify {
 	void add(std::string pre, std::string body, color color_pre, int life_time, log_type type) {
 		add(pre, body, color_pre, color(255, 255, 255, 255), life_time, type);
 	}
-	void add(std::string pre, std::string body, color color_pre, log_type type)
-	{
+
+	void add(std::string pre, std::string body, color color_pre, log_type type) {
 		add(pre, body, color_pre, color(255, 255, 255, 255), 2000.f, type);
 	}
-	void add(std::string pre, std::string body, log_type type)
-	{
+
+	void add(std::string pre, std::string body, log_type type) {
 		add(pre, body, globals::menu_color, color(255, 255, 255, 255), 2000.f, type);
 	}
 
-	void render()
-	{
+	void render() {
 		int screen_w, screen_h;
 
 		screen_w = utils::get_screen_size().x;
@@ -115,15 +114,15 @@ namespace notify {
 
 				bool this_multicolor = notify.multicolor_items.size() > 0;
 
-				int left_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, "[ ").x;
-				int right_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, " ]").x;
-				int space_size = render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, "  ").x;
+				int left_size = render::get_text_size("[ ").x;
+				int right_size = render::get_text_size(" ]").x;
+				int space_size = render::get_text_size(" ").x;
 
 				std::string all_text = utils::snprintf("[ %s ] %s", notify.s_pre.c_str(), notify.s_body.c_str());
 				std::string all_for_multi_text = utils::snprintf("[ %s ]", notify.s_pre.c_str());
 
-				vec2 pre_size = math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_pre.c_str()));
-				vec2 all_text_size = this_multicolor ? vec2(render::get_multicolor_size(notify.multicolor_items).x + render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, all_for_multi_text.c_str()).x, render::get_multicolor_size(notify.multicolor_items).y) : math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.f, all_text.c_str()));
+				vec2 pre_size = render::get_text_size(notify.s_pre);
+				vec2 all_text_size = this_multicolor ? render::get_multicolor_size(notify.multicolor_items) + vec2(render::get_text_size(all_for_multi_text).x, 0.f) : render::get_text_size(all_text);
 				notify.max_x = all_text_size.x + 10;
 
 				notify.y = utils::lerp(notify.y, i * (all_text_size.y + 3), 0.03f);
@@ -165,10 +164,8 @@ namespace notify {
 				render::draw_text("[", vec2(start_text, notify.y + 2.f), color(255, 255, 255, 255), false);
 				render::draw_text(" ]", vec2(start_text + pre_size.x + left_size + 1, notify.y + 1), color(255, 255, 255, 255), false);
 				render::draw_text(notify.s_pre, vec2(start_text + left_size + 1, notify.y + 2), notify.c_pre, false);
-				if (!this_multicolor)
-					render::draw_text(notify.s_body, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), notify.c_body, false);
-				else 
-					render::draw_text_multicolor(notify.multicolor_items, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), false);
+				if (!this_multicolor) render::draw_text(notify.s_body, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), notify.c_body, false);
+				else render::draw_text_multicolor(notify.multicolor_items, vec2(start_text + left_size + right_size + space_size + pre_size.x + 2, notify.y + 1), false);
 			}
 		}
 
@@ -177,10 +174,8 @@ namespace notify {
 				auto& notify = notifications_big.at(i);
 
 				bool this_multicolor = notify.multicolor_items.size() > 0;
-
 				float round = ImGui::GetStyle().FrameRounding;
-
-				vec2 text_size = this_multicolor ? render::get_multicolor_size(notify.multicolor_items) : math::to_vec2(render::default_font->CalcTextSizeA(12.f, FLT_MAX, 0.0f, notify.s_body.c_str()));
+				vec2 text_size = this_multicolor ? render::get_multicolor_size(notify.multicolor_items) : render::get_text_size(notify.s_body);
 
 				float box_size_x = 50.f + text_size.x;
 				float box_size_y = 40.f;

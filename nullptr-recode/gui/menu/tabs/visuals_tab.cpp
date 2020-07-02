@@ -25,6 +25,8 @@ namespace menu {
 						}
 						});
 				}
+				null_gui::check_box("bomb timer", &settings::visuals::bomb_timer);
+				null_gui::combo("bomb timer position", &settings::visuals::bomb_timer_pos, std::vector<std::string>{"screen", "bomb"});
 				null_gui::check_box("grenade prediction", &settings::visuals::grenade_prediction::enable);
 				null_gui::tooltip_items("##grenade prediction settings", []() {
 					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);
@@ -50,6 +52,7 @@ namespace menu {
 					null_gui::slider_int("show time##server impact", &settings::visuals::impacts::server::show_time, 1, 10);
 					null_gui::slider_int("size##server impact", &settings::visuals::impacts::server::size, 1, 10);
 					});
+				null_gui::check_box("sniper crosshair", &settings::visuals::sniper_crosshair);
 				null_gui::check_box("enable logs##logs", &settings::visuals::logs::enable);
 				null_gui::tooltip_items("##log settings", []() {
 					null_gui::check_box("use custom color for hurt", &settings::visuals::logs::hurt.using_custom_color);

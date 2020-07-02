@@ -2,8 +2,7 @@
 #include "../../../functions/misc/misc.h"
 #include "../../../sdk/structures/structures.h"
 
-char* clantag_tabs[] =
-{
+char* clantag_tabs[] = {
 	"standart",
 	"players tags",
 	"custom"
@@ -19,22 +18,17 @@ namespace menu {
 			null_gui::check_box("obs bypass", &settings::misc::obs_bypass);
 			null_gui::check_box("bhop", &settings::misc::bhop::enable);	
 			null_gui::combo("auto strafe type", &settings::misc::bhop::strafe_type, std::vector<std::string>{"none", "legt", "pseudo wasd"});
-
 			null_gui::check_box("edge jump", &settings::misc::edge_jump::enable);
 			null_gui::tooltip_items("##edge_jump_tooltip", []() {
 				null_gui::check_box("auto duck", &settings::misc::edge_jump::auto_duck);
 				});
 			null_gui::key_bind("##edge_jump_bind", &settings::misc::edge_jump::bind);
-
 			null_gui::check_box("block bot", &settings::misc::block_bot::enable);
 			null_gui::key_bind("##bock_bot_bind", &settings::misc::block_bot::bind);
-
 			null_gui::check_box("fake latency", &settings::misc::fake_latency::enable);
 			null_gui::slider_int("amont##fake latency", &settings::misc::fake_latency::amount, 0, 1000);
-
 			null_gui::check_box("ingame radar", &settings::visuals::ingame_radar);//dont work
 			null_gui::tooltip("shows enemies on game radar");
-
 			null_gui::tooltip_items("view model", []() {
 				null_gui::slider_float("override##view_model", &settings::misc::viewmodel::override, 60, 150);
 				null_gui::slider_float("viewmodel##view_model", &settings::misc::viewmodel::viewmodel, 42, 120);
@@ -46,7 +40,6 @@ namespace menu {
 				null_gui::check_box("save roll side", &settings::misc::viewmodel::save_roll_side);
 				null_gui::tooltip("ignore cl_righthand");
 				});
-
 			null_gui::check_box("auto accept", &settings::misc::auto_accept);
 			null_gui::check_box("money reveal", &settings::misc::reveal_money);
 			null_gui::check_box("rank reveal", &settings::misc::reveal_rank);
@@ -57,25 +50,21 @@ namespace menu {
 			null_gui::check_box("slow gravity", &settings::misc::inverse_gravity::enable_slow);
 			null_gui::check_box("inverse gravity", &settings::misc::inverse_gravity::enable);
 			null_gui::slider_int("inverse gravity value", &settings::misc::inverse_gravity::value, -10, 10);
-
 			null_gui::multi_combo("disable##misc", std::vector<std::string>{ "smoke", "flash", "zoom", "zoom border" }, std::vector<bool*>{ &settings::misc::disable_smoke, &settings::misc::disable_flash, &settings::misc::disable_zoom, &settings::misc::disable_zoom_border });
 			if (settings::misc::disable_flash) {
 				null_gui::slider_int("max alpha##disable_flash", &settings::misc::flash_alpha, 0, 255);
 			}
-
 			null_gui::check_box("thirdperson", &settings::misc::third_person::enable);
 			null_gui::key_bind("##thirdperson_bind", &settings::misc::third_person::bind);
 			if (settings::misc::third_person::enable) {
 				null_gui::slider_int("dist##thirdperson_dist", &settings::misc::third_person::dist, 25, 350);
 			}
-
-			null_gui::end_group();
 		}
+		null_gui::end_group();
 
 		null_gui::next_column();
 
-		null_gui::begin_group("clantag##misc_tab", vec2(0, 211));
-		{
+		null_gui::begin_group("clantag##misc_tab", vec2(0, 211)); {
 			null_gui::horizontal(settings::misc::clantag::clantag_type, clantag_tabs);
 
 			null_gui::check_box("enable##clantag", &settings::misc::clantag::enable);
@@ -119,8 +108,7 @@ namespace menu {
 					});
 
 					null_gui::check_box("checking on empty tag at player", &settings::misc::clantag::check_empty);
-				}
-				else {
+				} else {
 					null_gui::text("connect to server");
 				}
 				break;

@@ -29,7 +29,8 @@ namespace hooks {
 	vfunc_hook client_mode_vhook;
 	vfunc_hook sound_vhook;
 	vfunc_hook engine_vhook;
-	vfunc_hook game_coordinator_vhook; 
+	vfunc_hook game_coordinator_vhook;
+	vfunc_hook weapon_spread_vhook;
 
 	void initialize() {
 		wndproc::o_wnd_proc = (wndproc::WNDPROC)SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::hook);
@@ -61,6 +62,9 @@ namespace hooks {
 		game_coordinator_vhook.setup(sdk::game_coordinator);
 		game_coordinator_vhook.hook_index(indexes::retrieve_message, retrieve_message::hook);
 
+		weapon_spread_vhook.setup(sdk::cvar->find_var("weapon_debug_spread_show"));
+		weapon_spread_vhook.hook_index(indexes::cvar_get_bool, weapon_spread::hook);
+
 		event_manager::initialization();
 	}
 
@@ -74,6 +78,7 @@ namespace hooks {
 		sound_vhook.unhook_all();
 		engine_vhook.unhook_all();
 		game_coordinator_vhook.unhook_all();
+		weapon_spread_vhook.unhook_all();
 
 		event_manager::shutdown();
 		profile_changer::send_update_messages();

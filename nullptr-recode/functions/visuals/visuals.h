@@ -9,6 +9,7 @@ namespace visuals {
 	void spectator_list();
 	void night_mode();
 	void asus_props();
+	void bomb_indicator();
 	void entity_loop();
 
 	enum act
