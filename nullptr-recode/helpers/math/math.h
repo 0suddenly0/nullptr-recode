@@ -31,6 +31,7 @@ namespace math {
 	float normalize_yaw(float yaw);
 	bool screen_transform(const vec3& in, vec2& out);
 	bool world2screen(const vec3& in, vec2& out);
+	bool world2screen_offscreen(const vec3& in, vec2& out);
 	void vector_transform(const vec3& in1, const matrix3x4& in2, vec3& out);
 
 	template<class T>

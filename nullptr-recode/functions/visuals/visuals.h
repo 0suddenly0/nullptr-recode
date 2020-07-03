@@ -4,6 +4,7 @@
 namespace visuals {
 	void render();
 	void draw_watermark();
+	void spread_circle();
 	void thirdperson();
 	void impact();
 	void spectator_list();

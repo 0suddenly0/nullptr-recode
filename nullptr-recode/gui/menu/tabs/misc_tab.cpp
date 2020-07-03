@@ -40,6 +40,7 @@ namespace menu {
 				null_gui::check_box("save roll side", &settings::misc::viewmodel::save_roll_side);
 				null_gui::tooltip("ignore cl_righthand");
 				});
+			null_gui::check_box("unlock inventory", &settings::misc::unlock_inventory);
 			null_gui::check_box("auto accept", &settings::misc::auto_accept);
 			null_gui::check_box("money reveal", &settings::misc::reveal_money);
 			null_gui::check_box("rank reveal", &settings::misc::reveal_rank);

@@ -212,6 +212,18 @@ namespace math {
 			out.x = (size.x / 2.0f) + (out.x * size.x) / 2.0f;
 			out.y = (size.y / 2.0f) - (out.y * size.y) / 2.0f;
 
+			return true;
+		}
+		return false;
+	}
+
+	bool world2screen_offscreen(const vec3& in, vec2& out) {
+		if (!screen_transform(in, out)) {
+			vec2 size = utils::get_screen_size();
+
+			out.x = (size.x / 2.0f) + (out.x * size.x) / 2.0f;
+			out.y = (size.y / 2.0f) - (out.y * size.y) / 2.0f;
+
 			auto xOk = size.x > out.x > 0.0f;
 			auto yOk = size.y > out.y > 0.0f;
 

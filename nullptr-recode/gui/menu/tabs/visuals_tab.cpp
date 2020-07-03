@@ -53,6 +53,8 @@ namespace menu {
 					null_gui::slider_int("size##server impact", &settings::visuals::impacts::server::size, 1, 10);
 					});
 				null_gui::check_box("sniper crosshair", &settings::visuals::sniper_crosshair);
+				null_gui::check_box("spread circle", &settings::visuals::spread_circle::enable);
+				null_gui::color_edit("##spread circle", &settings::visuals::spread_circle::clr);
 				null_gui::check_box("enable logs##logs", &settings::visuals::logs::enable);
 				null_gui::tooltip_items("##log settings", []() {
 					null_gui::check_box("use custom color for hurt", &settings::visuals::logs::hurt.using_custom_color);

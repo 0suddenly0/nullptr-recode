@@ -91,6 +91,7 @@ float get_bomb_damage() {
 namespace visuals {
 	void render() {
 		bomb_indicator();
+		spread_circle();
 		impact();
 		grenade_prediction::paint();
 		draw_watermark();
@@ -120,6 +121,21 @@ namespace visuals {
 		render::draw_box_filled_rounded(main_start_position, main_end_position, color(50, 50, 50, 100), rounding, 12); // draw watermark body
 
 		render::draw_text(watermark_text, main_start_position + vec2(offsets_text.x / 2, offsets_text.y / 2), color(255,255,255,255), false);
+	}
+
+	void spread_circle() {
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player->is_alive() || !settings::visuals::spread_circle::enable) return;
+		auto weapon = sdk::local_player->active_weapon();
+		if (!weapon) return;
+
+		float spreed = weapon->get_inaccuracy() * 800;
+		int w, h;
+		int centre_w, centre_h;
+		sdk::engine_client->get_screen_size(w, h);
+		centre_w = w / 2;
+		centre_h = h / 2;
+
+		render::draw_circle_filled(centre_w, centre_h, spreed, 40, settings::visuals::spread_circle::clr);
 	}
 
 	void thirdperson() {

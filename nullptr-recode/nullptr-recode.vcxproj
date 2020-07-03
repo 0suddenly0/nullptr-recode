@@ -202,6 +202,7 @@
     <ClCompile Include="hooks\hooks\emit_sound.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
+    <ClCompile Include="hooks\hooks\is_connected.cpp" />
     <ClCompile Include="hooks\hooks\is_playing_demo.cpp" />
     <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
     <ClCompile Include="hooks\hooks\override_view.cpp" />

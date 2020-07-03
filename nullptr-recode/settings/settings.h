@@ -55,6 +55,11 @@ namespace settings {
 			}
 		}
 
+		namespace spread_circle {
+			bool enable = false;
+			color clr = color(255, 255, 255, 20);
+		}
+
 		namespace props {
 			bool enable = false;
 			int alpha = 255;
@@ -90,6 +95,7 @@ namespace settings {
 		bool disable_smoke = false;
 		bool disable_zoom = false;
 		bool disable_zoom_border = false;
+		bool unlock_inventory = false;
 
 		namespace fog {
 			bool enable = false;

@@ -6,7 +6,7 @@
 #include "../../helpers/input.h"
 #include "../../helpers/math/math.h"
 
-namespace misc {
+namespace misc {	
 	void prepare_revolver(c_user_cmd* cmd) {
 		if (!sdk::local_player || !sdk::engine_client->is_connected() || !sdk::local_player->active_weapon() || !sdk::local_player->is_alive()) return;
 

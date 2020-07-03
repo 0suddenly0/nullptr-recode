@@ -38,6 +38,7 @@ namespace hooks {
 		int retrieve_message = 2;
 		int draw_set_color = 15;
 		int cvar_get_bool = 13;
+		int is_connected = 27;
 	}
 
 	void initialize();
@@ -111,6 +112,11 @@ namespace hooks {
 	namespace weapon_spread {
 		using fn = int(__thiscall*)(void*);
 		int __fastcall hook(void* ecx, void* edx);
+	}
+
+	namespace is_connected {
+		using fn = bool(__thiscall*)(void*);
+		bool __fastcall hook(void* ecx, void* edx);
 	}
 
 	namespace wndproc {

@@ -33,7 +33,6 @@ bool mouse_key(int vk, bool down) {
 
 
 namespace input {
-
 	void create_binds() {
 		create_bind("prepare revolver", settings::misc::prepare_revolver::enable, &settings::misc::prepare_revolver::bind, bind_info_flags_standart);
 		create_bind("block bot", settings::misc::block_bot::enable, &settings::misc::block_bot::bind, bind_info_flags_standart);

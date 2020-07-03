@@ -58,6 +58,7 @@ namespace hooks {
 
 		engine_vhook.setup(sdk::engine_client);
 		engine_vhook.hook_index(indexes::is_playing_demo, is_playing_demo::hook);
+		engine_vhook.hook_index(indexes::is_connected,    is_connected::hook);
 
 		game_coordinator_vhook.setup(sdk::game_coordinator);
 		game_coordinator_vhook.hook_index(indexes::retrieve_message, retrieve_message::hook);
