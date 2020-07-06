@@ -19,7 +19,7 @@ namespace menu {
 			null_gui::check_box("bhop", &settings::misc::bhop::enable);	
 			null_gui::combo("auto strafe type", &settings::misc::bhop::strafe_type, std::vector<std::string>{"none", "legt", "pseudo wasd"});
 			null_gui::check_box("edge jump", &settings::misc::edge_jump::enable);
-			null_gui::tooltip_items("##edge_jump_tooltip", []() {
+			null_gui::tooltip_items("##edge jump tooltip", []() {
 				null_gui::check_box("auto duck", &settings::misc::edge_jump::auto_duck);
 				});
 			null_gui::key_bind("##edge_jump_bind", &settings::misc::edge_jump::bind);
@@ -27,7 +27,7 @@ namespace menu {
 			null_gui::key_bind("##bock_bot_bind", &settings::misc::block_bot::bind);
 			null_gui::check_box("fake latency", &settings::misc::fake_latency::enable);
 			null_gui::slider_int("amont##fake latency", &settings::misc::fake_latency::amount, 0, 1000);
-			null_gui::check_box("ingame radar", &settings::visuals::ingame_radar);//dont work
+			null_gui::check_box("ingame radar", &settings::visuals::ingame_radar);
 			null_gui::tooltip("shows enemies on game radar");
 			null_gui::tooltip_items("view model", []() {
 				null_gui::slider_float("override##view_model", &settings::misc::viewmodel::override, 60, 150);
@@ -44,6 +44,7 @@ namespace menu {
 			null_gui::check_box("auto accept", &settings::misc::auto_accept);
 			null_gui::check_box("money reveal", &settings::misc::reveal_money);
 			null_gui::check_box("rank reveal", &settings::misc::reveal_rank);
+			null_gui::check_box("chat filter bypass", &settings::misc::chat_filter_bypass);
 			null_gui::check_box("moon walk", &settings::misc::moon_walk);
 			null_gui::check_box("fast duck", &settings::misc::fast_duck);
 			null_gui::check_box("prepare revolver", &settings::misc::prepare_revolver::enable);
@@ -70,8 +71,7 @@ namespace menu {
 
 			null_gui::check_box("enable##clantag", &settings::misc::clantag::enable);
 
-			switch (settings::misc::clantag::clantag_type)
-			{
+			switch (settings::misc::clantag::clantag_type) {
 			case 0:
 				null_gui::combo("clantag's##clanTag", &settings::misc::clantag::animation_type, std::vector<std::string>{"nullptr", "gaysence", "polakware.net", "c l o w n"});
 				break;
@@ -118,6 +118,7 @@ namespace menu {
 				if (null_gui::button("apply##clan", true)) {
 					settings::misc::clantag::clantag = temp_clantag;
 					settings::misc::clantag::clantag_visible = temp_clantag;
+					sdk::engine_client->client_cmd("say salam");
 				}
 
 				null_gui::combo("animation", &settings::misc::clantag::custom_type, std::vector<std::string>{"none", "type 1", "type 2"});

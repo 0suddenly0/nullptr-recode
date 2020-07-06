@@ -127,6 +127,7 @@ namespace null_gui {
     void end_window();
 
     void same_line(float x = -1.f);
+    void new_line();
     void create_columns(int count);
     void set_column_width(int idx, float size);
     void next_column();

@@ -289,6 +289,10 @@ namespace null_gui {
         ImGui::SameLine(0, x);
     }
 
+    void new_line() {
+        ImGui::NewLine();
+    }
+
     void create_columns(int count) {
         ImGui::Columns(count, (const char*)0, false);
     }

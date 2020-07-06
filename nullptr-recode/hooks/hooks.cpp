@@ -31,13 +31,14 @@ namespace hooks {
 	vfunc_hook engine_vhook;
 	vfunc_hook game_coordinator_vhook;
 	vfunc_hook weapon_spread_vhook;
+	recv_prop_hook* spotted_vhook;
 
 	void initialize() {
 		wndproc::o_wnd_proc = (wndproc::WNDPROC)SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::hook);
 
 		d3d9device_vhook.setup(sdk::d3d9device);
 		d3d9device_vhook.hook_index(indexes::end_scene, end_scene::hook);
-		d3d9device_vhook.hook_index(indexes::reset, reset::hook);
+		d3d9device_vhook.hook_index(indexes::reset,     reset::hook);
 
 		panel_vhook.setup(sdk::vgui_panel);
 		panel_vhook.hook_index(indexes::paint_traverse, paint_traverse::hook);
@@ -58,6 +59,7 @@ namespace hooks {
 
 		engine_vhook.setup(sdk::engine_client);
 		engine_vhook.hook_index(indexes::is_playing_demo, is_playing_demo::hook);
+		engine_vhook.hook_index(indexes::client_command,  client_command::hook);
 		engine_vhook.hook_index(indexes::is_connected,    is_connected::hook);
 
 		game_coordinator_vhook.setup(sdk::game_coordinator);
@@ -65,6 +67,8 @@ namespace hooks {
 
 		weapon_spread_vhook.setup(sdk::cvar->find_var("weapon_debug_spread_show"));
 		weapon_spread_vhook.hook_index(indexes::cvar_get_bool, weapon_spread::hook);
+
+		spotted_vhook = new recv_prop_hook(c_base_entity::spotted(), spotted::hook);
 
 		event_manager::initialization();
 	}
@@ -80,6 +84,7 @@ namespace hooks {
 		engine_vhook.unhook_all();
 		game_coordinator_vhook.unhook_all();
 		weapon_spread_vhook.unhook_all();
+		spotted_vhook->~recv_prop_hook();
 
 		event_manager::shutdown();
 		profile_changer::send_update_messages();

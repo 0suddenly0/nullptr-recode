@@ -106,12 +106,20 @@ namespace render {
 		return math::to_vec2(font->CalcTextSizeA(text_size, FLT_MAX, 0, text.c_str()));
 	}
 
-	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline, bool center, int size) {
-		float cur_x = pos.x - (center ? get_multicolor_size(items, size).x / 2 : 0);
+	void draw_triangle_filled(std::array<vec2, 3> poligons, color clr) {
+		draw_list->AddTriangleFilled(math::to_imvec2(poligons[0]), math::to_imvec2(poligons[1]), math::to_imvec2(poligons[2]), ImGui::GetColorU32(get_vec4(clr)));
+	}
+
+	void draw_triangle(std::array<vec2, 3> poligons, color clr) {
+		draw_list->AddTriangle(math::to_imvec2(poligons[0]), math::to_imvec2(poligons[1]), math::to_imvec2(poligons[2]), ImGui::GetColorU32(get_vec4(clr)), 3.f);
+	}
+
+	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline, bool center_x, bool center_y, int size) {
+		float cur_x = pos.x - (center_x ? get_multicolor_size(items, size).x / 2 : 0);
 
 		for (auto& item : items) {
 			vec2 text_size = get_text_size(item.text, default_font, size);
-			draw_text(item.text, vec2(cur_x, pos.y), item.clr, outline, false, size);
+			draw_text(item.text, vec2(cur_x, pos.y), item.clr, outline, false, center_y, size);
 			cur_x += text_size.x;
 		}
 	}
@@ -128,13 +136,13 @@ namespace render {
 		return cur_size;
 	}
 
-	void draw_text(std::string text, vec2 pos, color clr, bool outline, bool center, int size) {
+	void draw_text(std::string text, vec2 pos, color clr, bool outline, bool center_x, bool center_y, int size) {
 		ImVec2 textSize = default_font->CalcTextSizeA(size, FLT_MAX, 0.0f, text.c_str());
 		if (!default_font->ContainerAtlas) return;
 		draw_list->PushTextureID(default_font->ContainerAtlas->TexID);
 
-		if (center)
-			pos.x -= textSize.x / 2.0f;
+		if (center_x) pos.x -= textSize.x / 2.0f;
+		if (center_y) pos.y -= textSize.y / 2.0f;
 
 		if (outline) {
 			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());

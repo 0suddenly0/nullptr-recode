@@ -243,10 +243,22 @@ namespace utils {
         }
 
         if (old_tag != tag || (!anim && (p_tag != "" && p_tag != tag))) {
-            static auto fnClantagChanged = (int(__fastcall*)(const char*, const char*))pattern_scan(GetModuleHandleW(L"engine.dll"), "53 56 57 8B DA 8B F9 FF 15");
-            fnClantagChanged(tag.c_str(), tag.c_str());
+            static auto set_clantag_fn = (int(__fastcall*)(const char*, const char*))pattern_scan(GetModuleHandleW(L"engine.dll"), "53 56 57 8B DA 8B F9 FF 15");
+            set_clantag_fn(tag.c_str(), tag.c_str());
 
             old_tag = tag;
         }
+    }
+
+    std::wstring s2ws(const std::string& str) {
+        using convert_typeX = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_typeX, wchar_t> converterX;
+        return converterX.from_bytes(str);
+    }
+
+    std::string ws2s(const std::wstring& wstr) {
+        using convert_typeX = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_typeX, wchar_t> converterX;
+        return converterX.to_bytes(wstr);
     }
 }

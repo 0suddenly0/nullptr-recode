@@ -217,9 +217,9 @@ namespace notify {
 				render::draw_box_filled        (notify.x_body - box_size_x,       notify.y - opacity, notify.x_body - box_size_x + 2.f, notify.y, color(notify.c_pre, 255));
 
 				if (!this_multicolor)
-					render::draw_text(notify.s_body, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2) - (text_size.y / 2), color(255, 255, 255, 255), false, true);
+					render::draw_text(notify.s_body, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2), color(255, 255, 255, 255), false, true, true);
 				else
-					render::draw_text_multicolor(notify.multicolor_items, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2) - (text_size.y / 2), false, true);
+					render::draw_text_multicolor(notify.multicolor_items, notify.x_body - (box_size_x / 2), notify.y - (box_size_y / 2), false, true);
 			}
 		}
 

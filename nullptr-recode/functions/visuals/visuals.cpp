@@ -1,96 +1,240 @@
 #include "visuals.h"
 #include "../../settings/settings.h"
 #include "../../sdk/structures/structures.h"
+
+std::map<int, std::string> fixed_names = {
+	//pistols
+	{ item_definition_index::usp_silencer, "usp" },
+	{ item_definition_index::glock, "glock" },
+	{ item_definition_index::hkp2000, "p2000" },
+	{ item_definition_index::elite, "elite" },
+	{ item_definition_index::p250, "p250" },
+	{ item_definition_index::fiveseven, "five-seven" },
+	{ item_definition_index::cz75a, "cz75a" },
+	{ item_definition_index::tec9, "tec9" },
+	{ item_definition_index::deagle, "deagle" },
+	{ item_definition_index::revolver, "rovelver" },
+	////////////////////////////////////////////////
+
+	//pp
+	{ item_definition_index::mp9, "mp9" },
+	{ item_definition_index::mac10, "mac10" },
+	{ item_definition_index::mp7, "mp7" },
+	{ item_definition_index::mp5, "mp5-sd" },
+	{ item_definition_index::ump45, "ump45" },
+	{ item_definition_index::p90, "p90" },
+	{ item_definition_index::bizon, "bizon" },
+	////////////////////////////////////////////////
+
+	//rifles
+	{ item_definition_index::famas, "famas" },
+	{ item_definition_index::m4a1_silencer, "m4a1-s" },
+	{ item_definition_index::m4a1, "m4a1" },
+	{ item_definition_index::ssg08, "ssg08" },
+	{ item_definition_index::aug, "aug" },
+	{ item_definition_index::awp, "awp" },
+	{ item_definition_index::scar20, "scar20" },
+	{ item_definition_index::galilar, "galil" },
+	{ item_definition_index::ak47, "ak 47" },
+	{ item_definition_index::sg556, "sg553" },
+	{ item_definition_index::g3sg1, "g3sg1" },
+	////////////////////////////////////////////////
+
+	//have
+	{ item_definition_index::nova, "nova" },
+	{ item_definition_index::xm1014, "xm1014" },
+	{ item_definition_index::sawedoff, "sawedoff" },
+	{ item_definition_index::m249, "m249" },
+	{ item_definition_index::negev, "negev" },
+	{ item_definition_index::mag7, "mag7" },
+	////////////////////////////////////////////////
+
+	//granades
+	{ item_definition_index::flashbang, "flash" },
+	{ item_definition_index::smokegrenade, "smoke" },
+	{ item_definition_index::molotov, "molotov" },
+	{ item_definition_index::incgrenade, "inc" },
+	{ item_definition_index::decoy, "decoy" },
+	{ item_definition_index::hegrenade, "hae" },
+	////////////////////////////////////////////////
+
+	//other
+	{ item_definition_index::c4, "c4" },
+	{ item_definition_index::knife, "knife" },
+	{ item_definition_index::knife_gg, "knife" },
+	{ item_definition_index::knife_bayonet, "knife" },
+	{ item_definition_index::knife_butterfly, "knife" },
+	{ item_definition_index::knife_falchion, "knife" },
+	{ item_definition_index::knife_flip, "knife" },
+	{ item_definition_index::knife_ghost, "knife" },
+	{ item_definition_index::knife_gut, "knife" },
+	{ item_definition_index::knife_gypsy_jack, "knife" },
+	{ item_definition_index::knife_karambit, "knife" },
+	{ item_definition_index::knife_m9_bayonet, "knife" },
+	{ item_definition_index::knife_navaja, "knife" },
+	{ item_definition_index::knife_push, "knife" },
+	{ item_definition_index::knife_stiletto, "knife" },
+	{ item_definition_index::knife_survival_bowie, "knife" },
+	{ item_definition_index::knife_t, "knife" },
+	{ item_definition_index::knife_tactical, "knife" },
+	{ item_definition_index::knife_talon, "knife" },
+	{ item_definition_index::knife_ursus, "knife" },
+	{ item_definition_index::knife_widowmaker, "knife" },
+	{ item_definition_index::taser, "zeus" }
+	////////////////////////////////////////////////
+};
+
+const char* clean_item_name(const char* name) {
+	if (name[0] == 'C')
+		name++;
+
+	auto start = strstr(name, "Weapon");
+	if (start != nullptr)
+		name = start + 6;
+
+	return name;
+};
+
 struct spectator_t {
 	std::string name;
 	observer_mode_t mode;
 };
 
-float get_defuse_time(c_planted_c4* bomb) {
-	static float defuse_time = -1;
-	if (!bomb) return 0;
-	if (!bomb->bomb_defuser()) defuse_time = -1;
-	else if (defuse_time == -1) defuse_time = sdk::global_vars->curtime + bomb->defuse_length();
-	if (defuse_time > -1 && bomb->bomb_defuser()) return defuse_time - sdk::global_vars->curtime;
-	return 0;
-}
+float player_alpha[65];
+float player_alpha_offscreen[65];
+float last_view_time[1024];
+float last_view_time_offscreen[1024];
 
-c_base_player* get_bomb_player() {
-	for (int i = 1; i <= sdk::entity_list->get_highest_entity_index(); ++i) {
-		c_base_player* entity = c_base_player::get_player_by_index(i);
-		if (!entity || entity->is_player() || entity->is_dormant() || entity == sdk::local_player)
-			continue;
+RECT get_bbox(c_base_entity* ent) {
+	RECT rect{};
+	auto collideable = ent->get_collideable();
+	if (!collideable) return rect;
 
-		if (entity->is_planted_c4())
-			return entity;
+	auto min = collideable->obb_mins();
+	auto max = collideable->obb_maxs();
+
+	const matrix3x4& trans = ent->coordinate_frame();
+
+
+	vec3 points[] = {
+		vec3(min.x, min.y, min.z),
+		vec3(min.x, max.y, min.z),
+		vec3(max.x, max.y, min.z),
+		vec3(max.x, min.y, min.z),
+		vec3(max.x, max.y, max.z),
+		vec3(min.x, max.y, max.z),
+		vec3(min.x, min.y, max.z),
+		vec3(max.x, min.y, max.z)
+	};
+
+	vec3 pointsTransformed[8];
+	for (int i = 0; i < 8; i++) {
+		math::vector_transform(points[i], trans, pointsTransformed[i]);
 	}
 
-	return nullptr;
-}
+	vec2 screen_points[8] = {};
 
-c_planted_c4* get_bomb() {
-	c_base_entity* entity;
-	for (int i = 1; i <= sdk::entity_list->get_max_entities(); ++i) {
-		entity = c_base_entity::get_entity_by_index(i);
-		if (entity && !entity->is_dormant() && entity->is_planted_c4())
-			return (c_planted_c4*)(entity);
+	for (int i = 0; i < 8; i++) {
+		if (!math::world2screen(pointsTransformed[i], screen_points[i]))
+			return rect;
 	}
 
-	return nullptr;
-}
+	auto left = screen_points[0].x;
+	auto top = screen_points[0].y;
+	auto right = screen_points[0].x;
+	auto bottom = screen_points[0].y;
 
-c_base_player* get_damage_player() {
-	if (sdk::local_player->is_alive()) {
-		return sdk::local_player;
-	} else {
-		if (sdk::local_player->observer_mode() == observer_mode_t::obs_roaming) {
-			return nullptr;
-		} else {
-			c_base_player* spectated_ent = sdk::local_player->observer_target();
-			if (!spectated_ent) return nullptr;
-			return spectated_ent;
-		}
+	for (int i = 1; i < 8; i++) {
+		if (left > screen_points[i].x)
+			left = screen_points[i].x;
+		if (top < screen_points[i].y)
+			top = screen_points[i].y;
+		if (right < screen_points[i].x)
+			right = screen_points[i].x;
+		if (bottom > screen_points[i].y)
+			bottom = screen_points[i].y;
 	}
-
-	return sdk::local_player;
+	return RECT{ (long)left, (long)top, (long)right, (long)bottom };
 }
 
-float get_bomb_damage() {
-	c_base_player* bomb = get_bomb_player();
-
-	if (!bomb)
-		return 0.f;
-
-	float armor = get_damage_player()->armor_value();
-	float distance = get_damage_player()->get_eye_pos().dist_to(bomb->get_abs_origin());
-
-	float a = 450.7f;
-	float b = 75.68f;
-	float c = 789.2f;
-	float d = ((distance - b) / c);
-	float damage = a * exp(-d * d);
-
-	float dmg = damage;
-
-	if (armor > 0)
+class esp_player {
+public:
+	static int get_player_alpha_offscreen(int index, int max = 255)
 	{
-		float _new = dmg * 0.5f;
-		float armor = (dmg - _new) * 0.5f;
+		int i = player_alpha_offscreen[index];
+		i = std::clamp(i, 0, max);
+		return i;
+	}
 
-		if (armor > (float)(armor))
-		{
-			armor = float(armor) * (1.f / 0.5f);
-			_new = dmg - armor;
+	static int get_player_alpha(int alpha, int index)
+	{
+		int i = alpha - player_alpha[index];
+		i = std::clamp(i, 0, 255);
+		return i;
+	}
+
+	bool begin(c_base_player* _player) {
+		if (!_player->is_alive()) return false;
+
+		player = _player;
+		is_localplayer = sdk::local_player->ent_index() == _player->ent_index();
+		is_enemy = sdk::local_player->team_num() != _player->team_num();
+		is_visible = sdk::local_player->can_see_player(_player, hitbox_chest);
+
+		if (sdk::local_player->observer_target() == player && sdk::local_player->observer_mode() != observer_mode_t::obs_chase && !settings::misc::third_person::bind.enable) {
+			return false;
 		}
 
-		damage = _new;
+		if (is_enemy) {
+			current_settings = settings::visuals::esp::esp_items[esp_types::enemies];
+		} else if (!is_enemy && !is_localplayer) {
+			current_settings = settings::visuals::esp::esp_items[esp_types::teammates];
+		} else if (is_localplayer) {
+			if (settings::misc::third_person::bind.enable) current_settings = settings::visuals::esp::esp_items[esp_types::local_player];
+			else return false;
+		}
+
+		if (!current_settings.enable) return false;
+
+		clr = is_visible ? current_settings.box_visible : current_settings.box_invisible;
+
+		auto head = _player->get_hitbox_pos(hitbox_head);
+		auto origin = _player->vec_origin();
+
+		head.z += 6;
+
+		if (!math::world2screen(head, head_pos) ||
+			!math::world2screen(origin, feet_pos)) {
+			return false;
+		}
+
+		auto h = fabs(head_pos.y - feet_pos.y);
+		auto w = h / 2.f;
+
+		bbox.left = (long)(feet_pos.x - w * 0.45f);
+		bbox.right = (long)(bbox.left + w);
+		bbox.bottom = (long)(feet_pos.y);
+		bbox.top = (long)(head_pos.y);
+		return true;
 	}
-	return damage;
-}
+
+	c_base_player* player;
+	bool          is_enemy;
+	bool          is_visible;
+	bool          is_localplayer;
+	color         clr;
+	vec2          head_pos;
+	vec2          feet_pos;
+	RECT          bbox;
+	esp_settings_t current_settings;
+};
+
+
 
 namespace visuals {
 	void render() {
 		bomb_indicator();
+		grenades();
 		spread_circle();
 		impact();
 		grenade_prediction::paint();
@@ -136,6 +280,155 @@ namespace visuals {
 		centre_h = h / 2;
 
 		render::draw_circle_filled(centre_w, centre_h, spreed, 40, settings::visuals::spread_circle::clr);
+	}
+
+	void grenade_names(c_base_entity* entity) {
+		if (!sdk::local_player)
+			return;
+
+		std::string name;
+		color clr;
+
+		const model_t* model = entity->get_model();
+
+		if (entity->get_client_class()) {
+			if (model) {
+				studiohdr_t* hdr = sdk::mdl_info->get_studiomodel(model);
+				if (hdr) {
+					std::string hdrName = hdr->szName;
+					if (hdrName.find("thrown") != std::string::npos || hdrName.find("dropped") != std::string::npos) {
+						if (hdrName.find("flashbang") != std::string::npos) {
+							name = "flash";
+							clr = settings::visuals::grenades::color_flash;
+						} else if (hdrName.find("fraggrenade") != std::string::npos) {
+							name = "frag";
+							clr = settings::visuals::grenades::color_frag;
+						} else if (hdrName.find("molotov") != std::string::npos) {
+							name = "molotov";
+							clr = settings::visuals::grenades::color_molotov;
+						} else if (hdrName.find("incendiarygrenade") != std::string::npos) {
+							name = "incendiary";
+							clr = settings::visuals::grenades::color_molotov;
+						} else if (hdrName.find("decoy") != std::string::npos) {
+							name = "decoy";
+							clr = settings::visuals::grenades::color_decoy;
+						} else if (hdrName.find("smoke") != std::string::npos) {
+							name = "smoke";
+							clr = settings::visuals::grenades::color_smoke;
+						}
+					}
+				}
+
+				if (!name.empty()) {
+					vec2 pos;
+					if (math::world2screen(entity->vec_origin(), pos))
+					{
+						render::draw_text(name, pos, clr, true, true);
+					}
+				}
+			}
+		}
+	}
+
+	void draw_capsule_hitbox(c_base_player* player, bool dead) {
+		if (!settings::visuals::hitbox::enable || !player || (settings::visuals::hitbox::show_only_kill && !dead)) return;
+		matrix3x4 boneMatrix_actual[MAXSTUDIOBONES];
+		if (!player->setup_bones(boneMatrix_actual, 128, 0x00000100 | 0x200, sdk::global_vars->curtime))return;
+
+		studiohdr_t* studioHdr = sdk::mdl_info->get_studiomodel(player->get_model());
+		if (studioHdr) {
+			mstudiohitboxset_t* set = studioHdr->get_hitbox_set(player->hitbox_set());
+			if (set) {
+				for (int i = 0; i < set->numhitboxes; i++) {
+					mstudiobbox_t* hitbox = set->get_hitbox(i);
+					if (hitbox) {
+						if (hitbox->m_flRadius != -1.0f) {
+							vec3 min_actual = vec3(0, 0, 0);
+							vec3 max_actual = vec3(0, 0, 0);
+
+							math::vector_transform(hitbox->bbmin, boneMatrix_actual[hitbox->bone], min_actual);
+							math::vector_transform(hitbox->bbmax, boneMatrix_actual[hitbox->bone], max_actual);
+
+							color clr = settings::visuals::hitbox::clr;
+							sdk::debug_overlay->add_capsule_overlay(min_actual, max_actual, hitbox->m_flRadius, clr.color_char[0], clr.color_char[1], clr.color_char[2], clr.color_char[3], settings::visuals::hitbox::show_time);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void grenades() {
+		if (!settings::visuals::grenades::enable) return;
+
+		for (int i = 0; i < sdk::entity_list->get_highest_entity_index(); i++) {
+			c_base_entity* entity = (c_base_entity*)(sdk::entity_list->get_client_entity(i));
+			if (entity && entity != sdk::local_player) {
+				grenade_names(entity);
+			}
+		}
+
+		for (int i = 0; i < globals::smoke_info.size(); i++) {
+			grenade_info_t cur_smoke = globals::smoke_info[i];
+			vec2 position;
+
+			if (cur_smoke.time_to_expire - sdk::global_vars->curtime < 0 || cur_smoke.time_to_expire - sdk::global_vars->curtime > 20) {
+				globals::smoke_info.erase(globals::smoke_info.begin() + i);
+				continue;
+			}
+
+			if (math::world2screen(cur_smoke.position, position)) {
+				std::string life_time = utils::snprintf("%.1f", cur_smoke.time_to_expire - sdk::global_vars->curtime);
+
+				if (settings::visuals::grenades::smoke_bar) {
+					float box_w = (float)fabs((position.x - 30) - (position.x + 30));
+					auto width = (((box_w * (cur_smoke.time_to_expire - sdk::global_vars->curtime)) / 18.f));
+
+					render::draw_box_filled(position.x - 30, position.y + 15, position.x + 30, position.y + 18.f, settings::visuals::grenades::color_bar_smoke_back);
+					render::draw_box_filled(position.x - 30, position.y + 15, (position.x - 30) + (int)width, position.y + 18.f, settings::visuals::grenades::color_bar_smoke_main);
+					if (settings::visuals::grenades::smoke_timer) {
+						render::draw_text(life_time, vec2(((position.x - 30) + (int)width), position.y + 20.f), settings::visuals::grenades::color_smoke, true, true);
+					}
+				} else if (settings::visuals::grenades::smoke_timer) {
+					render::draw_text(life_time, vec2(position.x, position.y + 10), settings::visuals::grenades::color_smoke, true, true);
+				}
+			}
+
+			if (settings::visuals::grenades::smoke_radius) {
+				render::draw_circle_3d(cur_smoke.position, 50, grenade_prediction::get_radius(smokegrenade), settings::visuals::grenades::color_smoke_radius);
+			}
+		}
+
+		for (int i = 0; i < globals::molotov_info.size(); i++) {
+			grenade_info_t cur_molotov = globals::molotov_info[i];
+			vec2 position;
+			if (cur_molotov.time_to_expire - sdk::global_vars->curtime < 0 || cur_molotov.time_to_expire - sdk::global_vars->curtime > 8) {
+				globals::molotov_info.erase(globals::molotov_info.begin() + i);
+				continue;
+			}
+
+			if (math::world2screen(cur_molotov.position, position)) {
+				std::string life_time = utils::snprintf("%.1f", (float)cur_molotov.time_to_expire - sdk::global_vars->curtime);
+
+				ImVec2 time_size = ImGui::CalcTextSize(life_time.c_str());
+				render::draw_text("molotov", position, settings::visuals::grenades::color_molotov, true, true);
+
+				if (settings::visuals::grenades::molotov_bar) {
+					float box_w = (float)fabs((position.x - 30) - (position.x + 30));
+					auto width = (((box_w * (cur_molotov.time_to_expire - sdk::global_vars->curtime)) / 7.f));
+
+					render::draw_box_filled(position.x - 30, position.y + 15.f, position.x + 30, position.y + 18.f, settings::visuals::grenades::color_bar_molotov_back);
+					render::draw_box_filled(position.x - 30, position.y + 15.f, (position.x - 30) + (int)width, position.y + 18.f, settings::visuals::grenades::color_bar_molotov_main);
+
+					if (settings::visuals::grenades::molotov_timer)
+					{
+						render::draw_text(life_time, vec2(((position.x - 30) + (int)width), position.y + 20.f), settings::visuals::grenades::color_molotov, true, true);
+					}
+				} else if (settings::visuals::grenades::molotov_timer) {
+					render::draw_text(life_time, vec2(position.x, position.y + 10), settings::visuals::grenades::color_molotov, true, true);
+				}
+			}
+		}
 	}
 
 	void thirdperson() {
@@ -397,7 +690,7 @@ namespace visuals {
 		int x, y;
 		sdk::engine_client->get_screen_size(x, y);
 
-		c_planted_c4* bomb = get_bomb();
+		c_planted_c4* bomb = c_planted_c4::get_bomb();
 		if (!bomb) return;
 		float bomb_timer = bomb->c4_blow() - sdk::global_vars->curtime;
 		if (bomb_timer < 0) return;
@@ -406,8 +699,8 @@ namespace visuals {
 		static vec2 window_size(96, 15);// 3 item - 35 | 2 item - 25 | 1 item - 15
 
 		if (settings::visuals::bomb_timer_pos == 1) {
-			if (!get_bomb_player()) return;
-			if (!math::world2screen(get_bomb_player()->get_abs_origin(), window_pos)) return;
+			if (!c_planted_c4::get_bomb_player()) return;
+			if (!math::world2screen(c_planted_c4::get_bomb_player()->get_abs_origin(), window_pos)) return;
 
 			window_pos.x -= window_size.x / 2;
 			window_pos.y -= window_size.y / 2;
@@ -417,15 +710,15 @@ namespace visuals {
 		render::draw_box_filled(window_pos, window_pos + vec2(2.f, window_size.y), globals::menu_color);
 		render::draw_text(bomb->bomb_defused() ? "defused" : utils::snprintf("bomb: %s", bomb_timer >= 0 ? utils::snprintf("%.3f", bomb_timer).c_str() : "0"), vec2(window_pos.x + 4, window_pos.y + 2), color(255, 255, 255, 255), false);
 	
-		float time = get_defuse_time(bomb);
-		float bomb_damage = get_bomb_damage();
+		float time = c_planted_c4::get_defuse_time(bomb);
+		float bomb_damage = c_planted_c4::get_bomb_damage();
 
 		if (bomb->bomb_defused()) {
 			window_size.y = 15;
 			return;
 		}
 
-		if (get_defuse_time(bomb) > 0) {
+		if (c_planted_c4::get_defuse_time(bomb) > 0) {
 			bool def_kits = bomb->bomb_defuser()->has_defuser_kit();
 
 			std::vector<render::multicolor_t> items = {
@@ -451,7 +744,7 @@ namespace visuals {
 			}
 
 			render::draw_box_filled(window_pos + vec2(0.f, window_size.y + 2.f), window_pos + vec2(width, window_size.y + 4.f), color(50, 50, 255, 255));
-		} else if (get_defuse_time(bomb) <= 0) {
+		} else if (c_planted_c4::get_defuse_time(bomb) <= 0) {
 			if (bomb_damage > 1 && bomb_timer >= 0) {
 				render::draw_text(utils::snprintf("damage: %s", bomb_damage < 100 ? utils::snprintf("%.0f", bomb_damage).c_str() : "you dead"), vec2(window_pos.x + 4, window_pos.y + 12), color(255, 255, 255, 255), false);
 				window_size.y = 25;
@@ -465,18 +758,105 @@ namespace visuals {
 		render::draw_box_filled(window_pos + vec2(0.f, window_size.y), window_pos + vec2(width, window_size.y + 2), color(255, 100, 100, 255));
 	}
 
+	void offscreen(c_base_player* player) {
+		if (!settings::visuals::ofc::enable || !sdk::local_player) return;
+		if (!player || !player->is_player() || player->life_state() != life_state::alive || (player->team_num() == sdk::local_player->team_num())) return;
+		if (!c_base_player::get_spectating_player() || player == c_base_player::get_spectating_player()) return;
+
+		qangle viewangles;
+		int width, height;
+		sdk::engine_client->get_view_angles(&viewangles);
+		sdk::engine_client->get_screen_size(width, height);
+
+		vec2 screen_center = vec2(width * .5f, height * .5f);
+
+		const float angle_yaw_rad = DEG2RAD(viewangles.yaw - math::calc_angle(c_base_player::get_spectating_player()->get_eye_pos(), player->get_hitbox_pos(hitbox_pelvis)).yaw - 90);
+		const float new_point_x = screen_center.x + ((((width - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * cos(angle_yaw_rad)) + (int)(6.0f * (((float)settings::visuals::ofc::size - 4.f) / 16.0f));
+		const float new_point_y = screen_center.y + ((((height - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * sin(angle_yaw_rad));
+
+		std::array<vec2, 3> points{
+			vec2(new_point_x - settings::visuals::ofc::size, new_point_y - settings::visuals::ofc::size),
+			vec2(new_point_x + settings::visuals::ofc::size, new_point_y),
+			vec2(new_point_x - settings::visuals::ofc::size, new_point_y + settings::visuals::ofc::size)
+		};
+
+		math::rotate_triangle(points, viewangles.yaw - math::calc_angle(c_base_player::get_spectating_player()->get_eye_pos(), player->get_hitbox_pos(hitbox_pelvis)).yaw - 90);
+		render::draw_triangle_filled(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index(), 100)));
+		render::draw_triangle(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index())));
+	}
+
+	void draw_weapons(c_base_combat_weapon* ent) {
+		if (ent->owner_entity().is_valid()) return;
+		auto bbox = get_bbox(ent);
+		if (bbox.right == 0 || bbox.bottom == 0) return;
+
+		if (settings::visuals::dropped_weapon::box) {
+			render::draw_box(vec2(bbox.left - 1, bbox.top + 1), vec2(bbox.right + 1, bbox.bottom - 1), color(0, 0, 0, 255));
+			render::draw_box(vec2(bbox.left, bbox.top), vec2(bbox.right, bbox.bottom), settings::visuals::dropped_weapon::box_color);
+			render::draw_box(vec2(bbox.left + 1, bbox.top - 1), vec2(bbox.right - 1, bbox.bottom + 1), color(0, 0, 0, 255));
+		}
+
+		std::string name = fixed_names[ent->get_item_definition_index()] == "" ? clean_item_name(ent->get_client_class()->network_name) : fixed_names[ent->get_item_definition_index()];
+		if (name.empty()) return;
+
+		float box_w = (float)fabs(bbox.right - bbox.left);
+		float offsett = 3.f;
+		if (settings::visuals::dropped_weapon::ammo_bar) {
+			if (ent->is_gun()) {
+				float width = (((box_w * std::clamp(ent->clip1(), 0, ent->get_cs_weapondata()->max_clip1)) / ent->get_cs_weapondata()->max_clip1));
+
+				render::draw_box(bbox.left - 1.f, bbox.top + 3.f, bbox.right + 1.f, bbox.top + 7.f, settings::visuals::dropped_weapon::bar_outline);
+				render::draw_box_filled(bbox.left, bbox.top + 4, bbox.right, bbox.top + 6, settings::visuals::dropped_weapon::bar_background);
+				render::draw_box_filled(bbox.left, bbox.top + 4, bbox.left + (int)width, bbox.top + 6, settings::visuals::dropped_weapon::bar_main);
+				if (ent->clip1() != ent->get_cs_weapondata()->max_clip1 && ent->clip1() > 0 && settings::visuals::dropped_weapon::ammo_in_bar) {
+					render::draw_text(std::to_string(ent->clip1()), bbox.left + width, bbox.top + 5.f, color(255, 255, 255, 255), true, true, true);
+				}
+				offsett += 4.f;
+			}
+		}
+
+		render::draw_text(name, (bbox.left + box_w * 0.5f), bbox.top + offsett, color(255, 255, 255, 255), true, true, false);
+	}
+
 	void entity_loop() {
 		for (int i = 1; i < sdk::entity_list->get_highest_entity_index(); ++i) {
 			c_base_entity* ent = c_base_entity::get_entity_by_index(i);
 			if (!ent) continue;
 
-			if (ent->get_client_class()->class_id == class_id::c_inferno) {
+			if (ent->is_player()) {
+				c_base_player* cur_player = (c_base_player*)ent;
+				if (!cur_player->is_dormant()) {
+					last_view_time_offscreen[cur_player->ent_index()] = sdk::global_vars->curtime;
+				}
+				if (!settings::visuals::ofc::visible_check) {
+					if (cur_player->is_dormant() && sdk::global_vars->curtime - last_view_time_offscreen[cur_player->ent_index()] > 2) {
+						player_alpha_offscreen[cur_player->ent_index()] = utils::lerp(player_alpha_offscreen[cur_player->ent_index()], 0.f, 0.15f);
+					} else if (!cur_player->is_dormant()) {
+						player_alpha_offscreen[cur_player->ent_index()] = utils::lerp(player_alpha_offscreen[cur_player->ent_index()], 255.f, 0.02f);
+					}
+				}
+				if (settings::visuals::ofc::visible_check) {
+					vec2 pos;
+					bool visible = math::world2screen_offscreen(cur_player->get_hitbox_pos(hitbox_pelvis), pos) && settings::visuals::ofc::visible_check;
+					if (visible || cur_player->is_dormant()) {
+						player_alpha_offscreen[cur_player->ent_index()] = utils::lerp(player_alpha_offscreen[cur_player->ent_index()], 0.f, 0.15f);
+					} else if (!visible && !cur_player->is_dormant()) {
+						player_alpha_offscreen[cur_player->ent_index()] = utils::lerp(player_alpha_offscreen[cur_player->ent_index()], 255.f, 0.02f);
+					}
+				}
+				offscreen(cur_player);
+
+				esp_player player = esp_player();
+				if (player.begin(cur_player)) {
+				}
+			}
+			else if (settings::visuals::dropped_weapon::enable && ent->is_weapon())
+				draw_weapons((c_base_combat_weapon*)(ent));
+			else if (ent->get_client_class()->class_id == class_id::c_inferno && settings::visuals::grenades::enable && settings::visuals::grenades::molotov_radius) {
 				c_base_inferno* inferno = (c_base_inferno*)ent;
 				if (!inferno) continue;
 
-				render::draw_circle_3d(inferno->vec_origin(), 50, inferno->fire_count() * 10.f, color(255, 255, 255, 255));
-
-				render::draw_text(utils::snprintf("%d : %.0f", inferno->fire_count(), ((float)inferno->fire_count() * 10.f)), vec2(100, 10), color(255, 255, 255, 255), true);
+				render::draw_circle_3d(inferno->vec_origin(), 50, inferno->fire_count() * 10.f, settings::visuals::grenades::color_molotov_radius);
 			}
 		}
 	}

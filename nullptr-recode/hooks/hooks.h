@@ -22,6 +22,7 @@ namespace hooks {
 	extern vfunc_hook engine_vhook;
 	extern vfunc_hook game_coordinator_vhook;
 	extern vfunc_hook weapon_spread_vhook;
+	extern recv_prop_hook* spotted_vhook;
 
 	namespace indexes {
 		int send_net_msg = 40;
@@ -39,6 +40,7 @@ namespace hooks {
 		int draw_set_color = 15;
 		int cvar_get_bool = 13;
 		int is_connected = 27;
+		int client_command = 7;
 	}
 
 	void initialize();
@@ -117,6 +119,15 @@ namespace hooks {
 	namespace is_connected {
 		using fn = bool(__thiscall*)(void*);
 		bool __fastcall hook(void* ecx, void* edx);
+	}
+
+	namespace spotted {
+		void hook(const c_recv_proxy_data* data, void* ent, void* out);
+	}
+
+	namespace client_command {
+		using fn = void(__thiscall*)(void*, const char*);
+		void __fastcall hook(void* ecx, void* edx, const char* command);
 	}
 
 	namespace wndproc {

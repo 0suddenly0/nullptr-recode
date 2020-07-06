@@ -21,6 +21,63 @@ struct profile_settings_t {
 	int rank_id = 0;
 };
 
+enum esp_types : int {
+	enemies = 0,
+	teammates = 1,
+	local_player = 2
+};
+
+struct esp_settings_t {
+	bool enable = false;
+	bool only_visible = false;
+
+	bool skeleton = false;
+	bool box = false;
+	bool name = false;
+
+	bool health_bar = false;
+	bool health_in_bar = false;
+	bool health_based = false;
+	int health_position = 0;
+
+	bool armor_bar = false;
+	bool armor_in_bar = false;
+	int armor_position = 1;
+
+	bool weapon = false;
+	bool ammo_in_bar = false;
+	bool weapon_ammo = false;
+
+	bool flags_scoped = false;
+	bool flags_flashed = false;
+	bool flags_defusing = false;
+	bool flags_planting = false;
+	bool flags_bomb_carrier = false;
+	bool flags_reloading = false;
+	bool flags_armor = false;
+	bool flags_helmet = false;
+
+	color dormant = color(0, 0, 0, 255);
+
+	color box_visible = color(0, 0, 0, 255);
+	color box_invisible = color(0, 0, 0, 255);
+
+	color skeleton_visible = color(0, 0, 0, 255);
+	color skeleton_invisible = color(0, 0, 0, 255);
+
+	color health_bar_outline = color(0, 0, 0, 255);
+	color health_bar_background = color(0, 0, 0, 255);
+	color health_bar_main = color(0, 0, 0, 255);
+
+	color armor_bar_outline = color(0, 0, 0, 255);
+	color armor_bar_background = color(0, 0, 0, 255);
+	color armor_bar_main = color(0, 0, 0, 255);
+
+	color ammo_bar_outline = color(0, 0, 0, 255);
+	color ammo_bar_background = color(0, 0, 0, 255);
+	color ammo_bar_main = color(0, 0, 0, 255);
+};
+
 namespace settings {
 	namespace visuals {
 		bool night_mode = false;
@@ -28,6 +85,10 @@ namespace settings {
 		bool sniper_crosshair = false;
 		bool bomb_timer = false;
 		int bomb_timer_pos = 0;
+
+		namespace esp {
+			std::array<esp_settings_t, 3> esp_items;
+		}
 
 		namespace logs {
 			bool enable = true;
@@ -60,14 +121,69 @@ namespace settings {
 			color clr = color(255, 255, 255, 20);
 		}
 
+		namespace hitbox {
+			bool enable;
+			bool show_only_kill;
+			color clr;
+			float show_time;
+		}
+
+		namespace dropped_weapon {
+			bool enable = true;
+			bool box = true;
+			bool ammo_bar = true;
+			bool ammo_in_bar = true;
+
+			color box_color = color(255, 255, 255, 255);
+
+			color bar_outline = color(0, 0, 0, 255);
+			color bar_background = color(10, 10, 10, 20);
+			color bar_main = color(100, 100, 255, 255);
+		}
+
+		namespace ofc {
+			bool enable = false;
+			bool visible_check = false;
+
+			float range = 26.f;
+			float size = 10.f;
+
+			color clr = color(255, 255, 255, 255);
+		}
+
+		namespace grenades {
+			bool enable = false;
+
+			bool smoke_timer = false;
+			bool smoke_bar = true;
+			bool smoke_radius = true;
+
+			bool molotov_timer = false;
+			bool molotov_bar = true;
+			bool molotov_radius = false;
+
+			color color_smoke = color(255, 255, 255, 255);
+			color color_molotov = color(255, 255, 255, 255);
+			color color_decoy = color(255, 255, 255, 255);
+			color color_flash = color(255, 255, 255, 255);
+			color color_frag = color(255, 255, 255, 255);
+
+			color color_bar_smoke_back = color(20, 20, 20, 100);
+			color color_bar_smoke_main = color(100, 100, 255, 255);
+			color color_smoke_radius = color(100, 100, 255, 255);
+
+			color color_bar_molotov_back = color(20, 20, 20, 100);
+			color color_bar_molotov_main = color(255, 100, 100, 255);
+			color color_molotov_radius = color(255, 100, 100, 255);
+		}
+
 		namespace props {
 			bool enable = false;
 			int alpha = 255;
 			bool request = false;
 		}
 
-		namespace grenade_prediction
-		{
+		namespace grenade_prediction {
 			bool enable = false;
 			bool radius = true;
 
@@ -75,10 +191,10 @@ namespace settings {
 			float colision_box_size = 2.f;
 			float main_colision_box_size = 3.f;
 
-			color radius_color = color(0, 0, 0, 255);
-			color main = color(0, 0, 0, 255);
-			color main_box = color(0, 0, 0, 255);
-			color end_box = color(0, 0, 0, 255);
+			color radius_color = color(255, 255, 255, 255);
+			color main = color(255, 255, 255, 255);
+			color main_box = color(100, 100, 255, 255);
+			color end_box = color(255, 100, 100, 255);
 		}
 	}
 
@@ -96,6 +212,7 @@ namespace settings {
 		bool disable_zoom = false;
 		bool disable_zoom_border = false;
 		bool unlock_inventory = false;
+		bool chat_filter_bypass = true;
 
 		namespace fog {
 			bool enable = false;

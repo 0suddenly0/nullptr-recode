@@ -1,4 +1,4 @@
-#define NOMINMAX
+ï»¿#define NOMINMAX
 #include "../../sdk/structures/structures.h"
 #include "misc.h"
 #include "../../settings/settings.h"
@@ -56,6 +56,7 @@ namespace misc {
 			}
 		}
 	}
+
 	void block_bot(c_user_cmd* cmd) {
 		if (!settings::misc::block_bot::bind.enable) return;
 
@@ -259,8 +260,7 @@ namespace misc {
 			cl_ragdoll_gravity->set_value(becup_cl_ragdoll_gravity);
 		}
 
-		if (settings::misc::inverse_gravity::enable_slow && !globals::unloading)
-		{
+		if (settings::misc::inverse_gravity::enable_slow && !globals::unloading) {
 			cl_phys_timescale->m_fnChangeCallbacks.m_Size = 0;
 			cl_phys_timescale->set_value(0.2f);
 		} else {
@@ -280,7 +280,6 @@ namespace misc {
 			if (!settings::misc::clantag::enable || !sdk::local_player) return;
 
 			int tick = int(sdk::global_vars->curtime * 2.4f);
-
 			static std::string local_tag;
 
 			if (settings::misc::clantag::clantag_type == 0) {
@@ -288,32 +287,31 @@ namespace misc {
 				case 0:
 					switch (tick % 26) {
 					case 0:	 utils::set_clantag(u8"|nullptr|"); break;
-					case 1:	 utils::set_clantag(u8"|nullpt| "); break;
-					case 2:  utils::set_clantag(u8"|nullp|  "); break;
-					case 3:	 utils::set_clantag(u8"|null|   "); break;
-					case 5:	 utils::set_clantag(u8"|nul|    "); break;
-					case 6:  utils::set_clantag(u8"|nu|     "); break;
-					case 7:  utils::set_clantag(u8"|n|      "); break;
-					case 8:	 utils::set_clantag(u8"||       "); break;
-					case 9:  utils::set_clantag(u8" ||      "); break;
-					case 10: utils::set_clantag(u8"  ||     "); break;
-					case 11: utils::set_clantag(u8"   ||    "); break;
-					case 12: utils::set_clantag(u8"    ||   "); break;
-					case 13: utils::set_clantag(u8"     ||  "); break;
-					case 14: utils::set_clantag(u8"      || "); break;
-					case 15: utils::set_clantag(u8"       ||"); break;
-					case 16: utils::set_clantag(u8"      |r|"); break;
-					case 17: utils::set_clantag(u8"     |tr|"); break;
-					case 18: utils::set_clantag(u8"    |ptr|"); break;
-					case 19: utils::set_clantag(u8"   |lptr|"); break;
-					case 20: utils::set_clantag(u8"  |llptr|"); break;
-					case 21: utils::set_clantag(u8" |ullptr|"); break;
+					case 1:	 utils::set_clantag(u8"|nullpt|Â "); break;
+					case 2:  utils::set_clantag(u8"|nullp|Â Â "); break;
+					case 3:	 utils::set_clantag(u8"|null|Â Â Â "); break;
+					case 5:	 utils::set_clantag(u8"|nul|Â Â Â Â "); break;
+					case 6:  utils::set_clantag(u8"|nu|Â Â Â Â Â "); break;
+					case 7:  utils::set_clantag(u8"|n|Â Â Â Â Â Â "); break;
+					case 8:	 utils::set_clantag(u8"||Â Â Â Â Â Â  "); break;
+					case 9:  utils::set_clantag(u8"Â ||Â Â Â Â Â  "); break;
+					case 10: utils::set_clantag(u8"Â Â ||Â Â Â Â  "); break;
+					case 11: utils::set_clantag(u8"Â Â Â ||Â Â Â  "); break;
+					case 12: utils::set_clantag(u8"Â Â Â Â ||Â Â  "); break;
+					case 13: utils::set_clantag(u8"Â Â Â Â Â ||Â  "); break;
+					case 14: utils::set_clantag(u8"Â Â Â Â Â Â || "); break;
+					case 15: utils::set_clantag(u8"Â Â Â Â Â Â  ||"); break;
+					case 16: utils::set_clantag(u8"Â Â Â Â Â Â |r|"); break;
+					case 17: utils::set_clantag(u8"Â Â Â Â Â |tr|"); break;
+					case 18: utils::set_clantag(u8"Â Â Â Â |ptr|"); break;
+					case 19: utils::set_clantag(u8"Â Â Â |lptr|"); break;
+					case 20: utils::set_clantag(u8"Â Â |llptr|"); break;
+					case 21: utils::set_clantag(u8"Â |ullptr|"); break;
 					case 22: utils::set_clantag(u8"|nullptr|"); break;
 					case 23: utils::set_clantag(u8"|nullptr|"); break;
 					case 24: utils::set_clantag(u8"|nullptr|"); break;
 					case 25: utils::set_clantag(u8"|nullptr|"); break;
 					}
-
 					break;
 				case 1:
 					switch (tick % 18) {
@@ -385,26 +383,23 @@ namespace misc {
 					}
 					break;
 				}
-			}
-			else if (settings::misc::clantag::clantag_type == 1) {
+			} else if (settings::misc::clantag::clantag_type == 1) {
 				if (user_index == 0) return;
-
 				auto* player = c_base_player::get_player_by_index(user_index);
 				if (!player) return;
-
 				const auto info = player->get_player_info();
 				if (info.fakeplayer) return;
-
 				auto user_tag = std::string((*sdk::player_resource)->clantag()[player->get_index()]);
 
 				utils::set_clantag(user_tag);
 			} else if (settings::misc::clantag::clantag_type == 2) {
 				if (settings::misc::clantag::clantag.empty() || settings::misc::clantag::clantag.length() == 0) return;
 
-				if (settings::misc::clantag::custom_type == 0) {
+				if (settings::misc::clantag::custom_type == 0) {	
 					switch (tick % 2) {
 					case 1: utils::set_clantag(settings::misc::clantag::clantag, false); break;
 					}
+
 				} else if (settings::misc::clantag::custom_type == 1) {
 					if (clantag != settings::misc::clantag::clantag || clantag.length() < pos) {
 						clantag = settings::misc::clantag::clantag;
@@ -436,7 +431,6 @@ namespace misc {
 	}
 
 	namespace bhop {
-
 		void on_create_move(c_user_cmd* cmd) {
 			if (!settings::misc::bhop::enable) return;
 
@@ -524,7 +518,11 @@ namespace misc {
 
 				enum directions {
 					FORWARDS = 0,
+					FORWARDS_RIGHT = -45,
+					FORWARDS_LEFT = 45,
 					BACKWARDS = 180,
+					BACKWARDS_RIGHT = -135,
+					BACKWARDS_LEFT = 135,
 					LEFT = 90,
 					RIGHT = -90
 				};
@@ -540,13 +538,12 @@ namespace misc {
 				sdk::engine_client->get_view_angles(&base);
 
 				auto get_rough_direction = [&](float true_direction) -> float {
-					std::array< float, 4 > minimum = { directions::FORWARDS, directions::BACKWARDS, directions::LEFT, directions::RIGHT };
+					std::array< float, 8 > minimum = { directions::FORWARDS, FORWARDS_RIGHT, FORWARDS_LEFT, directions::BACKWARDS, BACKWARDS_RIGHT, BACKWARDS_LEFT, directions::LEFT, directions::RIGHT };
 					float best_angle, best_delta = 181.f;
 
 					for (size_t i = 0; i < minimum.size(); ++i) {
 						float rough_direction = base.yaw + minimum.at(i);
 						float delta = fabsf(math::normalize_yaw(true_direction - rough_direction));
-
 
 						if (delta < best_delta) {
 							best_angle = rough_direction;
@@ -561,21 +558,27 @@ namespace misc {
 
 				if (cmd->buttons & IN_FORWARD) {
 					wish_direction = base.yaw + directions::FORWARDS;
+					if (cmd->buttons & IN_MOVELEFT) wish_direction = base.yaw + directions::FORWARDS_LEFT;
+					if (cmd->buttons & IN_MOVERIGHT) wish_direction = base.yaw + directions::FORWARDS_RIGHT;
 				} else if (cmd->buttons & IN_BACK) {
 					wish_direction = base.yaw + directions::BACKWARDS;
+					if (cmd->buttons & IN_MOVELEFT) wish_direction = base.yaw + directions::BACKWARDS_LEFT;
+					if (cmd->buttons & IN_MOVERIGHT) wish_direction = base.yaw + directions::BACKWARDS_RIGHT;
 				} else if (cmd->buttons & IN_MOVELEFT) {
 					wish_direction = base.yaw + directions::LEFT;
+					if (cmd->buttons & IN_FORWARD) wish_direction = base.yaw + directions::FORWARDS_LEFT;
+					if (cmd->buttons & IN_BACK) wish_direction = base.yaw + directions::BACKWARDS_LEFT;
 				} else if (cmd->buttons & IN_MOVERIGHT) {
 					wish_direction = base.yaw + directions::RIGHT;
+					if (cmd->buttons & IN_FORWARD) wish_direction = base.yaw + directions::FORWARDS_RIGHT;
+					if (cmd->buttons & IN_BACK) wish_direction = base.yaw + directions::BACKWARDS_RIGHT;
 				} else {
-
 					cmd->buttons |= IN_FORWARD;
 					wish_direction = base.yaw + directions::FORWARDS;
 				}
 
 				float speed_rotation = std::min(RAD2DEG(std::asinf(30.f / sdk::local_player->velocity().length())) * 0.5f, 45.f);
 				if (in_transition) {
-
 					float ideal_step = speed_rotation + calculated_direction;
 					step = fabsf(math::normalize_yaw(calculated_direction - ideal_step));
 
@@ -620,7 +623,6 @@ namespace misc {
 	}
 
 	void fake_latency(c_net_channel* net_channel) {
-
 		if (!sdk::local_player->is_alive()) return;
 
 		static int32_t old_seq = 0;

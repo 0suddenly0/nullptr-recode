@@ -111,6 +111,8 @@ private:
 			std::vector<render::multicolor_t> items;
 
 			if (attacker_id == sdk::engine_client->get_local_player() && userid_id != sdk::engine_client->get_local_player()) {
+				visuals::draw_capsule_hitbox((c_base_player*)(sdk::entity_list->get_client_entity(userid_id)), event->get_int("health") == 0);
+
 				items = {
 					render::multicolor_t{ "you hurt ", color(255, 255, 255, 255) },
 					render::multicolor_t{ userid_info.szName, clr },
@@ -273,6 +275,24 @@ private:
 					}
 				}
 			}
+		}
+
+		if (strstr(event->get_name(), "inferno_startburn"))  {
+			vec3 position(event->get_float("x"), event->get_float("y"), event->get_float("z"));
+			globals::molotov_info.emplace_back(grenade_info_t{ position, sdk::global_vars->curtime + 7.f });
+		}
+
+		if (strstr(event->get_name(), "smokegrenade_detonate")) {
+			vec3 position(event->get_float("x"), event->get_float("y"), event->get_float("z"));
+			globals::smoke_info.emplace_back(grenade_info_t{ position, sdk::global_vars->curtime + 18.f });
+		}
+
+		if (strstr(event->get_name(), "round_end") || strstr(event->get_name(), "round_prestart") || strstr(event->get_name(), "round_freeze_end")) {
+			for (int i = 0; i < globals::molotov_info.size(); i++)
+				globals::molotov_info.erase(globals::molotov_info.begin() + i);
+
+			for (int i = 0; i < globals::smoke_info.size(); i++)
+				globals::smoke_info.erase(globals::smoke_info.begin() + i);
 		}
 	}
 

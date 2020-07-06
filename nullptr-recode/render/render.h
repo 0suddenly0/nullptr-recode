@@ -59,18 +59,21 @@ namespace render {
 
 	vec2 get_text_size(std::string text, ImFont* font = default_font, int text_size = 12);
 
+	void draw_triangle_filled(std::array<vec2, 3> poligons, color clr);
+	void draw_triangle(std::array<vec2, 3> poligons, color clr);
+
 	template <typename T>
 	void draw_text_multicolor(std::vector<multicolor_t> items, T x, T y, bool outline = true, bool center = false, int size = 12) {
 		draw_text_multicolor(items, vec2(x, y), outline, center, size);
 	}
-	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline = true, bool center = false, int size = 12);
+	void draw_text_multicolor(std::vector<multicolor_t> items, vec2 pos, bool outline = true, bool center_x = false, bool center_y = false, int size = 12);
 	vec2 get_multicolor_size(std::vector<multicolor_t> items, int size = 12);
 
 	template <typename T>
-	void draw_text(std::string text, T x, T y, color clr, bool outline = true, bool center = false, int size = 12) {
-		draw_text(text, vec2(x, y), clr, outline, center, size);
+	void draw_text(std::string text, T x, T y, color clr, bool outline = true, bool center_x = false, bool center_y = false, int size = 12) {
+		draw_text(text, vec2(x, y), clr, outline, center_x, center_y, size);
 	}
-	void draw_text(std::string text, vec2 pos, color clr, bool outline = true, bool center = false, int size = 12);
+	void draw_text(std::string text, vec2 pos, color clr, bool outline = true, bool center_x = false, bool center_y = false, int size = 12);
 
 	template <typename T>
 	void draw_line(T x_start, T y_start, T x_end, T y_end, color clr, int thickness = 1) {
@@ -79,7 +82,7 @@ namespace render {
 	void draw_line(vec2 start, vec2 end, color clr, int thickness = 1);
 
 	template <typename T>
-	void draw_box(float x_start, float y_start, float x_end, float y_end, color clr) {
+	void draw_box(T x_start, T y_start, T x_end, T y_end, color clr) {
 		draw_box(vec2(x_start, y_start), vec2(x_end, y_end), clr);
 	}
 	void draw_box(vec2 start, vec2 end, color clr);

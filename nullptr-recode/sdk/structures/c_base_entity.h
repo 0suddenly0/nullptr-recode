@@ -28,7 +28,7 @@ public:
 	NETVAR(int32_t, hitbox_set, "DT_BaseAnimating", "m_nHitboxSet");
 	NETVAR(int32_t, life_state, "DT_BasePlayer", "m_lifeState");
 	NETVAR(c_handle<c_base_player>, owner_entity, "DT_BaseEntity", "m_hOwnerEntity");
-	NETVAR(bool, spotted, "DT_BaseEntity", "m_bSpotted");
+	NETPROP(spotted, "DT_BaseEntity", "m_bSpotted");
 	NETVAR(float_t, c4_blow, "DT_PlantedC4", "m_flC4Blow");
 	NETVAR_EX(int, get_index, "DT_BaseEntity", "m_bIsAutoaimTarget", +0x4);
 

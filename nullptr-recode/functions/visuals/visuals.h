@@ -1,20 +1,25 @@
 #pragma once 
 #include "../../render/render.h"
 
+extern std::map<int, std::string> fixed_names;
+
 namespace visuals {
 	void render();
 	void draw_watermark();
 	void spread_circle();
+	void draw_capsule_hitbox(c_base_player* player, bool dead);
+	void grenade_names(c_base_entity* entity);
+	void grenades();
 	void thirdperson();
 	void impact();
 	void spectator_list();
 	void night_mode();
 	void asus_props();
 	void bomb_indicator();
+	void offscreen(c_base_player* player);
 	void entity_loop();
 
-	enum act
-	{
+	enum act {
 		act_none,
 		act_throw,
 		act_lob,
@@ -33,8 +38,8 @@ namespace visuals {
 		void view();
 		void paint();
 
-		void setup(c_base_player* pl, vec3& vecSrc, vec3& vecThrow, const qangle& angEyeAngles);
-		void simulate(qangle& Angles, c_base_player* pLocal);
+		void setup(c_base_player* pl, vec3& vecSrc, vec3& vecThrow, const qangle& angeyeangles);
+		void simulate(qangle& angles, c_base_player* plocal);
 		int  step(vec3& vecSrc, vec3& vecThrow, int tick, float interval);
 		bool check_detonate(const vec3& vecThrow, const trace_t& tr, int tick, float interval);
 		void trace_hull(vec3& src, vec3& end, trace_t& tr);
@@ -45,8 +50,7 @@ namespace visuals {
 		void draw_box(vec3 position, color clr, float size);
 		float get_radius(item_definition_index type_locl = type);
 
-		enum
-		{
+		enum {
 			act_none,
 			act_lob,
 			act_drop,

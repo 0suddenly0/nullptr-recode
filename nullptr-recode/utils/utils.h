@@ -39,4 +39,7 @@ namespace utils {
 
 	float get_curtime(c_user_cmd* ucmd);
 	void set_clantag(std::string tag, bool anim = true);
+
+	std::wstring s2ws(const std::string& str);
+	std::string ws2s(const std::wstring& wstr);
 }

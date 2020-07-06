@@ -3,6 +3,25 @@
 #include "../../sdk/structures/structures.h"
 
 namespace math {
+	void rotate_triangle(std::array<vec2, 3>& points, float rotation) {
+		const auto points_center = (points.at(0) + points.at(1) + points.at(2)) / 3;
+		for (auto& point : points) {
+			point -= points_center;
+
+			const auto temp_x = point.x;
+			const auto temp_y = point.y;
+
+			const auto theta = DEG2RAD(rotation);
+			const auto c = cos(theta);
+			const auto s = sin(theta);
+
+			point.x = temp_x * c - temp_y * s;
+			point.y = temp_x * s + temp_y * c;
+
+			point += points_center;
+		}
+	}
+
 	vec2 to_vec2(ImVec2 vec) {
 		return vec2(vec.x, vec.y);
 	}

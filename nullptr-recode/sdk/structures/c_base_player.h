@@ -2,6 +2,21 @@
 
 class c_base_player : public c_base_entity {
 public:
+	static c_base_player* get_spectating_player() {
+		if (sdk::local_player->is_alive()) {
+			return sdk::local_player;
+		} else {
+			if (sdk::local_player->observer_mode() == observer_mode_t::obs_roaming) {
+				return sdk::local_player;
+			} else {
+				c_base_player* spectated_ent = sdk::local_player->observer_target();
+				if (spectated_ent) return spectated_ent;
+			}
+		}
+
+		return sdk::local_player;
+	}
+
 	static __forceinline c_base_player* get_player_by_user_id(int id) {
 		return (c_base_player*)(get_entity_by_index(sdk::engine_client->get_player_for_user_id(id)));
 	}
@@ -440,20 +455,13 @@ public:
 	}
 
 	bool is_not_target() {
-		if (!this || this == sdk::local_player)
-			return true;
-
-		if (health() <= 0)
-			return true;
-
-		if (gun_game_immunity())
-			return true;
-
-		if (m_flags() & entity_flags::frozen)
-			return true;
+		if (!this || this == sdk::local_player) return true;
+		if (health() <= 0) return true;
+		if (gun_game_immunity()) return true;
+		if (m_flags() & entity_flags::frozen) return true;
 
 		int _ent_index = ent_index();
-		return _ent_index > sdk::global_vars->maxClients;
+		return _ent_index > sdk::global_vars->max_clients;
 	}
 
 	c_base_player* get_local_player() {
