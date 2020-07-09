@@ -35,6 +35,24 @@ namespace menu {
 				}
 				null_gui::check_box("bomb timer", &settings::visuals::bomb_timer);
 				null_gui::combo("bomb timer position", &settings::visuals::bomb_timer_pos, std::vector<std::string>{"screen", "bomb"});
+				null_gui::check_box("damage indicator", &settings::visuals::damage_indicator::enable);
+				null_gui::tooltip_items("##damage indicator settings", []() {
+					null_gui::slider_float("show time##damage indicator", &settings::visuals::damage_indicator::show_time, 2.f, 10.f);
+					null_gui::slider_float("speed##damage indicator", &settings::visuals::damage_indicator::speed, 0.f, 1.f, "%.2f");
+					null_gui::slider_float("max position y##damage indicator", &settings::visuals::damage_indicator::max_pos_y, 0.f, 200.f);
+					null_gui::slider_float("offset at kill##damage indicator", &settings::visuals::damage_indicator::offset_if_kill, 0.f, 20.f);
+					null_gui::slider_float("offset at hit##damage indicator", &settings::visuals::damage_indicator::offset_hit, 0.f, 10.f);
+					null_gui::slider_float("range offset x##damage indicator", &settings::visuals::damage_indicator::range_offset_x, 0.f, 30.f);
+					null_gui::color_edit("kill color##damage indicator", &settings::visuals::damage_indicator::kill_color, false);
+					});
+				null_gui::check_box("hitmarker", &settings::visuals::hitmarker::enable);
+				null_gui::tooltip_items("##hitmarker settings", []() {
+					null_gui::slider_float("show time##hitmarker", &settings::visuals::hitmarker::show_time, 2.f, 10.f);
+					null_gui::slider_float("size##hitmarker", &settings::visuals::hitmarker::size, 2.f, 10.f);
+					null_gui::combo("hitmarker type", &settings::visuals::hitmarker::type, std::vector<std::string>{"static", "dynamic"});
+					});
+				null_gui::check_box("hitsound", &settings::visuals::hitsound::enable);
+				null_gui::slider_float("hitsound volume", &settings::visuals::hitsound::volume, 0.1f, 1.f);
 				null_gui::check_box("grenade prediction", &settings::visuals::grenade_prediction::enable);
 				null_gui::tooltip_items("##grenade prediction settings", []() {
 					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);

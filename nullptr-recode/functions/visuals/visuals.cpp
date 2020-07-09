@@ -2,93 +2,81 @@
 #include "../../settings/settings.h"
 #include "../../sdk/structures/structures.h"
 
-std::map<int, std::string> fixed_names = {
-	//pistols
-	{ item_definition_index::usp_silencer, "usp" },
-	{ item_definition_index::glock, "glock" },
-	{ item_definition_index::hkp2000, "p2000" },
-	{ item_definition_index::elite, "elite" },
-	{ item_definition_index::p250, "p250" },
-	{ item_definition_index::fiveseven, "five-seven" },
-	{ item_definition_index::cz75a, "cz75a" },
-	{ item_definition_index::tec9, "tec9" },
-	{ item_definition_index::deagle, "deagle" },
-	{ item_definition_index::revolver, "rovelver" },
-	////////////////////////////////////////////////
+std::map<int, std::string> fixed_weapon_names_by_id = {
+		{ item_definition_index::usp_silencer, "usp" },
+		{ item_definition_index::glock, "glock" },
+		{ item_definition_index::hkp2000, "p2000" },
+		{ item_definition_index::elite, "elite" },
+		{ item_definition_index::p250, "p250" },
+		{ item_definition_index::fiveseven, "five-seven" },
+		{ item_definition_index::cz75a, "cz75a" },
+		{ item_definition_index::tec9, "tec9" },
+		{ item_definition_index::deagle, "deagle" },
+		{ item_definition_index::revolver, "rovelver" },
 
-	//pp
-	{ item_definition_index::mp9, "mp9" },
-	{ item_definition_index::mac10, "mac10" },
-	{ item_definition_index::mp7, "mp7" },
-	{ item_definition_index::mp5, "mp5-sd" },
-	{ item_definition_index::ump45, "ump45" },
-	{ item_definition_index::p90, "p90" },
-	{ item_definition_index::bizon, "bizon" },
-	////////////////////////////////////////////////
+		{ item_definition_index::mp9, "mp9" },
+		{ item_definition_index::mac10, "mac10" },
+		{ item_definition_index::mp7, "mp7" },
+		{ item_definition_index::mp5, "mp5-sd" },
+		{ item_definition_index::ump45, "ump45" },
+		{ item_definition_index::p90, "p90" },
+		{ item_definition_index::bizon, "bizon" },
 
-	//rifles
-	{ item_definition_index::famas, "famas" },
-	{ item_definition_index::m4a1_silencer, "m4a1-s" },
-	{ item_definition_index::m4a1, "m4a1" },
-	{ item_definition_index::ssg08, "ssg08" },
-	{ item_definition_index::aug, "aug" },
-	{ item_definition_index::awp, "awp" },
-	{ item_definition_index::scar20, "scar20" },
-	{ item_definition_index::galilar, "galil" },
-	{ item_definition_index::ak47, "ak 47" },
-	{ item_definition_index::sg556, "sg553" },
-	{ item_definition_index::g3sg1, "g3sg1" },
-	////////////////////////////////////////////////
+		{ item_definition_index::famas, "famas" },
+		{ item_definition_index::m4a1_silencer, "m4a1-s" },
+		{ item_definition_index::m4a1, "m4a1" },
+		{ item_definition_index::ssg08, "ssg08" },
+		{ item_definition_index::aug, "aug" },
+		{ item_definition_index::awp, "awp" },
+		{ item_definition_index::scar20, "scar20" },
+		{ item_definition_index::galilar, "galil" },
+		{ item_definition_index::ak47, "ak 47" },
+		{ item_definition_index::sg556, "sg553" },
+		{ item_definition_index::g3sg1, "g3sg1" },
 
-	//have
-	{ item_definition_index::nova, "nova" },
-	{ item_definition_index::xm1014, "xm1014" },
-	{ item_definition_index::sawedoff, "sawedoff" },
-	{ item_definition_index::m249, "m249" },
-	{ item_definition_index::negev, "negev" },
-	{ item_definition_index::mag7, "mag7" },
-	////////////////////////////////////////////////
+		{ item_definition_index::nova, "nova" },
+		{ item_definition_index::xm1014, "xm1014" },
+		{ item_definition_index::sawedoff, "sawedoff" },
+		{ item_definition_index::m249, "m249" },
+		{ item_definition_index::negev, "negev" },
+		{ item_definition_index::mag7, "mag7" },
 
-	//granades
-	{ item_definition_index::flashbang, "flash" },
-	{ item_definition_index::smokegrenade, "smoke" },
-	{ item_definition_index::molotov, "molotov" },
-	{ item_definition_index::incgrenade, "inc" },
-	{ item_definition_index::decoy, "decoy" },
-	{ item_definition_index::hegrenade, "hae" },
-	////////////////////////////////////////////////
+		{ item_definition_index::flashbang, "flash" },
+		{ item_definition_index::smokegrenade, "smoke" },
+		{ item_definition_index::molotov, "molotov" },
+		{ item_definition_index::incgrenade, "inc" },
+		{ item_definition_index::decoy, "decoy" },
+		{ item_definition_index::hegrenade, "hae" },
 
-	//other
-	{ item_definition_index::c4, "c4" },
-	{ item_definition_index::knife, "knife" },
-	{ item_definition_index::knife_gg, "knife" },
-	{ item_definition_index::knife_bayonet, "knife" },
-	{ item_definition_index::knife_butterfly, "knife" },
-	{ item_definition_index::knife_falchion, "knife" },
-	{ item_definition_index::knife_flip, "knife" },
-	{ item_definition_index::knife_ghost, "knife" },
-	{ item_definition_index::knife_gut, "knife" },
-	{ item_definition_index::knife_gypsy_jack, "knife" },
-	{ item_definition_index::knife_karambit, "knife" },
-	{ item_definition_index::knife_m9_bayonet, "knife" },
-	{ item_definition_index::knife_navaja, "knife" },
-	{ item_definition_index::knife_push, "knife" },
-	{ item_definition_index::knife_stiletto, "knife" },
-	{ item_definition_index::knife_survival_bowie, "knife" },
-	{ item_definition_index::knife_t, "knife" },
-	{ item_definition_index::knife_tactical, "knife" },
-	{ item_definition_index::knife_talon, "knife" },
-	{ item_definition_index::knife_ursus, "knife" },
-	{ item_definition_index::knife_widowmaker, "knife" },
-	{ item_definition_index::taser, "zeus" }
-	////////////////////////////////////////////////
+		{ item_definition_index::c4, "c4" },
+		{ item_definition_index::knife, "knife" },
+		{ item_definition_index::knife_gg, "knife" },
+		{ item_definition_index::knife_bayonet, "knife" },
+		{ item_definition_index::knife_butterfly, "knife" },
+		{ item_definition_index::knife_falchion, "knife" },
+		{ item_definition_index::knife_flip, "knife" },
+		{ item_definition_index::knife_ghost, "knife" },
+		{ item_definition_index::knife_gut, "knife" },
+		{ item_definition_index::knife_gypsy_jack, "knife" },
+		{ item_definition_index::knife_karambit, "knife" },
+		{ item_definition_index::knife_m9_bayonet, "knife" },
+		{ item_definition_index::knife_navaja, "knife" },
+		{ item_definition_index::knife_push, "knife" },
+		{ item_definition_index::knife_stiletto, "knife" },
+		{ item_definition_index::knife_survival_bowie, "knife" },
+		{ item_definition_index::knife_t, "knife" },
+		{ item_definition_index::knife_tactical, "knife" },
+		{ item_definition_index::knife_talon, "knife" },
+		{ item_definition_index::knife_ursus, "knife" },
+		{ item_definition_index::knife_widowmaker, "knife" },
+		{ item_definition_index::taser, "zeus" }
 };
 
 const char* clean_item_name(const char* name) {
 	if (name[0] == 'C')
 		name++;
 
-	auto start = strstr(name, "Weapon");
+	const char* start = strstr(name, "Weapon");
 	if (start != nullptr)
 		name = start + 6;
 
@@ -107,11 +95,11 @@ float last_view_time_offscreen[1024];
 
 RECT get_bbox(c_base_entity* ent) {
 	RECT rect{};
-	auto collideable = ent->get_collideable();
+	c_collideable* collideable = ent->get_collideable();
 	if (!collideable) return rect;
 
-	auto min = collideable->obb_mins();
-	auto max = collideable->obb_maxs();
+	vec3 min = collideable->obb_mins();
+	vec3 max = collideable->obb_maxs();
 
 	const matrix3x4& trans = ent->coordinate_frame();
 
@@ -139,10 +127,10 @@ RECT get_bbox(c_base_entity* ent) {
 			return rect;
 	}
 
-	auto left = screen_points[0].x;
-	auto top = screen_points[0].y;
-	auto right = screen_points[0].x;
-	auto bottom = screen_points[0].y;
+	float left = screen_points[0].x;
+	float top = screen_points[0].y;
+	float right = screen_points[0].x;
+	float bottom = screen_points[0].y;
 
 	for (int i = 1; i < 8; i++) {
 		if (left > screen_points[i].x)
@@ -198,8 +186,8 @@ public:
 
 		clr = is_visible ? current_settings.box_visible : current_settings.box_invisible;
 
-		auto head = _player->get_hitbox_pos(hitbox_head);
-		auto origin = _player->vec_origin();
+		vec3 head = _player->get_hitbox_pos(hitbox_head);
+		vec3 origin = _player->vec_origin();
 
 		head.z += 6;
 
@@ -208,8 +196,8 @@ public:
 			return false;
 		}
 
-		auto h = fabs(head_pos.y - feet_pos.y);
-		auto w = h / 2.f;
+		float h = fabs(head_pos.y - feet_pos.y);
+		float w = h / 2.f;
 
 		bbox.left = (long)(feet_pos.x - w * 0.45f);
 		bbox.right = (long)(bbox.left + w);
@@ -229,10 +217,10 @@ public:
 	esp_settings_t current_settings;
 };
 
-
-
 namespace visuals {
 	void render() {
+		hitmarker();
+		damage_indicator();
 		bomb_indicator();
 		grenades();
 		spread_circle();
@@ -269,7 +257,7 @@ namespace visuals {
 
 	void spread_circle() {
 		if (!sdk::engine_client->is_in_game() || !sdk::local_player->is_alive() || !settings::visuals::spread_circle::enable) return;
-		auto weapon = sdk::local_player->active_weapon();
+		c_base_combat_weapon* weapon = sdk::local_player->active_weapon().get();
 		if (!weapon) return;
 
 		float spreed = weapon->get_inaccuracy() * 800;
@@ -382,7 +370,7 @@ namespace visuals {
 
 				if (settings::visuals::grenades::smoke_bar) {
 					float box_w = (float)fabs((position.x - 30) - (position.x + 30));
-					auto width = (((box_w * (cur_smoke.time_to_expire - sdk::global_vars->curtime)) / 18.f));
+					float width = (((box_w * (cur_smoke.time_to_expire - sdk::global_vars->curtime)) / 18.f));
 
 					render::draw_box_filled(position.x - 30, position.y + 15, position.x + 30, position.y + 18.f, settings::visuals::grenades::color_bar_smoke_back);
 					render::draw_box_filled(position.x - 30, position.y + 15, (position.x - 30) + (int)width, position.y + 18.f, settings::visuals::grenades::color_bar_smoke_main);
@@ -415,13 +403,12 @@ namespace visuals {
 
 				if (settings::visuals::grenades::molotov_bar) {
 					float box_w = (float)fabs((position.x - 30) - (position.x + 30));
-					auto width = (((box_w * (cur_molotov.time_to_expire - sdk::global_vars->curtime)) / 7.f));
+					float width = (((box_w * (cur_molotov.time_to_expire - sdk::global_vars->curtime)) / 7.f));
 
 					render::draw_box_filled(position.x - 30, position.y + 15.f, position.x + 30, position.y + 18.f, settings::visuals::grenades::color_bar_molotov_back);
 					render::draw_box_filled(position.x - 30, position.y + 15.f, (position.x - 30) + (int)width, position.y + 18.f, settings::visuals::grenades::color_bar_molotov_main);
 
-					if (settings::visuals::grenades::molotov_timer)
-					{
+					if (settings::visuals::grenades::molotov_timer) {
 						render::draw_text(life_time, vec2(((position.x - 30) + (int)width), position.y + 20.f), settings::visuals::grenades::color_molotov, true, true);
 					}
 				} else if (settings::visuals::grenades::molotov_timer) {
@@ -505,14 +492,6 @@ namespace visuals {
 
 	void impact() {
 		if (!sdk::local_player || !sdk::local_player->is_alive() || !sdk::engine_client->is_connected()) return;
-
-		for (int i = 0; i < globals::server_impacts.size(); i++) {
-			bullet_impact_t cur_impact = globals::server_impacts[i];
-			sdk::debug_overlay->add_box_overlay(cur_impact.pos, vec3(-cur_impact.size, -cur_impact.size, -cur_impact.size), vec3(cur_impact.size, cur_impact.size, cur_impact.size), qangle(0, 0, 0), cur_impact.clr.color_char[0], cur_impact.clr.color_char[1], cur_impact.clr.color_char[2], cur_impact.clr.color_char[3], cur_impact.time_life);
-
-			if (sdk::global_vars->curtime - cur_impact.time_del < 0)
-				globals::server_impacts.erase(globals::server_impacts.begin() + i);
-		}
 
 		static int last_count = 0;
 		c_utl_vector<client_hit_verify_t>& client_impact_list = sdk::local_player->get_client_impacts();
@@ -700,10 +679,15 @@ namespace visuals {
 
 		if (settings::visuals::bomb_timer_pos == 1) {
 			if (!c_planted_c4::get_bomb_player()) return;
-			if (!math::world2screen(c_planted_c4::get_bomb_player()->get_abs_origin(), window_pos)) return;
+			vec2 draw_pos;
+			if (math::world2screen_offscreen(c_planted_c4::get_bomb_player()->get_abs_origin(), draw_pos)) {
+				window_pos = draw_pos;
 
-			window_pos.x -= window_size.x / 2;
-			window_pos.y -= window_size.y / 2;
+				window_pos -= window_size / 2;
+
+				window_pos.x = math::clamp(window_pos.x, 0.f, x - window_size.x);
+				window_pos.y = math::clamp(window_pos.y, 0.f, y - window_size.y - (bomb->bomb_defused() ? 0 : 2.f) - (c_planted_c4::get_defuse_time(bomb) > 0 ? 2.f : 0));
+			}
 		}
 
 		render::draw_box_filled(window_pos, window_pos + window_size, color(0, 0, 0, 100));
@@ -758,6 +742,73 @@ namespace visuals {
 		render::draw_box_filled(window_pos + vec2(0.f, window_size.y), window_pos + vec2(width, window_size.y + 2), color(255, 100, 100, 255));
 	}
 
+	void damage_indicator() {
+		if (!settings::visuals::damage_indicator::enable) return;
+
+		for (int i = 0; i < globals::damage_indicators.size(); i++) {
+			damage_indicator_t& indicator = globals::damage_indicators[i];
+			if (indicator.time_del - sdk::global_vars->curtime < 0) {
+				globals::damage_indicators.erase(globals::damage_indicators.begin() + i);
+				continue;
+			}
+
+			int alpha = math::clamp(indicator.time_del - sdk::global_vars->curtime, 0.f, 1.f) * 255;
+
+			if (!indicator.init) {
+				indicator.hit_pos.z += indicator.killed ? settings::visuals::damage_indicator::offset_if_kill : settings::visuals::damage_indicator::offset_hit;
+				indicator.end_pos = indicator.hit_pos + vec3(utils::random(-settings::visuals::damage_indicator::range_offset_x, settings::visuals::damage_indicator::range_offset_x),
+					utils::random(-settings::visuals::damage_indicator::range_offset_x, settings::visuals::damage_indicator::range_offset_x),
+					settings::visuals::damage_indicator::max_pos_y);
+				indicator.init = true;
+			}
+
+			indicator.hit_pos.z = utils::lerp(indicator.hit_pos.z, indicator.end_pos.z, settings::visuals::damage_indicator::speed);
+			indicator.hit_pos.x = utils::lerp(indicator.hit_pos.x, indicator.end_pos.x, settings::visuals::damage_indicator::speed);
+			indicator.hit_pos.y = utils::lerp(indicator.hit_pos.y, indicator.end_pos.y, settings::visuals::damage_indicator::speed);
+
+			vec2 draw_pos;
+			if (!math::world2screen(indicator.hit_pos, draw_pos))
+				continue;
+
+			render::draw_text(utils::snprintf("-%d", indicator.damage), draw_pos, indicator.killed ? color(settings::visuals::damage_indicator::kill_color, alpha) : color(255, 255, 255, alpha), true, true, true);
+		}
+	}
+
+	void hitmarker() {
+		if (!settings::visuals::hitmarker::enable) return;
+
+		if (settings::visuals::hitmarker::type == 1) {
+			for (int i = 0; i < globals::hitmarkers.size(); i++) {
+				bullet_impact_t& hitmarker = globals::hitmarkers[i];
+				if (hitmarker.time_del - sdk::global_vars->curtime < 0) {
+					globals::hitmarkers.erase(globals::hitmarkers.begin() + i);
+					continue;
+				}
+
+				int alpha = math::clamp(hitmarker.time_del - sdk::global_vars->curtime, 0.f, 1.f) * 255;
+
+				vec2 draw_pos;
+				if (!math::world2screen(hitmarker.pos, draw_pos))
+					continue;
+
+				float size = settings::visuals::hitmarker::size;
+				render::draw_line(draw_pos - size - 3.f, draw_pos - 3.f, color(255, 255, 255, alpha));
+				render::draw_line(draw_pos - vec2(size, -size) - vec2(3.f, -3.f), draw_pos - vec2(3.f, -3.f), color(255, 255, 255, alpha));
+				render::draw_line(draw_pos + size + 3.f, draw_pos + 3.f, color(255, 255, 255, alpha));
+				render::draw_line(draw_pos - vec2(-size, size) - vec2(-3.f, 3.f), draw_pos - vec2(-3.f, 3.f), color(255, 255, 255, alpha));
+			}
+		} else {
+			int alpha = math::clamp(globals::hitmarker_last.time_del - sdk::global_vars->curtime, 0.f, 1.f) * 255;
+			vec2 draw_pos = utils::get_screen_size() / 2;
+
+			float size = settings::visuals::hitmarker::size;
+			render::draw_line(draw_pos - size - 3.f, draw_pos - 3.f, color(255, 255, 255, alpha));
+			render::draw_line(draw_pos - vec2(size, -size) - vec2(3.f, -3.f), draw_pos - vec2(3.f, -3.f), color(255, 255, 255, alpha));
+			render::draw_line(draw_pos + size + 3.f, draw_pos + 3.f, color(255, 255, 255, alpha));
+			render::draw_line(draw_pos - vec2(-size, size) - vec2(-3.f, 3.f), draw_pos - vec2(-3.f, 3.f), color(255, 255, 255, alpha));
+		}
+	}
+
 	void offscreen(c_base_player* player) {
 		if (!settings::visuals::ofc::enable || !sdk::local_player) return;
 		if (!player || !player->is_player() || player->life_state() != life_state::alive || (player->team_num() == sdk::local_player->team_num())) return;
@@ -787,7 +838,7 @@ namespace visuals {
 
 	void draw_weapons(c_base_combat_weapon* ent) {
 		if (ent->owner_entity().is_valid()) return;
-		auto bbox = get_bbox(ent);
+		RECT bbox = get_bbox(ent);
 		if (bbox.right == 0 || bbox.bottom == 0) return;
 
 		if (settings::visuals::dropped_weapon::box) {
@@ -796,7 +847,7 @@ namespace visuals {
 			render::draw_box(vec2(bbox.left + 1, bbox.top - 1), vec2(bbox.right - 1, bbox.bottom + 1), color(0, 0, 0, 255));
 		}
 
-		std::string name = fixed_names[ent->get_item_definition_index()] == "" ? clean_item_name(ent->get_client_class()->network_name) : fixed_names[ent->get_item_definition_index()];
+		std::string name = fixed_weapon_names_by_id[ent->get_item_definition_index()] == "" ? clean_item_name(ent->get_client_class()->network_name) : fixed_weapon_names_by_id[ent->get_item_definition_index()];
 		if (name.empty()) return;
 
 		float box_w = (float)fabs(bbox.right - bbox.left);
@@ -877,7 +928,7 @@ namespace visuals {
 		void view() {
 			if (!settings::visuals::grenade_prediction::enable) return;
 			if (!sdk::local_player) return;
-			auto weapon = sdk::local_player->active_weapon().get();
+			c_base_combat_weapon* weapon = sdk::local_player->active_weapon().get();
 			if (!weapon) return;
 
 			if ((weapon->is_grenade()) && act != act_none) {

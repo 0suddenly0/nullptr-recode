@@ -213,6 +213,7 @@
     <ClCompile Include="hooks\hooks\send_datagram.cpp" />
     <ClCompile Include="hooks\hooks\send_net_msg.cpp" />
     <ClCompile Include="hooks\hooks\spotted.cpp" />
+    <ClCompile Include="hooks\hooks\sv_cheats.cpp" />
     <ClCompile Include="hooks\hooks\weapon_spread.cpp" />
     <ClCompile Include="hooks\hooks\wndproc.cpp" />
     <ClCompile Include="hooks\vfunc.cpp" />

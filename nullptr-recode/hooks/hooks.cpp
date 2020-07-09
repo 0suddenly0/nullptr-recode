@@ -31,6 +31,7 @@ namespace hooks {
 	vfunc_hook engine_vhook;
 	vfunc_hook game_coordinator_vhook;
 	vfunc_hook weapon_spread_vhook;
+	vfunc_hook sv_cheats_vhook;
 	recv_prop_hook* spotted_vhook;
 
 	void initialize() {
@@ -68,6 +69,9 @@ namespace hooks {
 		weapon_spread_vhook.setup(sdk::cvar->find_var("weapon_debug_spread_show"));
 		weapon_spread_vhook.hook_index(indexes::cvar_get_bool, weapon_spread::hook);
 
+		sv_cheats_vhook.setup(sdk::cvar->find_var("sv_cheats"));
+		sv_cheats_vhook.hook_index(indexes::cvar_get_bool, sv_cheats::hook);
+
 		spotted_vhook = new recv_prop_hook(c_base_entity::spotted(), spotted::hook);
 
 		event_manager::initialization();
@@ -84,6 +88,7 @@ namespace hooks {
 		engine_vhook.unhook_all();
 		game_coordinator_vhook.unhook_all();
 		weapon_spread_vhook.unhook_all();
+		sv_cheats_vhook.unhook_all();
 		spotted_vhook->~recv_prop_hook();
 
 		event_manager::shutdown();

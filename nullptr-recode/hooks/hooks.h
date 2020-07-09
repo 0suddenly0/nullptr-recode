@@ -22,6 +22,7 @@ namespace hooks {
 	extern vfunc_hook engine_vhook;
 	extern vfunc_hook game_coordinator_vhook;
 	extern vfunc_hook weapon_spread_vhook;
+	extern vfunc_hook sv_cheats_vhook;
 	extern recv_prop_hook* spotted_vhook;
 
 	namespace indexes {
@@ -128,6 +129,11 @@ namespace hooks {
 	namespace client_command {
 		using fn = void(__thiscall*)(void*, const char*);
 		void __fastcall hook(void* ecx, void* edx, const char* command);
+	}
+
+	namespace sv_cheats {
+		using fn = bool(__thiscall*)(void*);
+		bool __fastcall hook(void* ecx, void* edx);
 	}
 
 	namespace wndproc {

@@ -1,7 +1,7 @@
 #pragma once 
 #include "../../render/render.h"
 
-extern std::map<int, std::string> fixed_names;
+extern std::map<int, std::string> fixed_weapon_names_by_id;
 
 namespace visuals {
 	void render();
@@ -16,6 +16,8 @@ namespace visuals {
 	void night_mode();
 	void asus_props();
 	void bomb_indicator();
+	void damage_indicator();
+	void hitmarker();
 	void offscreen(c_base_player* player);
 	void entity_loop();
 

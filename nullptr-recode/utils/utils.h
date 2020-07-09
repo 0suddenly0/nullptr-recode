@@ -42,4 +42,7 @@ namespace utils {
 
 	std::wstring s2ws(const std::string& str);
 	std::string ws2s(const std::wstring& wstr);
+
+	int random(const int& min, const int& max);
+	float random(const float& min, const float& max);
 }

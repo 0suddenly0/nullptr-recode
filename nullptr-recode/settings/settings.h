@@ -128,6 +128,31 @@ namespace settings {
 			float show_time;
 		}
 
+		namespace damage_indicator {
+			bool enable = false;
+
+			float show_time = 5.f;
+			float speed = 0.2f;
+			float max_pos_y = 20.f;
+			float range_offset_x = 10.f;
+			float offset_if_kill = 10.f;
+			float offset_hit = 0.f;
+
+			color kill_color = color(255, 50, 50, 255);
+		}
+
+		namespace hitmarker {
+			bool enable = true;
+			float size = 3.f;
+			float show_time = 2.f;
+			int type = 1;
+		}
+
+		namespace hitsound {
+			bool enable = true;
+			float volume = 1.f;
+		}
+
 		namespace dropped_weapon {
 			bool enable = true;
 			bool box = true;

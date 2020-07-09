@@ -243,8 +243,8 @@ namespace math {
 			out.x = (size.x / 2.0f) + (out.x * size.x) / 2.0f;
 			out.y = (size.y / 2.0f) - (out.y * size.y) / 2.0f;
 
-			auto xOk = size.x > out.x > 0.0f;
-			auto yOk = size.y > out.y > 0.0f;
+			bool xOk = out.x < size.x && out.x > 0.f;
+			bool yOk = out.y < size.y && out.y > 0.f;
 
 			return xOk && yOk;
 		}

@@ -262,6 +262,9 @@
     <ClCompile Include="hooks\hooks\client_command.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\sv_cheats.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">

@@ -16,7 +16,7 @@
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
 namespace math {
-	void rotate_triangle(std::array<vec2, 3>& points, float rotation);
+	void rotate_triangle(std::array<vec2, 3>& points, float rotation); 
 	vec2 to_vec2(ImVec2 vec);
 	ImVec2 to_imvec2(vec2 vec);
 	int clamp(int a, int min, int max);

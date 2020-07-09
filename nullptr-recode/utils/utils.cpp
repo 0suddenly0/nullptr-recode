@@ -261,4 +261,12 @@ namespace utils {
         std::wstring_convert<convert_typeX, wchar_t> converterX;
         return converterX.to_bytes(wstr);
     }
+
+    int random(const int& min, const int& max) {
+        return rand() % (max - min + 1) + min;
+    }
+
+    float random(const float& min, const float& max) {
+        return ((max - min) * ((float)rand() / RAND_MAX)) + min;
+    }
 }
