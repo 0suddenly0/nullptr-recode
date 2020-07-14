@@ -19,8 +19,7 @@ DWORD WINAPI attach(LPVOID base) {
 	utils::attach_console();
 #endif
 
-	try {
-		
+	try {	
 		config::skins::setup_vars();
 		config::standart::setup_vars();
 
@@ -61,8 +60,7 @@ DWORD WINAPI attach(LPVOID base) {
 			globals::show_menu = !globals::show_menu;
 			});
 
-		if (skin_parser::skins.size() == 0)
-		{
+		if (skin_parser::skins.size() == 0) {
 			skin_parser::initialize_kits();
 		}
 

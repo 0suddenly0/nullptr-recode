@@ -1,13 +1,77 @@
 #include "../menu.h"
-
-int test = 0;
+int esp_player_tab = 0;
 
 namespace menu {
 	void visuals_tab() {
+		auto settings_cur = &settings::visuals::esp::esp_items[esp_player_tab];
+
 		null_gui::create_columns(2);
-		switch (global_visuals_tab)
-		{
+		switch (global_visuals_tab) {
 		case 0:
+			null_gui::begin_group("general##child", vec2(0, 101)); {
+				null_gui::horizontal(esp_player_tab, player_tabs);
+				null_gui::check_box("enable", &settings_cur->enable);
+				null_gui::check_box("use bind", &settings::visuals::esp::using_bind);
+				null_gui::key_bind("##use_bind", &settings::visuals::esp::bind);
+			}
+			null_gui::end_group();
+
+			null_gui::begin_group("player", vec2(0, 0)); {
+				null_gui::check_box("visible only", &settings_cur->only_visible);
+				null_gui::check_box("skeleton", &settings_cur->skeleton);
+				null_gui::check_box("box", &settings_cur->box);
+				null_gui::check_box("name", &settings_cur->name);
+				null_gui::check_box("health bar", &settings_cur->health_bar);
+				null_gui::tooltip_items("##health bar tooltip", [settings_cur]() {
+					null_gui::check_box("health in bar", &settings_cur->health_in_bar);
+					null_gui::check_box("color healthbased", &settings_cur->health_based);
+					});
+
+				null_gui::check_box("armour bar", &settings_cur->armor_bar);
+
+				null_gui::tooltip_items("##armour bar tooltip", [settings_cur]() {
+					null_gui::check_box("armour in bar", &settings_cur->armor_in_bar);
+					});
+
+				null_gui::check_box("weapon", &settings_cur->weapon);
+				null_gui::tooltip_items("##weapon bar tooltip", [settings_cur]() {
+					null_gui::check_box("ammo in bar", &settings_cur->ammo_in_bar);
+					null_gui::check_box("ammo bar", &settings_cur->weapon_ammo);
+					});
+
+				std::vector<std::string> flags_c = { "scoped", "flashed", "defusing", "planting", "reloading", "bomb", "armor", "helmet" };
+				std::vector<bool*> flags_b = { &settings_cur->flags_scoped, &settings_cur->flags_flashed, &settings_cur->flags_defusing, &settings_cur->flags_planting, &settings_cur->flags_reloading, &settings_cur->flags_bomb_carrier, &settings_cur->flags_armor, &settings_cur->flags_helmet };
+				null_gui::multi_combo("flags", flags_c, flags_b);
+
+			}
+			null_gui::end_group();
+
+			null_gui::next_column();
+
+			null_gui::begin_group("colors##players_visial", vec2(0, 0)); {
+				null_gui::color_edit("dormant", &settings_cur->dormant);
+				null_gui::new_line();
+				null_gui::color_edit("visible", &settings_cur->box_visible);
+				null_gui::color_edit("invisible", &settings_cur->box_invisible);
+				null_gui::new_line();
+				null_gui::color_edit("skeleton visible", &settings_cur->skeleton_visible);
+				null_gui::color_edit("skeleton invisible", &settings_cur->skeleton_invisible);
+				null_gui::new_line();
+				null_gui::color_edit("health bar outline", &settings_cur->health_bar_outline);
+				null_gui::color_edit("health bar background", &settings_cur->health_bar_background);
+				null_gui::color_edit("health bar main", &settings_cur->health_bar_main);
+				null_gui::new_line();
+				null_gui::color_edit("armor bar outline", &settings_cur->armor_bar_outline);
+				null_gui::color_edit("armor bar background", &settings_cur->armor_bar_background);
+				null_gui::color_edit("armor bar main", &settings_cur->armor_bar_main);
+				null_gui::new_line();
+				null_gui::color_edit("ammo bar outline", &settings_cur->ammo_bar_outline);
+				null_gui::color_edit("ammo bar background", &settings_cur->ammo_bar_background);
+				null_gui::color_edit("ammo bar main", &settings_cur->ammo_bar_main);
+
+			}
+			null_gui::end_group();
+			break;
 		case 1:
 		case 2:
 		case 3:
@@ -19,7 +83,6 @@ namespace menu {
 				null_gui::tooltip_items("##offscreen", []() {
 					null_gui::color_edit("color##offscreen", &settings::visuals::ofc::clr);
 					null_gui::check_box("visible check", &settings::visuals::ofc::visible_check);
-
 					null_gui::slider_float("range##offscreen", &settings::visuals::ofc::range, 0.f, 100.f, "%.1f");
 					null_gui::slider_float("size##offscreen", &settings::visuals::ofc::size, 0.f, 30.f, "%.1f");
 					});
@@ -57,11 +120,9 @@ namespace menu {
 				null_gui::tooltip_items("##grenade prediction settings", []() {
 					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);
 					null_gui::color_edit("##radiuscolor_genpred", &settings::visuals::grenade_prediction::radius_color);
-
 					null_gui::slider_float("line thickness##genpred", &settings::visuals::grenade_prediction::line_thickness, 0.f, 5.f, "%.1f");
 					null_gui::slider_float("colision box size##genpred", &settings::visuals::grenade_prediction::colision_box_size, 0.f, 10.f, "%.1f");
 					null_gui::slider_float("main colision box size##genpred", &settings::visuals::grenade_prediction::main_colision_box_size, 0.f, 10.f, "%.1f");
-
 					null_gui::color_edit("line color##genpred", &settings::visuals::grenade_prediction::main);
 					null_gui::color_edit("colision box color##genpred", &settings::visuals::grenade_prediction::main_box);
 					null_gui::color_edit("end colision box color##genpred", &settings::visuals::grenade_prediction::end_box);
@@ -95,19 +156,14 @@ namespace menu {
 				null_gui::tooltip_items("##log settings", []() {
 					null_gui::check_box("use custom color for hurt", &settings::visuals::logs::hurt.using_custom_color);
 					null_gui::color_edit("##color hit log", &settings::visuals::logs::hurt.custm_color);
-
 					null_gui::check_box("use custom color for buy", &settings::visuals::logs::player_buy.using_custom_color);
 					null_gui::color_edit("##color buy log", &settings::visuals::logs::player_buy.custm_color);
-
 					null_gui::check_box("use custom color for planting", &settings::visuals::logs::planting.using_custom_color);
 					null_gui::color_edit("##color planting log", &settings::visuals::logs::planting.custm_color);
-
 					null_gui::check_box("use custom color for defusing", &settings::visuals::logs::defusing.using_custom_color);
 					null_gui::color_edit("##color defusing log", &settings::visuals::logs::defusing.custm_color);
-
 					null_gui::check_box("use custom color for configs", &settings::visuals::logs::config.using_custom_color);
 					null_gui::color_edit("##color configs log", &settings::visuals::logs::config.custm_color);
-
 					null_gui::check_box("use custom color for scripts", &settings::visuals::logs::lua.using_custom_color);
 					null_gui::color_edit("##color scripts log", &settings::visuals::logs::lua.custm_color);
 					});
@@ -122,7 +178,7 @@ namespace menu {
 				static int selected_grenade;
 
 				null_gui::check_box("enable##grenades", &settings::visuals::grenades::enable);
-				null_gui::combo("grenade", &selected_grenade, std::vector<std::string>{ "smoke", "flahsbang", "he grenade", "decoy", "molotov"});
+				null_gui::combo("grenade", &selected_grenade, std::vector<std::string>{ "smoke", "flahsbang", "he grenade", "decoy", "tactical", "molotov"});
 
 				switch (selected_grenade)
 				{
@@ -146,6 +202,9 @@ namespace menu {
 					null_gui::color_edit("name##decoy", &settings::visuals::grenades::color_decoy);
 					break;
 				case 4:
+					null_gui::color_edit("name##tactical", &settings::visuals::grenades::color_tactical);
+					break;
+				case 5:
 					null_gui::color_edit("name##molotov", &settings::visuals::grenades::color_molotov);
 					null_gui::new_line();
 					null_gui::multi_combo("time display type##molotov", std::vector<std::string>{"bar", "text", "radius"}, std::vector<bool*>{ &settings::visuals::grenades::molotov_bar, &settings::visuals::grenades::molotov_timer, &settings::visuals::grenades::molotov_radius });

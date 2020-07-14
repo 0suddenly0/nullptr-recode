@@ -4,11 +4,10 @@
 #include "utl_memory.h"
 
 template< class T, class A = c_utl_memory<T> >
-class c_utl_vector
-{
-    typedef A CAllocator;
+class c_utl_vector {
+    typedef A c_allocator;
 public:
-    typedef T ElemType_t;
+    typedef T elem_type_t;
 
     // constructor, destructor
     c_utl_vector(int growSize = 0, int initSize = 0);
@@ -21,96 +20,95 @@ public:
     // element access
     T& operator[](int i);
     const T& operator[](int i) const;
-    T& Element(int i);
-    const T& Element(int i) const;
-    T& Head();
-    const T& Head() const;
-    T& Tail();
-    const T& Tail() const;
+    T& element(int i);
+    const T& element(int i) const;
+    T& head();
+    const T& head() const;
+    T& tail();
+    const T& tail() const;
 
     // Gets the base address (can change when adding elements!)
-    T* Base() { return m_Memory.Base(); }
-    const T* Base() const { return m_Memory.Base(); }
+    T* base() { return m_Memory.base(); }
+    const T* base() const { return m_Memory.base(); }
     // Returns the number of elements in the vector
-    int Count() const;
+    int count() const;
     // Is element index valid?
-    bool IsValidIndex(int i) const;
-    static int InvalidIndex();
+    bool is_valid_index(int i) const;
+    static int invalid_index();
     // Adds an element, uses default constructor
-    int AddToHead();
-    int AddToTail();
-    int InsertBefore(int elem);
-    int InsertAfter(int elem);
+    int add_to_head();
+    int add_to_tail();
+    int insert_before(int elem);
+    int insert_after(int elem);
     // Adds an element, uses copy constructor
-    int AddToHead(const T& src);
-    int AddToTail(const T& src);
-    int InsertBefore(int elem, const T& src);
-    int InsertAfter(int elem, const T& src);
+    int add_to_head(const T& src);
+    int add_to_tail(const T& src);
+    int insert_before(int elem, const T& src);
+    int insert_after(int elem, const T& src);
     // Adds multiple elements, uses default constructor
-    int AddMultipleToHead(int num);
-    int AddMultipleToTail(int num);
-    int AddMultipleToTail(int num, const T *pToCopy);
-    int InsertMultipleBefore(int elem, int num);
-    int InsertMultipleBefore(int elem, int num, const T *pToCopy);
-    int InsertMultipleAfter(int elem, int num);
-    // Calls RemoveAll() then AddMultipleToTail.
-    void SetSize(int size);
-    void SetCount(int count);
-    void SetCountNonDestructively(int count); //sets count by adding or removing elements to tail TODO: This should probably be the default behavior for SetCount
-    void CopyArray(const T *pArray, int size); //Calls SetSize and copies each element.
+    int add_multiple_to_head(int num);
+    int add_multiple_to_tail(int num);
+    int add_multiple_to_tail(int num, const T *pToCopy);
+    int insert_multiple_before(int elem, int num);
+    int insert_multiple_before(int elem, int num, const T *pToCopy);
+    int insert_multiple_after(int elem, int num);
+    // Calls remove_all() then add_multiple_to_tail.
+    void set_size(int size);
+    void set_count(int count);
+    void set_count_non_destructively(int count); //sets count by adding or removing elements to tail TODO: This should probably be the default behavior for set_count
+    void copy_array(const T *pArray, int size); //Calls set_size and copies each element.
                                                // Fast swap
-    void Swap(c_utl_vector< T, A > &vec);
+    void swap(c_utl_vector< T, A > &vec);
     // Add the specified array to the tail.
-    int AddVectorToTail(c_utl_vector<T, A> const &src);
+    int add_vector_to_tail(c_utl_vector<T, A> const &src);
     // Finds an element (element needs operator== defined)
-    int GetOffset(const T& src) const;
-    void FillWithValue(const T& src);
-    bool HasElement(const T& src) const;
+    int get_offset(const T& src) const;
+    void fill_with_value(const T& src);
+    bool has_element(const T& src) const;
     // Makes sure we have enough memory allocated to store a requested # of elements
-    void EnsureCapacity(int num);
+    void ensure_capacity(int num);
     // Makes sure we have at least this many elements
-    void EnsureCount(int num);
-    // Element removal
-    void FastRemove(int elem);    // doesn't preserve order
-    void Remove(int elem);        // preserves order, shifts elements
-    bool FindAndRemove(const T& src);    // removes first occurrence of src, preserves order, shifts elements
-    bool FindAndFastRemove(const T& src);    // removes first occurrence of src, doesn't preserve order
-    void RemoveMultiple(int elem, int num);    // preserves order, shifts elements
-    void RemoveMultipleFromHead(int num); // removes num elements from tail
-    void RemoveMultipleFromTail(int num); // removes num elements from tail
-    void RemoveAll();                // doesn't deallocate memory
-    void Purge(); // Memory deallocation
+    void ensure_count(int num);
+    // element removal
+    void fast_remove(int elem);    // doesn't preserve order
+    void remove(int elem);        // preserves order, shifts elements
+    bool find_and_remove(const T& src);    // removes first occurrence of src, preserves order, shifts elements
+    bool find_and_fast_remove(const T& src);    // removes first occurrence of src, doesn't preserve order
+    void remove_multiple(int elem, int num);    // preserves order, shifts elements
+    void remove_multiple_from_head(int num); // removes num elements from tail
+    void remove_multiple_from_tail(int num); // removes num elements from tail
+    void remove_all();                // doesn't deallocate memory
+    void purge(); // Memory deallocation
                   // Purges the list and calls delete on each element in it.
-    void PurgeAndDeleteElements();
+    void purge_and_delete_elements();
     // Compacts the vector to the number of elements actually in use 
-    void Compact();
+    void compact();
     // Set the size by which it grows when it needs to allocate more memory.
-    void SetGrowSize(int size) { m_Memory.SetGrowSize(size); }
-    int NumAllocated() const;    // Only use this if you really know what you're doing!
-    void Sort(int(__cdecl *pfnCompare)(const T *, const T *));
+    void set_grow_size(int size) { m_Memory.set_grow_size(size); }
+    int num_allocated() const;    // Only use this if you really know what you're doing!
+    void sort(int(__cdecl *pfnCompare)(const T *, const T *));
 
 protected:
     // Can't copy this unless we explicitly do it!
     c_utl_vector(c_utl_vector const& vec) { assert(0); }
 
     // Grows the vector
-    void GrowVector(int num = 1);
+    void grow_vector(int num = 1);
 
     // Shifts elements....
-    void ShiftElementsRight(int elem, int num = 1);
-    void ShiftElementsLeft(int elem, int num = 1);
+    void shift_elements_right(int elem, int num = 1);
+    void shift_elements_left(int elem, int num = 1);
 
 public:
-    CAllocator m_Memory;
+    c_allocator m_Memory;
     int m_Size;
 
     // For easier access to the elements through the debugger
     // it's in release builds so this can be used in libraries correctly
     T *m_pElements;
 
-    void ResetDbgInfo()
-    {
-        m_pElements = Base();
+    void ResetDbgInfo() {
+        m_pElements = base();
     }
 };
 
@@ -120,29 +118,25 @@ public:
 //-----------------------------------------------------------------------------
 template< typename T, class A >
 c_utl_vector<T, A>::c_utl_vector(int growSize, int initSize) :
-    m_Memory(growSize, initSize), m_Size(0)
-{
+    m_Memory(growSize, initSize), m_Size(0) {
     ResetDbgInfo();
 }
 
 template< typename T, class A >
 c_utl_vector<T, A>::c_utl_vector(T* pMemory, int allocationCount, int numElements) :
-    m_Memory(pMemory, allocationCount), m_Size(numElements)
-{
+    m_Memory(pMemory, allocationCount), m_Size(numElements) {
     ResetDbgInfo();
 }
 
 template< typename T, class A >
-c_utl_vector<T, A>::~c_utl_vector()
-{
-    Purge();
+c_utl_vector<T, A>::~c_utl_vector() {
+    purge();
 }
 
 template< typename T, class A >
-c_utl_vector<T, A>& c_utl_vector<T, A>::operator=(const c_utl_vector<T, A> &other)
-{
-    int nCount = other.Count();
-    SetSize(nCount);
+c_utl_vector<T, A>& c_utl_vector<T, A>::operator=(const c_utl_vector<T, A> &other) {
+    int nCount = other.count();
+    set_size(nCount);
     for(int i = 0; i < nCount; i++) {
         (*this)[i] = other[i];
     }
@@ -154,68 +148,59 @@ c_utl_vector<T, A>& c_utl_vector<T, A>::operator=(const c_utl_vector<T, A> &othe
 // element access
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-T& c_utl_vector<T, A>::operator[](int i)
-{
+T& c_utl_vector<T, A>::operator[](int i) {
     assert(i < m_Size);
     return m_Memory[i];
 }
 
 template< typename T, class A >
-const T& c_utl_vector<T, A>::operator[](int i) const
-{
+const T& c_utl_vector<T, A>::operator[](int i) const {
     assert(i < m_Size);
     return m_Memory[i];
 }
 
 template< typename T, class A >
-T& c_utl_vector<T, A>::Element(int i)
-{
+T& c_utl_vector<T, A>::element(int i) {
     assert(i < m_Size);
     return m_Memory[i];
 }
 
 template< typename T, class A >
-const T& c_utl_vector<T, A>::Element(int i) const
-{
+const T& c_utl_vector<T, A>::element(int i) const {
     assert(i < m_Size);
     return m_Memory[i];
 }
 
 template< typename T, class A >
-T& c_utl_vector<T, A>::Head()
-{
+T& c_utl_vector<T, A>::head() {
     assert(m_Size > 0);
     return m_Memory[0];
 }
 
 template< typename T, class A >
-const T& c_utl_vector<T, A>::Head() const
-{
+const T& c_utl_vector<T, A>::head() const {
     assert(m_Size > 0);
     return m_Memory[0];
 }
 
 template< typename T, class A >
-T& c_utl_vector<T, A>::Tail()
-{
+T& c_utl_vector<T, A>::tail() {
     assert(m_Size > 0);
     return m_Memory[m_Size - 1];
 }
 
 template< typename T, class A >
-const T& c_utl_vector<T, A>::Tail() const
-{
+const T& c_utl_vector<T, A>::tail() const {
     assert(m_Size > 0);
     return m_Memory[m_Size - 1];
 }
 
 
 //-----------------------------------------------------------------------------
-// Count
+// count
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::Count() const
-{
+int c_utl_vector<T, A>::count() const {
     return m_Size;
 }
 
@@ -224,8 +209,7 @@ int c_utl_vector<T, A>::Count() const
 // Is element index valid?
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-bool c_utl_vector<T, A>::IsValidIndex(int i) const
-{
+bool c_utl_vector<T, A>::is_valid_index(int i) const {
     return (i >= 0) && (i < m_Size);
 }
 
@@ -234,8 +218,7 @@ bool c_utl_vector<T, A>::IsValidIndex(int i) const
 // Returns in invalid index
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::InvalidIndex()
-{
+int c_utl_vector<T, A>::invalid_index() {
     return -1;
 }
 
@@ -244,10 +227,9 @@ int c_utl_vector<T, A>::InvalidIndex()
 // Grows the vector
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::GrowVector(int num)
-{
-    if(m_Size + num > m_Memory.NumAllocated()) {
-        m_Memory.Grow(m_Size + num - m_Memory.NumAllocated());
+void c_utl_vector<T, A>::grow_vector(int num) {
+    if(m_Size + num > m_Memory.num_allocated()) {
+        m_Memory.grow(m_Size + num - m_Memory.num_allocated());
     }
 
     m_Size += num;
@@ -259,14 +241,13 @@ void c_utl_vector<T, A>::GrowVector(int num)
 // Sorts the vector
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::Sort(int(__cdecl *pfnCompare)(const T *, const T *))
-{
+void c_utl_vector<T, A>::sort(int(__cdecl *pfnCompare)(const T *, const T *)) {
     typedef int(__cdecl *QSortCompareFunc_t)(const void *, const void *);
-    if(Count() <= 1)
+    if(count() <= 1)
         return;
 
-    if(Base()) {
-        qsort(Base(), Count(), sizeof(T), (QSortCompareFunc_t)(pfnCompare));
+    if(base()) {
+        qsort(base(), count(), sizeof(T), (QSortCompareFunc_t)(pfnCompare));
     } else {
         assert(0);
         // this path is untested
@@ -276,8 +257,8 @@ void c_utl_vector<T, A>::Sort(int(__cdecl *pfnCompare)(const T *, const T *))
 
         for(int i = m_Size - 1; i >= 0; --i) {
             for(int j = 1; j <= i; ++j) {
-                if(pfnCompare(&Element(j - 1), &Element(j)) < 0) {
-                    V_swap(Element(j - 1), Element(j));
+                if(pfnCompare(&element(j - 1), &element(j)) < 0) {
+                    V_swap(element(j - 1), element(j));
                 }
             }
         }
@@ -288,10 +269,9 @@ void c_utl_vector<T, A>::Sort(int(__cdecl *pfnCompare)(const T *, const T *))
 // Makes sure we have enough memory allocated to store a requested # of elements
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::EnsureCapacity(int num)
-{
+void c_utl_vector<T, A>::ensure_capacity(int num) {
     MEM_ALLOC_CREDIT_CLASS();
-    m_Memory.EnsureCapacity(num);
+    m_Memory.ensure_capacity(num);
     ResetDbgInfo();
 }
 
@@ -300,10 +280,9 @@ void c_utl_vector<T, A>::EnsureCapacity(int num)
 // Makes sure we have at least this many elements
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::EnsureCount(int num)
-{
-    if(Count() < num) {
-        AddMultipleToTail(num - Count());
+void c_utl_vector<T, A>::ensure_count(int num) {
+    if(count() < num) {
+        add_multiple_to_tail(num - count());
     }
 }
 
@@ -312,24 +291,22 @@ void c_utl_vector<T, A>::EnsureCount(int num)
 // Shifts elements
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::ShiftElementsRight(int elem, int num)
-{
-    assert(IsValidIndex(elem) || (m_Size == 0) || (num == 0));
+void c_utl_vector<T, A>::shift_elements_right(int elem, int num) {
+    assert(is_valid_index(elem) || (m_Size == 0) || (num == 0));
     int numToMove = m_Size - elem - num;
     if((numToMove > 0) && (num > 0))
-        memmove(&Element(elem + num), &Element(elem), numToMove * sizeof(T));
+        memmove(&element(elem + num), &element(elem), numToMove * sizeof(T));
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::ShiftElementsLeft(int elem, int num)
-{
-    assert(IsValidIndex(elem) || (m_Size == 0) || (num == 0));
+void c_utl_vector<T, A>::shift_elements_left(int elem, int num) {
+    assert(is_valid_index(elem) || (m_Size == 0) || (num == 0));
     int numToMove = m_Size - elem - num;
     if((numToMove > 0) && (num > 0)) {
-        memmove(&Element(elem), &Element(elem + num), numToMove * sizeof(T));
+        memmove(&element(elem), &element(elem + num), numToMove * sizeof(T));
 
 #ifdef _DEBUG
-        memset(&Element(m_Size - num), 0xDD, num * sizeof(T));
+        memset(&element(m_Size - num), 0xDD, num * sizeof(T));
 #endif
     }
 }
@@ -339,32 +316,28 @@ void c_utl_vector<T, A>::ShiftElementsLeft(int elem, int num)
 // Adds an element, uses default constructor
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::AddToHead()
-{
-    return InsertBefore(0);
+int c_utl_vector<T, A>::add_to_head() {
+    return insert_before(0);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::AddToTail()
-{
-    return InsertBefore(m_Size);
+int c_utl_vector<T, A>::add_to_tail() {
+    return insert_before(m_Size);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertAfter(int elem)
-{
-    return InsertBefore(elem + 1);
+int c_utl_vector<T, A>::insert_after(int elem) {
+    return insert_before(elem + 1);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertBefore(int elem)
-{
+int c_utl_vector<T, A>::insert_before(int elem) {
     // Can insert at the end
-    assert((elem == Count()) || IsValidIndex(elem));
+    assert((elem == count()) || is_valid_index(elem));
 
-    GrowVector();
-    ShiftElementsRight(elem);
-    Construct(&Element(elem));
+    grow_vector();
+    shift_elements_right(elem);
+    Construct(&element(elem));
     return elem;
 }
 
@@ -373,41 +346,37 @@ int c_utl_vector<T, A>::InsertBefore(int elem)
 // Adds an element, uses copy constructor
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::AddToHead(const T& src)
-{
+int c_utl_vector<T, A>::add_to_head(const T& src) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count())));
-    return InsertBefore(0, src);
+    assert((base() == NULL) || (&src < base()) || (&src >= (base() + count())));
+    return insert_before(0, src);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::AddToTail(const T& src)
-{
+int c_utl_vector<T, A>::add_to_tail(const T& src) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count())));
-    return InsertBefore(m_Size, src);
+    assert((base() == NULL) || (&src < base()) || (&src >= (base() + count())));
+    return insert_before(m_Size, src);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertAfter(int elem, const T& src)
-{
+int c_utl_vector<T, A>::insert_after(int elem, const T& src) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count())));
-    return InsertBefore(elem + 1, src);
+    assert((base() == NULL) || (&src < base()) || (&src >= (base() + count())));
+    return insert_before(elem + 1, src);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertBefore(int elem, const T& src)
-{
+int c_utl_vector<T, A>::insert_before(int elem, const T& src) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || (&src < Base()) || (&src >= (Base() + Count())));
+    assert((base() == NULL) || (&src < base()) || (&src >= (base() + count())));
 
     // Can insert at the end
-    assert((elem == Count()) || IsValidIndex(elem));
+    assert((elem == count()) || is_valid_index(elem));
 
-    GrowVector();
-    ShiftElementsRight(elem);
-    CopyConstruct(&Element(elem), src);
+    grow_vector();
+    shift_elements_right(elem);
+    CopyConstruct(&element(elem), src);
     return elem;
 }
 
@@ -416,70 +385,61 @@ int c_utl_vector<T, A>::InsertBefore(int elem, const T& src)
 // Adds multiple elements, uses default constructor
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::AddMultipleToHead(int num)
-{
-    return InsertMultipleBefore(0, num);
+int c_utl_vector<T, A>::add_multiple_to_head(int num) {
+    return insert_multiple_before(0, num);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::AddMultipleToTail(int num)
-{
-    return InsertMultipleBefore(m_Size, num);
+int c_utl_vector<T, A>::add_multiple_to_tail(int num) {
+    return insert_multiple_before(m_Size, num);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::AddMultipleToTail(int num, const T *pToCopy)
-{
+int c_utl_vector<T, A>::add_multiple_to_tail(int num, const T *pToCopy) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || !pToCopy || (pToCopy + num <= Base()) || (pToCopy >= (Base() + Count())));
+    assert((base() == NULL) || !pToCopy || (pToCopy + num <= base()) || (pToCopy >= (base() + count())));
 
-    return InsertMultipleBefore(m_Size, num, pToCopy);
+    return insert_multiple_before(m_Size, num, pToCopy);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertMultipleAfter(int elem, int num)
-{
-    return InsertMultipleBefore(elem + 1, num);
+int c_utl_vector<T, A>::insert_multiple_after(int elem, int num) {
+    return insert_multiple_before(elem + 1, num);
 }
 
 
 template< typename T, class A >
-void c_utl_vector<T, A>::SetCount(int count)
-{
-    RemoveAll();
-    AddMultipleToTail(count);
+void c_utl_vector<T, A>::set_count(int count) {
+    remove_all();
+    add_multiple_to_tail(count);
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::SetSize(int size)
-{
-    SetCount(size);
+void c_utl_vector<T, A>::set_size(int size) {
+    set_count(size);
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::SetCountNonDestructively(int count)
-{
+void c_utl_vector<T, A>::set_count_non_destructively(int count) {
     int delta = count - m_Size;
-    if(delta > 0) AddMultipleToTail(delta);
-    else if(delta < 0) RemoveMultipleFromTail(-delta);
+    if(delta > 0) add_multiple_to_tail(delta);
+    else if(delta < 0) remove_multiple_from_tail(-delta);
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::CopyArray(const T *pArray, int size)
-{
+void c_utl_vector<T, A>::copy_array(const T *pArray, int size) {
     // Can't insert something that's in the list... reallocation may hose us
-    assert((Base() == NULL) || !pArray || (Base() >= (pArray + size)) || (pArray >= (Base() + Count())));
+    assert((base() == NULL) || !pArray || (base() >= (pArray + size)) || (pArray >= (base() + count())));
 
-    SetSize(size);
+    set_size(size);
     for(int i = 0; i < size; i++) {
         (*this)[i] = pArray[i];
     }
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::Swap(c_utl_vector< T, A > &vec)
-{
-    m_Memory.Swap(vec.m_Memory);
+void c_utl_vector<T, A>::swap(c_utl_vector< T, A > &vec) {
+    m_Memory.swap(vec.m_Memory);
     V_swap(m_Size, vec.m_Size);
 #ifndef _X360
     V_swap(m_pElements, vec.m_pElements);
@@ -487,64 +447,61 @@ void c_utl_vector<T, A>::Swap(c_utl_vector< T, A > &vec)
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::AddVectorToTail(c_utl_vector const &src)
-{
+int c_utl_vector<T, A>::add_vector_to_tail(c_utl_vector const &src) {
     assert(&src != this);
 
-    int base = Count();
+    int base = count();
 
     // Make space.
-    int nSrcCount = src.Count();
-    EnsureCapacity(base + nSrcCount);
+    int nSrcCount = src.count();
+    ensure_capacity(base + nSrcCount);
 
     // Copy the elements.	
     m_Size += nSrcCount;
     for(int i = 0; i < nSrcCount; i++) {
-        CopyConstruct(&Element(base + i), src[i]);
+        CopyConstruct(&element(base + i), src[i]);
     }
     return base;
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertMultipleBefore(int elem, int num)
-{
+int c_utl_vector<T, A>::insert_multiple_before(int elem, int num) {
     if(num == 0)
         return elem;
 
     // Can insert at the end
-    assert((elem == Count()) || IsValidIndex(elem));
+    assert((elem == count()) || is_valid_index(elem));
 
-    GrowVector(num);
-    ShiftElementsRight(elem, num);
+    grow_vector(num);
+    shift_elements_right(elem, num);
 
     // Invoke default constructors
     for(int i = 0; i < num; ++i) {
-        Construct(&Element(elem + i));
+        Construct(&element(elem + i));
     }
 
     return elem;
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::InsertMultipleBefore(int elem, int num, const T *pToInsert)
-{
+int c_utl_vector<T, A>::insert_multiple_before(int elem, int num, const T *pToInsert) {
     if(num == 0)
         return elem;
 
     // Can insert at the end
-    assert((elem == Count()) || IsValidIndex(elem));
+    assert((elem == count()) || is_valid_index(elem));
 
-    GrowVector(num);
-    ShiftElementsRight(elem, num);
+    grow_vector(num);
+    shift_elements_right(elem, num);
 
     // Invoke default constructors
     if(!pToInsert) {
         for(int i = 0; i < num; ++i) {
-            Construct(&Element(elem + i));
+            Construct(&element(elem + i));
         }
     } else {
         for(int i = 0; i < num; i++) {
-            CopyConstruct(&Element(elem + i), pToInsert[i]);
+            CopyConstruct(&element(elem + i), pToInsert[i]);
         }
     }
 
@@ -556,117 +513,106 @@ int c_utl_vector<T, A>::InsertMultipleBefore(int elem, int num, const T *pToInse
 // Finds an element (element needs operator== defined)
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-int c_utl_vector<T, A>::GetOffset(const T& src) const
-{
-    for(int i = 0; i < Count(); ++i) {
-        if(Element(i) == src)
+int c_utl_vector<T, A>::get_offset(const T& src) const {
+    for(int i = 0; i < count(); ++i) {
+        if(element(i) == src)
             return i;
     }
     return -1;
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::FillWithValue(const T& src)
-{
-    for(int i = 0; i < Count(); i++) {
-        Element(i) = src;
+void c_utl_vector<T, A>::fill_with_value(const T& src) {
+    for(int i = 0; i < count(); i++) {
+        element(i) = src;
     }
 }
 
 template< typename T, class A >
-bool c_utl_vector<T, A>::HasElement(const T& src) const
-{
-    return (GetOffset(src) >= 0);
+bool c_utl_vector<T, A>::has_element(const T& src) const {
+    return (get_offset(src) >= 0);
 }
 
 
 //-----------------------------------------------------------------------------
-// Element removal
+// element removal
 //-----------------------------------------------------------------------------
 template< typename T, class A >
-void c_utl_vector<T, A>::FastRemove(int elem)
-{
-    assert(IsValidIndex(elem));
+void c_utl_vector<T, A>::fast_remove(int elem) {
+    assert(is_valid_index(elem));
 
-    Destruct(&Element(elem));
+    Destruct(&element(elem));
     if(m_Size > 0) {
         if(elem != m_Size - 1)
-            memcpy(&Element(elem), &Element(m_Size - 1), sizeof(T));
+            memcpy(&element(elem), &element(m_Size - 1), sizeof(T));
         --m_Size;
     }
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::Remove(int elem)
-{
-    Destruct(&Element(elem));
-    ShiftElementsLeft(elem);
+void c_utl_vector<T, A>::remove(int elem) {
+    Destruct(&element(elem));
+    shift_elements_left(elem);
     --m_Size;
 }
 
 template< typename T, class A >
-bool c_utl_vector<T, A>::FindAndRemove(const T& src)
-{
-    int elem = GetOffset(src);
+bool c_utl_vector<T, A>::find_and_remove(const T& src) {
+    int elem = get_offset(src);
     if(elem != -1) {
-        Remove(elem);
+        remove(elem);
         return true;
     }
     return false;
 }
 
 template< typename T, class A >
-bool c_utl_vector<T, A>::FindAndFastRemove(const T& src)
-{
-    int elem = GetOffset(src);
+bool c_utl_vector<T, A>::find_and_fast_remove(const T& src) {
+    int elem = get_offset(src);
     if(elem != -1) {
-        FastRemove(elem);
+        fast_remove(elem);
         return true;
     }
     return false;
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::RemoveMultiple(int elem, int num)
-{
+void c_utl_vector<T, A>::remove_multiple(int elem, int num) {
     assert(elem >= 0);
-    assert(elem + num <= Count());
+    assert(elem + num <= count());
 
     for(int i = elem + num; --i >= elem; )
-        Destruct(&Element(i));
+        Destruct(&element(i));
 
-    ShiftElementsLeft(elem, num);
+    shift_elements_left(elem, num);
     m_Size -= num;
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::RemoveMultipleFromHead(int num)
-{
-    assert(num <= Count());
+void c_utl_vector<T, A>::remove_multiple_from_head(int num) {
+    assert(num <= count());
 
     for(int i = num; --i >= 0; )
-        Destruct(&Element(i));
+        Destruct(&element(i));
 
-    ShiftElementsLeft(0, num);
+    shift_elements_left(0, num);
     m_Size -= num;
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::RemoveMultipleFromTail(int num)
-{
-    assert(num <= Count());
+void c_utl_vector<T, A>::remove_multiple_from_tail(int num) {
+    assert(num <= count());
 
     for(int i = m_Size - num; i < m_Size; i++)
-        Destruct(&Element(i));
+        Destruct(&element(i));
 
     m_Size -= num;
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::RemoveAll()
-{
+void c_utl_vector<T, A>::remove_all() {
     for(int i = m_Size; --i >= 0; ) {
-        Destruct(&Element(i));
+        Destruct(&element(i));
     }
 
     m_Size = 0;
@@ -678,33 +624,29 @@ void c_utl_vector<T, A>::RemoveAll()
 //-----------------------------------------------------------------------------
 
 template< typename T, class A >
-void c_utl_vector<T, A>::Purge()
-{
-    RemoveAll();
-    m_Memory.Purge();
+void c_utl_vector<T, A>::purge() {
+    remove_all();
+    m_Memory.purge();
     ResetDbgInfo();
 }
 
 
 template< typename T, class A >
-void c_utl_vector<T, A>::PurgeAndDeleteElements()
-{
+void c_utl_vector<T, A>::purge_and_delete_elements() {
     for(int i = 0; i < m_Size; i++) {
-        delete Element(i);
+        delete element(i);
     }
-    Purge();
+    purge();
 }
 
 template< typename T, class A >
-void c_utl_vector<T, A>::Compact()
-{
-    m_Memory.Purge(m_Size);
+void c_utl_vector<T, A>::compact() {
+    m_Memory.purge(m_Size);
 }
 
 template< typename T, class A >
-int c_utl_vector<T, A>::NumAllocated() const
-{
-    return m_Memory.NumAllocated();
+int c_utl_vector<T, A>::num_allocated() const {
+    return m_Memory.num_allocated();
 }
 
 
@@ -713,8 +655,7 @@ int c_utl_vector<T, A>::NumAllocated() const
 //-----------------------------------------------------------------------------
 #ifdef DBGFLAG_VALIDATE
 template< typename T, class A >
-void c_utl_vector<T, A>::Validate(CValidator &validator, char *pchName)
-{
+void c_utl_vector<T, A>::Validate(CValidator &validator, char *pchName) {
     validator.Push(typeid(*this).name(), this, pchName);
 
     m_Memory.Validate(validator, "m_Memory");
@@ -725,29 +666,24 @@ void c_utl_vector<T, A>::Validate(CValidator &validator, char *pchName)
 
 // A vector class for storing pointers, so that the elements pointed to by the pointers are deleted
 // on exit.
-template<class T> class c_utl_vector_auto_purge : public c_utl_vector< T, c_utl_memory< T, int> >
-{
+template<class T> class c_utl_vector_auto_purge : public c_utl_vector< T, c_utl_memory< T, int> > {
 public:
-    ~c_utl_vector_auto_purge(void)
-    {
-        this->PurgeAndDeleteElements();
+    ~c_utl_vector_auto_purge(void) {
+        this->purge_and_delete_elements();
     }
 };
 
 // easy string list class with dynamically allocated strings. For use with V_SplitString, etc.
 // Frees the dynamic strings in destructor.
-class c_utl_string_list : public c_utl_vector_auto_purge< char *>
-{
+class c_utl_string_list : public c_utl_vector_auto_purge< char *> {
 public:
-    void CopyAndAddToTail(char const *pString)			// clone the string and add to the end
-    {
+    void CopyAndAddToTail(char const *pString) {
         char *pNewStr = new char[1 + strlen(pString)];
         strcpy_s(pNewStr, 1 + strlen(pString), pString);
-        AddToTail(pNewStr);
+        add_to_tail(pNewStr);
     }
 
-    static int __cdecl SortFunc(char * const * sz1, char * const * sz2)
-    {
+    static int __cdecl SortFunc(char * const * sz1, char * const * sz2) {
         return strcmp(*sz1, *sz2);
     }
 

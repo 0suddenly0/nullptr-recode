@@ -32,6 +32,9 @@ public:
     void                    add_capsule_overlay(vec3& mins, vec3& maxs, float pillradius, int r, int g, int b, int a, float duration) {
         return vfunc<void(__thiscall*)(void*, vec3&, vec3&, float&, int, int, int, int, float)>(this, 24)(this, mins, maxs, pillradius, r, g, b, a, duration);
     } 
+    void                    add_box_overlay(vec3& origin, vec3& mins, vec3& max, qangle& orientation, color clr, float duration) {
+        return vfunc<void(__thiscall*)(void*, vec3&, vec3&, vec3& , qangle&, int, int, int, int, float)>(this, 1)(this, origin, mins, max, orientation, clr.r(), clr.g(), clr.b(), clr.a(), duration);
+    }
 
 private:
     inline void add_text_overlay(const vec3& origin, int line_offset, float duration, int r, int g, int b, int a, const char* format, ...) {} /* catch improper use of bad interface. Needed because '0' duration can be resolved by compiler to NULL format string (i.e., compiles but calls wrong function) */

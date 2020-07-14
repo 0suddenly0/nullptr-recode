@@ -69,6 +69,25 @@ public:
         *((int*)this) = color32;
     }
 
+    template<typename T = unsigned char>
+    T& r() {
+        return std::is_same<T, unsigned char>::value ? (T&)color_char[0] : (T&)color_float[0];
+    }
+
+    template<typename T = unsigned char>
+    T& g() {
+        return std::is_same<T, unsigned char>::value ? (T&)color_char[1] : (T&)color_float[1];
+    }
+
+    template<typename T = unsigned char>
+    T& b() {
+        return std::is_same<T, unsigned char>::value ? (T&)color_char[2] : (T&)color_float[2];
+    }
+
+    template<typename T = unsigned char>
+    T& a() {
+        return std::is_same<T, unsigned char>::value ? (T&)color_char[3] : (T&)color_float[3];
+    }
     
     void inalizate_char(int r, int g, int b, int a) {
         color_char[0] = std::clamp(r, 0, 255);
@@ -98,7 +117,6 @@ public:
         color_float[3] = std::clamp(a / 255.f, 0.f, 1.f);
     }
 
-    //meme: 3 colors. Maybe fix later
     unsigned char color_char[4];
     //int color_int[4];
     float color_float[4];

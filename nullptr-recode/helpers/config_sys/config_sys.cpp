@@ -84,7 +84,7 @@ namespace config {
 		void add_var(int& cur_line, int& cur_group, std::vector<std::string>& config, std::vector<color_v>& vars, std::string name, color& var) {
 			add_space(cur_group, config);
 
-			std::string full = utils::snprintf("%s = %d-%d-%d-%d;", name.c_str(), var.color_char[0], var.color_char[1], var.color_char[2], var.color_char[3]);
+			std::string full = utils::snprintf("%s = %d-%d-%d-%d;", name.c_str(), var.r(), var.g(), var.b(), var.a());
 
 			vars.push_back(color_v{ full, utils::snprintf("%s = ", name.c_str()), var, cur_line, cur_group });
 			config.push_back(utils::snprintf("%s\n", full.c_str()));
@@ -219,7 +219,7 @@ namespace config {
 					char split = '-';
 					char endl = ';';
 
-					float col[4] = { 0, 0, 0, 0 };
+					int col[4] = { 0, 0, 0, 0 };
 
 					int h = 0;
 
@@ -234,15 +234,17 @@ namespace config {
 						}
 					}
 
-					colors[i].v.color_char[0] = col[0];
-					colors[i].v.color_char[1] = col[1];
-					colors[i].v.color_char[2] = col[2];
-					colors[i].v.color_char[3] = col[3];
+					colors[i].v = col;
 
-					colors[i].v.color_float[0] = col[0] / 255.f;
-					colors[i].v.color_float[1] = col[1] / 255.f;
-					colors[i].v.color_float[2] = col[2] / 255.f;
-					colors[i].v.color_float[3] = col[3] / 255.f;
+					/*colors[i].v.r<int>() = col[0];
+					colors[i].v.g<int>() = col[1];
+					colors[i].v.b<int>() = col[2];
+					colors[i].v.a<int>() = col[3];
+
+					colors[i].v.r<float>() = col[0] / 255.f;
+					colors[i].v.g<float>() = col[1] / 255.f;
+					colors[i].v.b<float>() = col[2] / 255.f;
+					colors[i].v.a<float>() = col[3] / 255.f;*/
 				}
 			}
 

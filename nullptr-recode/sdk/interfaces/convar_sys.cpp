@@ -254,11 +254,11 @@ bool c_command::tokenize(const char *pCommand, characterset_t *pBreakSet) {
     // Parse the current command into the current command buffer
     c_utl_buffer bufParse(m_pArgSBuffer, nLen, c_utl_buffer::TEXT_BUFFER | c_utl_buffer::READ_ONLY);
     int nArgvBufferSize = 0;
-    while(bufParse.IsValid() && (m_nArgc < COMMAND_MAX_ARGC)) {
+    while(bufParse.is_valid() && (m_nArgc < COMMAND_MAX_ARGC)) {
         char *pArgvBuf = &m_pArgvBuffer[nArgvBufferSize];
         int nMaxLen = COMMAND_MAX_LENGTH - nArgvBufferSize;
-        int nStartGet = bufParse.TellGet();
-        int	nSize = bufParse.ParseToken(pBreakSet, pArgvBuf, nMaxLen);
+        int nStartGet = bufParse.tell_get();
+        int	nSize = bufParse.parse_token(pBreakSet, pArgvBuf, nMaxLen);
         if(nSize < 0)
             break;
 
@@ -270,7 +270,7 @@ bool c_command::tokenize(const char *pCommand, characterset_t *pBreakSet) {
 
         if(m_nArgc == 1) {
             // Deal with the case where the arguments were quoted
-            m_nArgv0Size = bufParse.TellGet();
+            m_nArgv0Size = bufParse.tell_get();
             bool bFoundEndQuote = m_pArgSBuffer[m_nArgv0Size - 1] == '\"';
             if(bFoundEndQuote) {
                 --m_nArgv0Size;
@@ -385,7 +385,7 @@ void con_command::dispatch(const c_command &command) {
     //AssertMsg(0, ("Encountered ConCommand without a callback!\n"));
 }
 
-int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< CUtlString > &commands) {
+int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< c_utl_string > &commands) {
     if(m_bUsingCommandCallbackInterface) {
         if(!m_pCommandCompletionCallback)
             return 0;
@@ -397,8 +397,8 @@ int	con_command::auto_complete_suggest(const char *partial, c_utl_vector< CUtlSt
     char rgpchCommands[COMMAND_COMPLETION_MAXITEMS][COMMAND_COMPLETION_ITEM_LENGTH];
     int iret = (m_fnCompletionCallback)(partial, rgpchCommands);
     for(int i = 0; i < iret; ++i) {
-        CUtlString str = rgpchCommands[i];
-        commands.AddToTail(str);
+        c_utl_string str = rgpchCommands[i];
+        commands.add_to_tail(str);
     }
     return iret;
 }
@@ -438,8 +438,8 @@ convar::~convar(void) {
 
 void convar::install_change_callback(FnChangeCallback_t callback, bool bInvoke) {
     if(callback) {
-        if(m_fnChangeCallbacks.GetOffset(callback) != -1) {
-            m_fnChangeCallbacks.AddToTail(callback);
+        if(m_fnChangeCallbacks.get_offset(callback) != -1) {
+            m_fnChangeCallbacks.add_to_tail(callback);
             if(bInvoke)
                 callback(this, m_Value.m_pszString, m_Value.m_fValue);
         } else {
@@ -537,7 +537,7 @@ void convar::change_string_value(const char *tempVal, float flOldValue) {
 	memcpy(m_Value.m_pszString, std::to_string(this->get_float()).c_str(), len);
 
     // Invoke any necessary callback function
-    for(int i = 0; i < m_fnChangeCallbacks.Count(); i++) {
+    for(int i = 0; i < m_fnChangeCallbacks.count(); i++) {
         m_fnChangeCallbacks[i](this, pszOldValue, flOldValue);
     }
 
@@ -574,7 +574,7 @@ void convar::internal_set_float_value(float fNewValue) {
         snprintf(tempVal, sizeof(tempVal), "%f", m_Value.m_fValue);
         change_string_value(tempVal, flOldValue);
     } else {
-        //assert(m_fnChangeCallbacks.Count() == 0);
+        //assert(m_fnChangeCallbacks.count() == 0);
     }
 }
 
@@ -596,7 +596,7 @@ void convar::internal_set_int_value(int nValue) {
         snprintf(tempVal, sizeof(tempVal), "%d", m_Value.m_nValue);
         change_string_value(tempVal, flOldValue);
     } else {
-        //assert(m_fnChangeCallbacks.Count() == 0);
+        //assert(m_fnChangeCallbacks.count() == 0);
     }
 }
 
@@ -626,7 +626,7 @@ void convar::create(const char *pName, const char *pDefaultValue, int flags /*= 
     m_fMaxVal = fMax;
 
     if(callback)
-        m_fnChangeCallbacks.AddToTail(callback);
+        m_fnChangeCallbacks.add_to_tail(callback);
 
     float value = (float)atof(m_Value.m_pszString);
 

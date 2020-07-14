@@ -2,8 +2,7 @@
 #include <iostream>
 
 struct inputdata_t;
-typedef enum _fieldtypes
-{
+typedef enum _fieldtypes {
 	FIELD_VOID = 0,			// No type or value
 	FIELD_FLOAT,			// Any floating point value
 	FIELD_STRING,			// A string ID (return from ALLOC_STRING)
@@ -55,8 +54,7 @@ typedef void (c_base_entity::*inputfunc_t)(inputdata_t &data);
 struct datamap_t;
 struct typedescription_t;
 
-enum
-{
+enum {
 	TD_OFFSET_NORMAL = 0,
 	TD_OFFSET_PACKED = 1,
 
@@ -64,8 +62,7 @@ enum
 	TD_OFFSET_COUNT,
 };
 
-struct typedescription_t
-{
+struct typedescription_t {
 	int32_t fieldType; //0x0000
 	char* fieldName; //0x0004
 	int fieldOffset[TD_OFFSET_COUNT]; //0x0008
@@ -81,8 +78,7 @@ struct typedescription_t
    // Purpose: stores the list of objects in the hierarchy
    //            used to iterate through an object's data descriptions
    //-----------------------------------------------------------------------------
-struct datamap_t
-{
+struct datamap_t {
 	typedescription_t    *dataDesc;
 	int                    dataNumFields;
 	char const            *dataClassName;

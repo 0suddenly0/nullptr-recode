@@ -38,6 +38,7 @@ namespace input {
 		create_bind("block bot", settings::misc::block_bot::enable, &settings::misc::block_bot::bind, bind_info_flags_standart);
 		create_bind("edge jump", settings::misc::edge_jump::enable, &settings::misc::edge_jump::bind, bind_info_flags_standart);
 		create_bind("third person", settings::misc::third_person::enable, &settings::misc::third_person::bind, bind_info_flags_standart);
+		create_bind("esp", settings::visuals::esp::using_bind, &settings::visuals::esp::bind, bind_info_flags_standart);
 	}
 
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -170,18 +171,16 @@ namespace input {
 		return NULL;
 	}
 
-	bind_info* create_bind_info(std::string name, bool state, bind_info_flags flag) {
+	bind_info* create_bind_info(std::string name, key_bind_t* bind, bind_info_flags flag) {
 		bind_info* bind_find = find_bind_info(name);
 
 		if (bind_find != NULL) {
-			bind_find->enable = state;
+			bind_find->bind->enable = bind->enable;
 			return bind_find;
 		}
 
-		bind_info* bind_inf = new bind_info{ name, state, flag };
-
+		bind_info* bind_inf = new bind_info{ name, bind, flag };
 		binds.push_back(bind_inf);
-
 		return bind_inf;
 	}
 
@@ -195,7 +194,7 @@ namespace input {
 	
 	void create_bind(std::string name, bool enable, key_bind_t* bind, bind_info_flags flag) {
 		if (enable) {
-			bind_info* bindinfo = create_bind_info(name, bind->enable, flag);
+			bind_info* bindinfo = create_bind_info(name, bind, flag);
 
 			if (bind->bind_type == key_bind_type::always) {
 				bind->enable = true;
@@ -227,7 +226,7 @@ namespace input {
 
 	void create_bind(std::string name, bool enable, key_bind_t* bind, float* side, bind_info_flags flag) {
 		if (enable) {
-			bind_info* bindinfo = create_bind_info(name, bind->enable, flag);
+			bind_info* bindinfo = create_bind_info(name, bind, flag);
 
 			if (was_key_pressed(bind->key_id)) {
 				bind->enable = !bind->enable;

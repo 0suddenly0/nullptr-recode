@@ -265,6 +265,12 @@
     <ClCompile Include="hooks\hooks\sv_cheats.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\draw_model_stats_overlay.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\draw_model_execute.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">

@@ -32,6 +32,8 @@ namespace hooks {
 	vfunc_hook game_coordinator_vhook;
 	vfunc_hook weapon_spread_vhook;
 	vfunc_hook sv_cheats_vhook;
+	vfunc_hook draw_model_stats_overlay_vhook;
+	vfunc_hook mdl_render_vhook;
 	recv_prop_hook* spotted_vhook;
 
 	void initialize() {
@@ -66,11 +68,17 @@ namespace hooks {
 		game_coordinator_vhook.setup(sdk::game_coordinator);
 		game_coordinator_vhook.hook_index(indexes::retrieve_message, retrieve_message::hook);
 
+		mdl_render_vhook.setup(sdk::mdl_render);
+		mdl_render_vhook.hook_index(indexes::draw_model_execute, draw_model_execute::hook);
+
 		weapon_spread_vhook.setup(sdk::cvar->find_var("weapon_debug_spread_show"));
 		weapon_spread_vhook.hook_index(indexes::cvar_get_bool, weapon_spread::hook);
 
 		sv_cheats_vhook.setup(sdk::cvar->find_var("sv_cheats"));
 		sv_cheats_vhook.hook_index(indexes::cvar_get_bool, sv_cheats::hook);
+
+		draw_model_stats_overlay_vhook.setup(sdk::cvar->find_var("r_drawmodelstatsoverlay"));
+		draw_model_stats_overlay_vhook.hook_index(indexes::cvar_get_bool, draw_model_stats_overlay::hook);
 
 		spotted_vhook = new recv_prop_hook(c_base_entity::spotted(), spotted::hook);
 
@@ -89,6 +97,8 @@ namespace hooks {
 		game_coordinator_vhook.unhook_all();
 		weapon_spread_vhook.unhook_all();
 		sv_cheats_vhook.unhook_all();
+		draw_model_stats_overlay_vhook.unhook_all();
+		mdl_render_vhook.unhook_all();
 		spotted_vhook->~recv_prop_hook();
 
 		event_manager::shutdown();

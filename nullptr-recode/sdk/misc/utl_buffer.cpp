@@ -85,7 +85,7 @@ public:
 	c_utl_cstring_conversion( char nEscapeChar, const char* pDelimiter, int nCount, conversion_array_t* pArray );
 
 	// Finds a conversion for the passed-in string, returns length
-	virtual char FindConversion( const char* pString, int* pLength );
+	virtual char find_conversion( const char* pString, int* pLength );
 
 private:
 	char m_pConversion[255];
@@ -101,7 +101,7 @@ public:
 	}
 
 	// Finds a conversion for the passed-in string, returns length
-	virtual char FindConversion( const char* pString, int* pLength ) {
+	virtual char find_conversion( const char* pString, int* pLength ) {
 		*pLength = 0;
 		return 0;
 	}
@@ -150,7 +150,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		}
 
 		// Finds a conversion for the passed-in string, returns length
-		char c_utl_cstring_conversion::FindConversion( const char* pString, int* pLength ) {
+		char c_utl_cstring_conversion::find_conversion( const char* pString, int* pLength ) {
 			char c = m_pConversion[pString[0]];
 			*pLength = ( c != '\0' ) ? 1 : 0;
 			return c;
@@ -170,7 +170,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			for ( int i = 0; i < nCount; ++i ) {
 				m_pList[i] = pArray[i].m_nActualChar;
-				ConversionInfo_t& info = m_pReplacements[m_pList[i]];
+				conversion_info_t& info = m_pReplacements[m_pList[i]];
 				assert( info.m_pReplacementString == 0 );
 				info.m_pReplacementString = pArray[i].m_pReplacementString;
 				info.m_nLength = strlen( info.m_pReplacementString );
@@ -183,37 +183,37 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Escape character + delimiter
 		//-----------------------------------------------------------------------------
-		char c_utl_char_conversion::GetEscapeChar() const {
+		char c_utl_char_conversion::get_escape_char() const {
 			return m_nEscapeChar;
 		}
 
-		const char* c_utl_char_conversion::GetDelimiter() const {
+		const char* c_utl_char_conversion::get_delimiter() const {
 			return m_pDelimiter;
 		}
 
-		int c_utl_char_conversion::GetDelimiterLength() const {
+		int c_utl_char_conversion::get_delimiter_length() const {
 			return m_nDelimiterLength;
 		}
 
 		//-----------------------------------------------------------------------------
 		// Constructor
 		//-----------------------------------------------------------------------------
-		const char* c_utl_char_conversion::GetConversionString( char c ) const {
+		const char* c_utl_char_conversion::get_conversion_string( char c ) const {
 			return m_pReplacements[c].m_pReplacementString;
 		}
 
-		int c_utl_char_conversion::GetConversionLength( char c ) const {
+		int c_utl_char_conversion::get_conversion_length( char c ) const {
 			return m_pReplacements[c].m_nLength;
 		}
 
-		int c_utl_char_conversion::MaxConversionLength() const {
+		int c_utl_char_conversion::max_conversion_length() const {
 			return m_nMaxConversionLength;
 		}
 
 		//-----------------------------------------------------------------------------
 		// Finds a conversion for the passed-in string, returns length
 		//-----------------------------------------------------------------------------
-		char c_utl_char_conversion::FindConversion( const char* pString, int* pLength ) {
+		char c_utl_char_conversion::find_conversion( const char* pString, int* pLength ) {
 			for ( int i = 0; i < m_nCount; ++i ) {
 				if ( !strcmp( pString, m_pReplacements[m_pList[i]].m_pReplacementString ) ) {
 					*pLength = m_pReplacements[m_pList[i]].m_nLength;
@@ -235,13 +235,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			m_nTab = 0;
 			m_nOffset = 0;
 			m_Flags = (unsigned char)nFlags;
-			if ( ( initSize != 0 ) && !IsReadOnly() ) {
+			if ( ( initSize != 0 ) && !is_read_only() ) {
 				m_nMaxPut = -1;
-				AddNullTermination();
+				add_null_termination();
 			} else {
 				m_nMaxPut = 0;
 			}
-			SetOverflowFuncs( &c_utl_buffer::GetOverflow, &c_utl_buffer::PutOverflow );
+			set_overflow_funcs( &c_utl_buffer::get_overflow, &c_utl_buffer::put_overflow );
 		}
 
 		c_utl_buffer::c_utl_buffer( const void* pBuffer, int nSize, int nFlags ) :
@@ -253,27 +253,27 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			m_nTab = 0;
 			m_nOffset = 0;
 			m_Flags = (unsigned char)nFlags;
-			if ( IsReadOnly() ) {
+			if ( is_read_only() ) {
 				m_nMaxPut = nSize;
 			} else {
 				m_nMaxPut = -1;
-				AddNullTermination();
+				add_null_termination();
 			}
-			SetOverflowFuncs( &c_utl_buffer::GetOverflow, &c_utl_buffer::PutOverflow );
+			set_overflow_funcs( &c_utl_buffer::get_overflow, &c_utl_buffer::put_overflow );
 		}
 
 		//-----------------------------------------------------------------------------
 		// Modifies the buffer to be binary or text; Blows away the buffer and the CONTAINS_CRLF value.
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::SetBufferType( bool bIsText, bool bContainsCRLF ) {
+		void c_utl_buffer::set_buffer_type( bool bIsText, bool bContainsCRLF ) {
 		#ifdef _DEBUG
 			// If the buffer is empty, there is no opportunity for this stuff to fail
-			if ( TellMaxPut() != 0 ) {
-				if ( IsText() ) {
+			if ( tell_max_put() != 0 ) {
+				if ( is_text() ) {
 					if ( bIsText ) {
-						assert( ContainsCRLF() == bContainsCRLF );
+						assert( contains_crlf() == bContainsCRLF );
 					} else {
-						assert( ContainsCRLF() );
+						assert( contains_crlf() );
 					}
 				} else {
 					if ( bIsText ) {
@@ -298,8 +298,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Attaches the buffer to external memory....
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::SetExternalBuffer( void* pMemory, int nSize, int nInitialPut, int nFlags ) {
-			m_Memory.SetExternalBuffer( (unsigned char*)pMemory, nSize );
+		void c_utl_buffer::set_external_buffer( void* pMemory, int nSize, int nInitialPut, int nFlags ) {
+			m_Memory.set_external_buffer( (unsigned char*)pMemory, nSize );
 
 			// Reset all indices; we just changed memory
 			m_Get = 0;
@@ -309,14 +309,14 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			m_nOffset = 0;
 			m_Flags = (unsigned char)nFlags;
 			m_nMaxPut = -1;
-			AddNullTermination();
+			add_null_termination();
 		}
 
 		//-----------------------------------------------------------------------------
 		// Assumes an external buffer but manages its deletion
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::AssumeMemory( void* pMemory, int nSize, int nInitialPut, int nFlags ) {
-			m_Memory.AssumeMemory( (unsigned char*)pMemory, nSize );
+		void c_utl_buffer::assume_memory( void* pMemory, int nSize, int nInitialPut, int nFlags ) {
+			m_Memory.assume_memory( (unsigned char*)pMemory, nSize );
 
 			// Reset all indices; we just changed memory
 			m_Get = 0;
@@ -326,42 +326,42 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			m_nOffset = 0;
 			m_Flags = (unsigned char)nFlags;
 			m_nMaxPut = -1;
-			AddNullTermination();
+			add_null_termination();
 		}
 
 		//-----------------------------------------------------------------------------
 		// Makes sure we've got at least this much memory
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::EnsureCapacity( int num ) {
+		void c_utl_buffer::ensure_capacity( int num ) {
 			// Add one extra for the null termination
 			num += 1;
-			if ( m_Memory.IsExternallyAllocated() ) {
-				if ( IsGrowable() && ( m_Memory.NumAllocated() < num ) ) {
-					m_Memory.ConvertToGrowableMemory( 0 );
+			if ( m_Memory.is_externally_allocated() ) {
+				if ( is_growable() && ( m_Memory.num_allocated() < num ) ) {
+					m_Memory.convert_to_growable_memory( 0 );
 				} else {
 					num -= 1;
 				}
 			}
 
-			m_Memory.EnsureCapacity( num );
+			m_Memory.ensure_capacity( num );
 		}
 
 		//-----------------------------------------------------------------------------
-		// Base Get method from which all others derive
+		// base get method from which all others derive
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::Get( void* pMem, int size ) {
-			if ( CheckGet( size ) ) {
+		void c_utl_buffer::get( void* pMem, int size ) {
+			if ( check_get( size ) ) {
 				memcpy( pMem, &m_Memory[m_Get - m_nOffset], size );
 				m_Get += size;
 			}
 		}
 
 		//-----------------------------------------------------------------------------
-		// This will Get at least 1 uint8_t and up to nSize bytes.
+		// This will get at least 1 uint8_t and up to nSize bytes.
 		// It will return the number of bytes actually read.
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::GetUpTo( void* pMem, int nSize ) {
-			if ( CheckArbitraryPeekGet( 0, nSize ) ) {
+		int c_utl_buffer::get_up_to( void* pMem, int nSize ) {
+			if ( check_arbitrary_peek_get( 0, nSize ) ) {
 				memcpy( pMem, &m_Memory[m_Get - m_nOffset], nSize );
 				m_Get += nSize;
 				return nSize;
@@ -372,10 +372,10 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Eats whitespace
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::EatWhiteSpace() {
-			if ( IsText() && IsValid() ) {
-				while ( CheckGet( sizeof( char ) ) ) {
-					if ( !isspace( *(const unsigned char*)PeekGet() ) )
+		void c_utl_buffer::eat_white_space() {
+			if ( is_text() && is_valid() ) {
+				while ( check_get( sizeof( char ) ) ) {
+					if ( !isspace( *(const unsigned char*)peek_get() ) )
 						break;
 					m_Get += sizeof( char );
 				}
@@ -385,10 +385,10 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Eats C++ style comments
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::EatCPPComment() {
-			if ( IsText() && IsValid() ) {
+		bool c_utl_buffer::eat_cpp_comment() {
+			if ( is_text() && is_valid() ) {
 				// If we don't have a a c++ style comment next, we're done
-				const char* pPeek = (const char*)PeekGet( 2 * sizeof( char ), 0 );
+				const char* pPeek = (const char*)peek_get( 2 * sizeof( char ), 0 );
 				if ( !pPeek || ( pPeek[0] != '/' ) || ( pPeek[1] != '/' ) )
 					return false;
 
@@ -396,7 +396,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				m_Get += 2;
 
 				// read complete line
-				for ( char c = GetChar(); IsValid(); c = GetChar() ) {
+				for ( char c = get_char(); is_valid(); c = get_char() ) {
 					if ( c == '\n' )
 						break;
 				}
@@ -408,12 +408,12 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Peeks how much whitespace to eat
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::PeekWhiteSpace( int nOffset ) {
-			if ( !IsText() || !IsValid() )
+		int c_utl_buffer::peek_white_space( int nOffset ) {
+			if ( !is_text() || !is_valid() )
 				return 0;
 
-			while ( CheckPeekGet( nOffset, sizeof( char ) ) ) {
-				if ( !isspace( *(unsigned char*)PeekGet( nOffset ) ) )
+			while ( check_peek_get( nOffset, sizeof( char ) ) ) {
+				if ( !isspace( *(unsigned char*)peek_get( nOffset ) ) )
 					break;
 				nOffset += sizeof( char );
 			}
@@ -424,14 +424,14 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Peek size of sting to come, check memory bound
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::PeekStringLength() {
-			if ( !IsValid() )
+		int c_utl_buffer::peek_string_length() {
+			if ( !is_valid() )
 				return 0;
 
 			// Eat preceeding whitespace
 			int nOffset = 0;
-			if ( IsText() ) {
-				nOffset = PeekWhiteSpace( nOffset );
+			if ( is_text() ) {
+				nOffset = peek_white_space( nOffset );
 			}
 
 			int nStartingOffset = nOffset;
@@ -440,15 +440,15 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				int nPeekAmount = 128;
 
 				// NOTE: Add 1 for the terminating zero!
-				if ( !CheckArbitraryPeekGet( nOffset, nPeekAmount ) ) {
+				if ( !check_arbitrary_peek_get( nOffset, nPeekAmount ) ) {
 					if ( nOffset == nStartingOffset )
 						return 0;
 					return nOffset - nStartingOffset + 1;
 				}
 
-				const char* pTest = (const char*)PeekGet( nOffset );
+				const char* pTest = (const char*)peek_get( nOffset );
 
-				if ( !IsText() ) {
+				if ( !is_text() ) {
 					for ( int i = 0; i < nPeekAmount; ++i ) {
 						// The +1 here is so we eat the terminating 0
 						if ( pTest[i] == 0 )
@@ -470,8 +470,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Peek size of line to come, check memory bound
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::PeekLineLength() {
-			if ( !IsValid() )
+		int c_utl_buffer::peek_line_length() {
+			if ( !is_valid() )
 				return 0;
 
 			int nOffset = 0;
@@ -481,13 +481,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				int nPeekAmount = 128;
 
 				// NOTE: Add 1 for the terminating zero!
-				if ( !CheckArbitraryPeekGet( nOffset, nPeekAmount ) ) {
+				if ( !check_arbitrary_peek_get( nOffset, nPeekAmount ) ) {
 					if ( nOffset == nStartingOffset )
 						return 0;
 					return nOffset - nStartingOffset + 1;
 				}
 
-				const char* pTest = (const char*)PeekGet( nOffset );
+				const char* pTest = (const char*)peek_get( nOffset );
 
 				for ( int i = 0; i < nPeekAmount; ++i ) {
 					// The +2 here is so we eat the terminating '\n' and 0
@@ -506,62 +506,62 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Does the next bytes of the buffer match a pattern?
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::PeekStringMatch( int nOffset, const char* pString, int nLen ) {
-			if ( !CheckPeekGet( nOffset, nLen ) )
+		bool c_utl_buffer::peek_string_match( int nOffset, const char* pString, int nLen ) {
+			if ( !check_peek_get( nOffset, nLen ) )
 				return false;
-			return !strncmp( (const char*)PeekGet( nOffset ), pString, nLen );
+			return !strncmp( (const char*)peek_get( nOffset ), pString, nLen );
 		}
 
 		//-----------------------------------------------------------------------------
-		// This version of PeekStringLength converts \" to \\ and " to \, etc.
+		// This version of peek_string_length converts \" to \\ and " to \, etc.
 		// It also reads a " at the beginning and end of the string
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::PeekDelimitedStringLength( c_utl_char_conversion* pConv, bool bActualSize ) {
-			if ( !IsText() || !pConv )
-				return PeekStringLength();
+		int c_utl_buffer::peek_delimited_string_length( c_utl_char_conversion* pConv, bool bActualSize ) {
+			if ( !is_text() || !pConv )
+				return peek_string_length();
 
 			// Eat preceeding whitespace
 			int nOffset = 0;
-			if ( IsText() ) {
-				nOffset = PeekWhiteSpace( nOffset );
+			if ( is_text() ) {
+				nOffset = peek_white_space( nOffset );
 			}
 
-			if ( !PeekStringMatch( nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+			if ( !peek_string_match( nOffset, pConv->get_delimiter(), pConv->get_delimiter_length() ) )
 				return 0;
 
 			// Try to read ending ", but don't accept \"
 			int nActualStart = nOffset;
-			nOffset += pConv->GetDelimiterLength();
+			nOffset += pConv->get_delimiter_length();
 			int nLen = 1; // Starts at 1 for the '\0' termination
 
 			do {
-				if ( PeekStringMatch( nOffset, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+				if ( peek_string_match( nOffset, pConv->get_delimiter(), pConv->get_delimiter_length() ) )
 					break;
 
-				if ( !CheckPeekGet( nOffset, 1 ) )
+				if ( !check_peek_get( nOffset, 1 ) )
 					break;
 
-				char c = *(const char*)PeekGet( nOffset );
+				char c = *(const char*)peek_get( nOffset );
 				++nLen;
 				++nOffset;
-				if ( c == pConv->GetEscapeChar() ) {
-					int nLength = pConv->MaxConversionLength();
-					if ( !CheckArbitraryPeekGet( nOffset, nLength ) )
+				if ( c == pConv->get_escape_char() ) {
+					int nLength = pConv->max_conversion_length();
+					if ( !check_arbitrary_peek_get( nOffset, nLength ) )
 						break;
 
-					pConv->FindConversion( (const char*)PeekGet( nOffset ), &nLength );
+					pConv->find_conversion( (const char*)peek_get( nOffset ), &nLength );
 					nOffset += nLength;
 				}
 			} while ( true );
 
-			return bActualSize ? nLen : nOffset - nActualStart + pConv->GetDelimiterLength() + 1;
+			return bActualSize ? nLen : nOffset - nActualStart + pConv->get_delimiter_length() + 1;
 		}
 
 		//-----------------------------------------------------------------------------
 		// Reads a null-terminated string
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::GetString( char* pString, int nMaxChars ) {
-			if ( !IsValid() ) {
+		void c_utl_buffer::get_string( char* pString, int nMaxChars ) {
+			if ( !is_valid() ) {
 				*pString = 0;
 				return;
 			}
@@ -572,10 +572,10 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			// Remember, this *includes* the null character
 			// It will be 0, however, if the buffer is empty.
-			int nLen = PeekStringLength();
+			int nLen = peek_string_length();
 
-			if ( IsText() ) {
-				EatWhiteSpace();
+			if ( is_text() ) {
+				eat_white_space();
 			}
 
 			if ( nLen == 0 ) {
@@ -586,27 +586,27 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			// Strip off the terminating NULL
 			if ( nLen <= nMaxChars ) {
-				Get( pString, nLen - 1 );
+				get( pString, nLen - 1 );
 				pString[nLen - 1] = 0;
 			} else {
-				Get( pString, nMaxChars - 1 );
+				get( pString, nMaxChars - 1 );
 				pString[nMaxChars - 1] = 0;
-				SeekGet( SEEK_CURRENT, nLen - 1 - nMaxChars );
+				seek_get( SEEK_CURRENT, nLen - 1 - nMaxChars );
 			}
 
 			// Read the terminating NULL in binary formats
-			if ( !IsText() ) {
-				assert( GetChar() == 0 );
+			if ( !is_text() ) {
+				assert( get_char() == 0 );
 			}
 		}
 
 		//-----------------------------------------------------------------------------
 		// Reads up to and including the first \n
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::GetLine( char* pLine, int nMaxChars ) {
-			assert( IsText() && !ContainsCRLF() );
+		void c_utl_buffer::get_line( char* pLine, int nMaxChars ) {
+			assert( is_text() && !contains_crlf() );
 
-			if ( !IsValid() ) {
+			if ( !is_valid() ) {
 				*pLine = 0;
 				return;
 			}
@@ -617,7 +617,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			// Remember, this *includes* the null character
 			// It will be 0, however, if the buffer is empty.
-			int nLen = PeekLineLength();
+			int nLen = peek_line_length();
 			if ( nLen == 0 ) {
 				*pLine = 0;
 				m_Error |= GET_OVERFLOW;
@@ -626,46 +626,46 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 			// Strip off the terminating NULL
 			if ( nLen <= nMaxChars ) {
-				Get( pLine, nLen - 1 );
+				get( pLine, nLen - 1 );
 				pLine[nLen - 1] = 0;
 			} else {
-				Get( pLine, nMaxChars - 1 );
+				get( pLine, nMaxChars - 1 );
 				pLine[nMaxChars - 1] = 0;
-				SeekGet( SEEK_CURRENT, nLen - 1 - nMaxChars );
+				seek_get( SEEK_CURRENT, nLen - 1 - nMaxChars );
 			}
 		}
 
 		//-----------------------------------------------------------------------------
-		// This version of GetString converts \ to \\ and " to \", etc.
+		// This version of get_string converts \ to \\ and " to \", etc.
 		// It also places " at the beginning and end of the string
 		//-----------------------------------------------------------------------------
-		char c_utl_buffer::GetDelimitedCharInternal( c_utl_char_conversion* pConv ) {
-			char c = GetChar();
-			if ( c == pConv->GetEscapeChar() ) {
-				int nLength = pConv->MaxConversionLength();
-				if ( !CheckArbitraryPeekGet( 0, nLength ) )
+		char c_utl_buffer::get_delimited_char_internal( c_utl_char_conversion* pConv ) {
+			char c = get_char();
+			if ( c == pConv->get_escape_char() ) {
+				int nLength = pConv->max_conversion_length();
+				if ( !check_arbitrary_peek_get( 0, nLength ) )
 					return '\0';
 
-				c = pConv->FindConversion( (const char*)PeekGet(), &nLength );
-				SeekGet( SEEK_CURRENT, nLength );
+				c = pConv->find_conversion( (const char*)peek_get(), &nLength );
+				seek_get( SEEK_CURRENT, nLength );
 			}
 
 			return c;
 		}
 
-		char c_utl_buffer::GetDelimitedChar( c_utl_char_conversion* pConv ) {
-			if ( !IsText() || !pConv )
-				return GetChar();
-			return GetDelimitedCharInternal( pConv );
+		char c_utl_buffer::get_delimited_char( c_utl_char_conversion* pConv ) {
+			if ( !is_text() || !pConv )
+				return get_char();
+			return get_delimited_char_internal( pConv );
 		}
 
-		void c_utl_buffer::GetDelimitedString( c_utl_char_conversion* pConv, char* pString, int nMaxChars ) {
-			if ( !IsText() || !pConv ) {
-				GetString( pString, nMaxChars );
+		void c_utl_buffer::get_delimited_string( c_utl_char_conversion* pConv, char* pString, int nMaxChars ) {
+			if ( !is_text() || !pConv ) {
+				get_string( pString, nMaxChars );
 				return;
 			}
 
-			if ( !IsValid() ) {
+			if ( !is_valid() ) {
 				*pString = 0;
 				return;
 			}
@@ -674,21 +674,21 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				nMaxChars = INT_MAX;
 			}
 
-			EatWhiteSpace();
-			if ( !PeekStringMatch( 0, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) )
+			eat_white_space();
+			if ( !peek_string_match( 0, pConv->get_delimiter(), pConv->get_delimiter_length() ) )
 				return;
 
 			// Pull off the starting delimiter
-			SeekGet( SEEK_CURRENT, pConv->GetDelimiterLength() );
+			seek_get( SEEK_CURRENT, pConv->get_delimiter_length() );
 
 			int nRead = 0;
-			while ( IsValid() ) {
-				if ( PeekStringMatch( 0, pConv->GetDelimiter(), pConv->GetDelimiterLength() ) ) {
-					SeekGet( SEEK_CURRENT, pConv->GetDelimiterLength() );
+			while ( is_valid() ) {
+				if ( peek_string_match( 0, pConv->get_delimiter(), pConv->get_delimiter_length() ) ) {
+					seek_get( SEEK_CURRENT, pConv->get_delimiter_length() );
 					break;
 				}
 
-				char c = GetDelimitedCharInternal( pConv );
+				char c = get_delimited_char_internal( pConv );
 
 				if ( nRead < nMaxChars ) {
 					pString[nRead] = c;
@@ -703,19 +703,19 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		}
 
 		//-----------------------------------------------------------------------------
-		// Checks if a Get is ok
+		// Checks if a get is ok
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::CheckGet( int nSize ) {
+		bool c_utl_buffer::check_get( int nSize ) {
 			if ( m_Error & GET_OVERFLOW )
 				return false;
 
-			if ( TellMaxPut() < m_Get + nSize ) {
+			if ( tell_max_put() < m_Get + nSize ) {
 				m_Error |= GET_OVERFLOW;
 				return false;
 			}
 
-			if ( ( m_Get < m_nOffset ) || ( m_Memory.NumAllocated() < m_Get - m_nOffset + nSize ) ) {
-				if ( !OnGetOverflow( nSize ) ) {
+			if ( ( m_Get < m_nOffset ) || ( m_Memory.num_allocated() < m_Get - m_nOffset + nSize ) ) {
+				if ( !on_get_overflow( nSize ) ) {
 					m_Error |= GET_OVERFLOW;
 					return false;
 				}
@@ -725,14 +725,14 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		}
 
 		//-----------------------------------------------------------------------------
-		// Checks if a peek Get is ok
+		// Checks if a peek get is ok
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::CheckPeekGet( int nOffset, int nSize ) {
+		bool c_utl_buffer::check_peek_get( int nOffset, int nSize ) {
 			if ( m_Error & GET_OVERFLOW )
 				return false;
 
 			// Checking for peek can't Set the overflow flag
-			bool bOk = CheckGet( nOffset + nSize );
+			bool bOk = check_get( nOffset + nSize );
 			m_Error &= ~GET_OVERFLOW;
 			return bOk;
 		}
@@ -741,20 +741,20 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		// Call this to peek arbitrarily long into memory. It doesn't fail unless
 		// it can't read *anything* new
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::CheckArbitraryPeekGet( int nOffset, int& nIncrement ) {
-			if ( TellGet() + nOffset >= TellMaxPut() ) {
+		bool c_utl_buffer::check_arbitrary_peek_get( int nOffset, int& nIncrement ) {
+			if ( tell_get() + nOffset >= tell_max_put() ) {
 				nIncrement = 0;
 				return false;
 			}
 
-			if ( TellGet() + nOffset + nIncrement > TellMaxPut() ) {
-				nIncrement = TellMaxPut() - TellGet() - nOffset;
+			if ( tell_get() + nOffset + nIncrement > tell_max_put() ) {
+				nIncrement = tell_max_put() - tell_get() - nOffset;
 			}
 
-			// NOTE: CheckPeekGet could modify TellMaxPut for streaming files
-			// We have to call TellMaxPut again here
-			CheckPeekGet( nOffset, nIncrement );
-			int nMaxGet = TellMaxPut() - TellGet();
+			// NOTE: check_peek_get could modify tell_max_put for streaming files
+			// We have to call tell_max_put again here
+			check_peek_get( nOffset, nIncrement );
+			int nMaxGet = tell_max_put() - tell_get();
 			if ( nMaxGet < nIncrement ) {
 				nIncrement = nMaxGet;
 			}
@@ -764,8 +764,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Peek part of the butt
 		//-----------------------------------------------------------------------------
-		const void* c_utl_buffer::PeekGet( int nMaxSize, int nOffset ) {
-			if ( !CheckPeekGet( nOffset, nMaxSize ) )
+		const void* c_utl_buffer::peek_get( int nMaxSize, int nOffset ) {
+			if ( !check_peek_get( nOffset, nMaxSize ) )
 				return NULL;
 			return &m_Memory[m_Get + nOffset - m_nOffset];
 		}
@@ -773,7 +773,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Change where I'm reading
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::SeekGet( SeekType_t type, int offset ) {
+		void c_utl_buffer::seek_get( seek_type_t type, int offset ) {
 			switch ( type ) {
 			case SEEK_HEAD:
 				m_Get = offset;
@@ -792,8 +792,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				m_Error |= GET_OVERFLOW;
 			} else {
 				m_Error &= ~GET_OVERFLOW;
-				if ( m_Get < m_nOffset || m_Get >= m_nOffset + Size() ) {
-					OnGetOverflow( -1 );
+				if ( m_Get < m_nOffset || m_Get >= m_nOffset + size() ) {
+					on_get_overflow( -1 );
 				}
 			}
 		}
@@ -804,9 +804,9 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 	#pragma warning( disable : 4706 )
 
-		int c_utl_buffer::VaScanf( const char* pFmt, va_list list ) {
+		int c_utl_buffer::vascanf( const char* pFmt, va_list list ) {
 			assert( pFmt );
-			if ( m_Error || !IsText() )
+			if ( m_Error || !is_text() )
 				return 0;
 
 			int numScanned = 0;
@@ -815,7 +815,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			char* pEnd;
 			while ( c = *pFmt++ ) {
 				// Stop if we hit the end of the buffer
-				if ( m_Get >= TellMaxPut() ) {
+				if ( m_Get >= tell_max_put() ) {
 					m_Error |= GET_OVERFLOW;
 					break;
 				}
@@ -823,7 +823,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				switch ( c ) {
 				case ' ':
 					// eat all whitespace
-					EatWhiteSpace();
+					eat_white_space();
 					break;
 
 				case '%': {
@@ -835,8 +835,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 					switch ( type ) {
 					case 'c': {
 						char* ch = va_arg( list, char* );
-						if ( CheckPeekGet( 0, sizeof( char ) ) ) {
-							*ch = *(const char*)PeekGet();
+						if ( check_peek_get( 0, sizeof( char ) ) ) {
+							*ch = *(const char*)peek_get();
 							++m_Get;
 						} else {
 							*ch = 0;
@@ -850,13 +850,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) ) {
+						if ( !check_arbitrary_peek_get( 0, nLength ) ) {
 							*i = 0;
 							return numScanned;
 						}
 
-						*i = strtol( (char*)PeekGet(), &pEnd, 10 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*i = strtol( (char*)peek_get(), &pEnd, 10 );
+						int nBytesRead = (int)( pEnd - (char*)peek_get() );
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
@@ -867,13 +867,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) ) {
+						if ( !check_arbitrary_peek_get( 0, nLength ) ) {
 							*i = 0;
 							return numScanned;
 						}
 
-						*i = strtol( (char*)PeekGet(), &pEnd, 16 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*i = strtol( (char*)peek_get(), &pEnd, 16 );
+						int nBytesRead = (int)( pEnd - (char*)peek_get() );
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
@@ -884,13 +884,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) ) {
+						if ( !check_arbitrary_peek_get( 0, nLength ) ) {
 							*u = 0;
 							return numScanned;
 						}
 
-						*u = strtoul( (char*)PeekGet(), &pEnd, 10 );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*u = strtoul( (char*)peek_get(), &pEnd, 10 );
+						int nBytesRead = (int)( pEnd - (char*)peek_get() );
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
@@ -901,13 +901,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 						// NOTE: This is not bullet-proof; it assumes numbers are < 128 characters
 						nLength = 128;
-						if ( !CheckArbitraryPeekGet( 0, nLength ) ) {
+						if ( !check_arbitrary_peek_get( 0, nLength ) ) {
 							*f = 0.0f;
 							return numScanned;
 						}
 
-						*f = (float)strtod( (char*)PeekGet(), &pEnd );
-						int nBytesRead = (int)( pEnd - (char*)PeekGet() );
+						*f = (float)strtod( (char*)peek_get(), &pEnd );
+						int nBytesRead = (int)( pEnd - (char*)peek_get() );
 						if ( nBytesRead == 0 )
 							return numScanned;
 						m_Get += nBytesRead;
@@ -915,7 +915,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 					case 's': {
 						char* s = va_arg( list, char* );
-						GetString( s );
+						get_string( s );
 					} break;
 
 					default: {
@@ -931,10 +931,10 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				default: {
 					// Here we have to match the format string character
 					// against what's in the buffer or we're done.
-					if ( !CheckPeekGet( 0, sizeof( char ) ) )
+					if ( !check_peek_get( 0, sizeof( char ) ) )
 						return numScanned;
 
-					if ( c != *(const char*)PeekGet() )
+					if ( c != *(const char*)peek_get() )
 						return numScanned;
 
 					++m_Get;
@@ -946,54 +946,54 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 
 	#pragma warning( default : 4706 )
 
-		int c_utl_buffer::Scanf( const char* pFmt, ... ) {
+		int c_utl_buffer::scanf( const char* pFmt, ... ) {
 			va_list args;
 
 			va_start( args, pFmt );
-			int count = VaScanf( pFmt, args );
+			int count = vascanf( pFmt, args );
 			va_end( args );
 
 			return count;
 		}
 
 		//-----------------------------------------------------------------------------
-		// Advance the Get index until after the particular string is found
+		// Advance the get index until after the particular string is found
 		// Do not eat whitespace before starting. Return false if it failed
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::GetToken( const char* pToken ) {
+		bool c_utl_buffer::get_token( const char* pToken ) {
 			assert( pToken );
 
 			// Look for the token
 			int nLen = strlen( pToken );
 
-			int nSizeToCheck = Size() - TellGet() - m_nOffset;
+			int nSizeToCheck = size() - tell_get() - m_nOffset;
 
-			int nGet = TellGet();
+			int nGet = tell_get();
 			do {
-				int nMaxSize = TellMaxPut() - TellGet();
+				int nMaxSize = tell_max_put() - tell_get();
 				if ( nMaxSize < nSizeToCheck ) {
 					nSizeToCheck = nMaxSize;
 				}
 				if ( nLen > nSizeToCheck )
 					break;
 
-				if ( !CheckPeekGet( 0, nSizeToCheck ) )
+				if ( !check_peek_get( 0, nSizeToCheck ) )
 					break;
 
-				const char* pBufStart = (const char*)PeekGet();
+				const char* pBufStart = (const char*)peek_get();
 				const char* pFoundEnd = V_strnistr( pBufStart, pToken, nSizeToCheck );
 				if ( pFoundEnd ) {
 					size_t nOffset = (size_t)pFoundEnd - (size_t)pBufStart;
-					SeekGet( c_utl_buffer::SEEK_CURRENT, nOffset + nLen );
+					seek_get( c_utl_buffer::SEEK_CURRENT, nOffset + nLen );
 					return true;
 				}
 
-				SeekGet( c_utl_buffer::SEEK_CURRENT, nSizeToCheck - nLen - 1 );
-				nSizeToCheck = Size() - ( nLen - 1 );
+				seek_get( c_utl_buffer::SEEK_CURRENT, nSizeToCheck - nLen - 1 );
+				nSizeToCheck = size() - ( nLen - 1 );
 
 			} while ( true );
 
-			SeekGet( c_utl_buffer::SEEK_HEAD, nGet );
+			seek_get( c_utl_buffer::SEEK_HEAD, nGet );
 			return false;
 		}
 
@@ -1003,10 +1003,10 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		// Grab all text that lies between a starting delimiter + ending delimiter
 		// (skipping whitespace that leads + trails both delimiters).
 		// Note the delimiter checks are case-insensitive.
-		// If successful, the Get index is advanced and the function returns true,
+		// If successful, the get index is advanced and the function returns true,
 		// otherwise the index is not advanced and the function returns false.
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::ParseToken( const char* pStartingDelim, const char* pEndingDelim, char* pString, int nMaxLen ) {
+		bool c_utl_buffer::parse_token( const char* pStartingDelim, const char* pEndingDelim, char* pString, int nMaxLen ) {
 			int nCharsToCopy = 0;
 			int nCurrentGet = 0;
 
@@ -1022,35 +1022,35 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			assert( pEndingDelim && pEndingDelim[0] );
 			nEndingDelimLen = strlen( pEndingDelim );
 
-			int nStartGet = TellGet();
+			int nStartGet = tell_get();
 			char nCurrChar;
 			int nTokenStart = -1;
-			EatWhiteSpace();
+			eat_white_space();
 			while ( *pStartingDelim ) {
 				nCurrChar = *pStartingDelim++;
 				if ( !isspace( (unsigned char)nCurrChar ) ) {
-					if ( tolower( GetChar() ) != tolower( nCurrChar ) )
+					if ( tolower( get_char() ) != tolower( nCurrChar ) )
 						goto parseFailed;
 				} else {
-					EatWhiteSpace();
+					eat_white_space();
 				}
 			}
 
-			EatWhiteSpace();
-			nTokenStart = TellGet();
-			if ( !GetToken( pEndingDelim ) )
+			eat_white_space();
+			nTokenStart = tell_get();
+			if ( !get_token( pEndingDelim ) )
 				goto parseFailed;
 
-			nCurrentGet = TellGet();
+			nCurrentGet = tell_get();
 			nCharsToCopy = ( nCurrentGet - nEndingDelimLen ) - nTokenStart;
 			if ( nCharsToCopy >= nMaxLen ) {
 				nCharsToCopy = nMaxLen - 1;
 			}
 
 			if ( nCharsToCopy > 0 ) {
-				SeekGet( c_utl_buffer::SEEK_HEAD, nTokenStart );
-				Get( pString, nCharsToCopy );
-				if ( !IsValid() )
+				seek_get( c_utl_buffer::SEEK_HEAD, nTokenStart );
+				get( pString, nCharsToCopy );
+				if ( !is_valid() )
 					goto parseFailed;
 
 				// Eat trailing whitespace
@@ -1061,13 +1061,13 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			}
 			pString[nCharsToCopy] = '\0';
 
-			// Advance the Get index
-			SeekGet( c_utl_buffer::SEEK_HEAD, nCurrentGet );
+			// Advance the get index
+			seek_get( c_utl_buffer::SEEK_HEAD, nCurrentGet );
 			return true;
 
 		parseFailed:
-			// Revert the Get index
-			SeekGet( SEEK_HEAD, nStartGet );
+			// Revert the get index
+			seek_get( SEEK_HEAD, nStartGet );
 			pString[0] = '\0';
 			return false;
 		}
@@ -1075,24 +1075,24 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Parses the next token, given a Set of character breaks to stop at
 		//-----------------------------------------------------------------------------
-		int c_utl_buffer::ParseToken( characterset_t* pBreaks, char* pTokenBuf, int nMaxLen, bool bParseComments ) {
+		int c_utl_buffer::parse_token( characterset_t* pBreaks, char* pTokenBuf, int nMaxLen, bool bParseComments ) {
 			assert( nMaxLen > 0 );
 			pTokenBuf[0] = 0;
 
 			// skip whitespace + comments
 			while ( true ) {
-				if ( !IsValid() )
+				if ( !is_valid() )
 					return -1;
-				EatWhiteSpace();
+				eat_white_space();
 				if ( bParseComments ) {
-					if ( !EatCPPComment() )
+					if ( !eat_cpp_comment() )
 						break;
 				} else {
 					break;
 				}
 			}
 
-			char c = GetChar();
+			char c = get_char();
 
 			// End of buffer
 			if ( c == 0 )
@@ -1101,8 +1101,8 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			// handle quoted strings specially
 			if ( c == '\"' ) {
 				int nLen = 0;
-				while ( IsValid() ) {
-					c = GetChar();
+				while ( is_valid() ) {
+					c = get_char();
 					if ( c == '\"' || !c ) {
 						pTokenBuf[nLen] = 0;
 						return nLen;
@@ -1134,12 +1134,12 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 					pTokenBuf[nLen - 1] = 0;
 					return nMaxLen;
 				}
-				c = GetChar();
-				if ( !IsValid() )
+				c = get_char();
+				if ( !is_valid() )
 					break;
 
 				if ( IN_CHARACTERSET( *pBreaks, c ) || c == '\"' || c <= ' ' ) {
-					SeekGet( SEEK_CURRENT, -1 );
+					seek_get( SEEK_CURRENT, -1 );
 					break;
 				}
 			}
@@ -1151,42 +1151,42 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Serialization
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::Put( const void* pMem, int size ) {
-			if ( size && CheckPut( size ) ) {
+		void c_utl_buffer::put( const void* pMem, int size ) {
+			if ( size && check_put( size ) ) {
 				memcpy( &m_Memory[m_Put - m_nOffset], pMem, size );
 				m_Put += size;
 
-				AddNullTermination();
+				add_null_termination();
 			}
 		}
 
 		//-----------------------------------------------------------------------------
 		// Writes a null-terminated string
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::PutString( const char* pString ) {
-			if ( !IsText() ) {
+		void c_utl_buffer::put_string( const char* pString ) {
+			if ( !is_text() ) {
 				if ( pString ) {
 					// Not text? append a null at the end.
 					size_t nLen = strlen( pString ) + 1;
-					Put( pString, nLen * sizeof( char ) );
+					put( pString, nLen * sizeof( char ) );
 					return;
 				} else {
-					PutTypeBin< char >( 0 );
+					put_type_bin< char >( 0 );
 				}
 			} else if ( pString ) {
 				int nTabCount = ( m_Flags & AUTO_TABS_DISABLED ) ? 0 : m_nTab;
 				if ( nTabCount > 0 ) {
-					if ( WasLastCharacterCR() ) {
-						PutTabs();
+					if ( was_last_character_cr() ) {
+						put_tabs();
 					}
 
 					const char* pEndl = strchr( pString, '\n' );
 					while ( pEndl ) {
 						size_t nSize = (size_t)pEndl - (size_t)pString + sizeof( char );
-						Put( pString, nSize );
+						put( pString, nSize );
 						pString = pEndl + 1;
 						if ( *pString ) {
-							PutTabs();
+							put_tabs();
 							pEndl = strchr( pString, '\n' );
 						} else {
 							pEndl = NULL;
@@ -1195,75 +1195,75 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				}
 				size_t nLen = strlen( pString );
 				if ( nLen ) {
-					Put( pString, nLen * sizeof( char ) );
+					put( pString, nLen * sizeof( char ) );
 				}
 			}
 		}
 
 		//-----------------------------------------------------------------------------
-		// This version of PutString converts \ to \\ and " to \", etc.
+		// This version of put_string converts \ to \\ and " to \", etc.
 		// It also places " at the beginning and end of the string
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::PutDelimitedCharInternal( c_utl_char_conversion* pConv, char c ) {
-			int l = pConv->GetConversionLength( c );
+		void c_utl_buffer::put_delimited_char_internal( c_utl_char_conversion* pConv, char c ) {
+			int l = pConv->get_conversion_length( c );
 			if ( l == 0 ) {
-				PutChar( c );
+				put_char( c );
 			} else {
-				PutChar( pConv->GetEscapeChar() );
-				Put( pConv->GetConversionString( c ), l );
+				put_char( pConv->get_escape_char() );
+				put( pConv->get_conversion_string( c ), l );
 			}
 		}
 
-		void c_utl_buffer::PutDelimitedChar( c_utl_char_conversion* pConv, char c ) {
-			if ( !IsText() || !pConv ) {
-				PutChar( c );
+		void c_utl_buffer::put_delimited_char( c_utl_char_conversion* pConv, char c ) {
+			if ( !is_text() || !pConv ) {
+				put_char( c );
 				return;
 			}
 
-			PutDelimitedCharInternal( pConv, c );
+			put_delimited_char_internal( pConv, c );
 		}
 
-		void c_utl_buffer::PutDelimitedString( c_utl_char_conversion* pConv, const char* pString ) {
-			if ( !IsText() || !pConv ) {
-				PutString( pString );
+		void c_utl_buffer::put_delimited_string( c_utl_char_conversion* pConv, const char* pString ) {
+			if ( !is_text() || !pConv ) {
+				put_string( pString );
 				return;
 			}
 
-			if ( WasLastCharacterCR() ) {
-				PutTabs();
+			if ( was_last_character_cr() ) {
+				put_tabs();
 			}
-			Put( pConv->GetDelimiter(), pConv->GetDelimiterLength() );
+			put( pConv->get_delimiter(), pConv->get_delimiter_length() );
 
 			int nLen = pString ? strlen( pString ) : 0;
 			for ( int i = 0; i < nLen; ++i ) {
-				PutDelimitedCharInternal( pConv, pString[i] );
+				put_delimited_char_internal( pConv, pString[i] );
 			}
 
-			if ( WasLastCharacterCR() ) {
-				PutTabs();
+			if ( was_last_character_cr() ) {
+				put_tabs();
 			}
-			Put( pConv->GetDelimiter(), pConv->GetDelimiterLength() );
+			put( pConv->get_delimiter(), pConv->get_delimiter_length() );
 		}
 
-		void c_utl_buffer::VaPrintf( const char* pFmt, va_list list ) {
+		void c_utl_buffer::vaprintf( const char* pFmt, va_list list ) {
 			char temp[2048];
 			int nLen = vsnprintf( temp, sizeof( temp ), pFmt, list );
 			assert( nLen < 2048 );
-			PutString( temp );
+			put_string( temp );
 		}
 
-		void c_utl_buffer::Printf( const char* pFmt, ... ) {
+		void c_utl_buffer::printf( const char* pFmt, ... ) {
 			va_list args;
 
 			va_start( args, pFmt );
-			VaPrintf( pFmt, args );
+			vaprintf( pFmt, args );
 			va_end( args );
 		}
 
 		//-----------------------------------------------------------------------------
 		// Calls the overflow functions
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::SetOverflowFuncs( UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc ) {
+		void c_utl_buffer::set_overflow_funcs( utl_buffer_overflow_func_t getFunc, utl_buffer_overflow_func_t putFunc ) {
 			m_GetOverflowFunc = getFunc;
 			m_PutOverflowFunc = putFunc;
 		}
@@ -1271,45 +1271,45 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		//-----------------------------------------------------------------------------
 		// Calls the overflow functions
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::OnPutOverflow( int nSize ) {
+		bool c_utl_buffer::on_put_overflow( int nSize ) {
 			return ( this->*m_PutOverflowFunc )( nSize );
 		}
 
-		bool c_utl_buffer::OnGetOverflow( int nSize ) {
+		bool c_utl_buffer::on_get_overflow( int nSize ) {
 			return ( this->*m_GetOverflowFunc )( nSize );
 		}
 
 		//-----------------------------------------------------------------------------
 		// Checks if a put is ok
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::PutOverflow( int nSize ) {
-			if ( m_Memory.IsExternallyAllocated() ) {
-				if ( !IsGrowable() )
+		bool c_utl_buffer::put_overflow( int nSize ) {
+			if ( m_Memory.is_externally_allocated() ) {
+				if ( !is_growable() )
 					return false;
 
-				m_Memory.ConvertToGrowableMemory( 0 );
+				m_Memory.convert_to_growable_memory( 0 );
 			}
 
-			while ( Size() < m_Put - m_nOffset + nSize ) {
-				m_Memory.Grow();
+			while ( size() < m_Put - m_nOffset + nSize ) {
+				m_Memory.grow();
 			}
 
 			return true;
 		}
 
-		bool c_utl_buffer::GetOverflow( int nSize ) {
+		bool c_utl_buffer::get_overflow( int nSize ) {
 			return false;
 		}
 
 		//-----------------------------------------------------------------------------
 		// Checks if a put is ok
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::CheckPut( int nSize ) {
-			if ( ( m_Error & PUT_OVERFLOW ) || IsReadOnly() )
+		bool c_utl_buffer::check_put( int nSize ) {
+			if ( ( m_Error & PUT_OVERFLOW ) || is_read_only() )
 				return false;
 
-			if ( ( m_Put < m_nOffset ) || ( m_Memory.NumAllocated() < m_Put - m_nOffset + nSize ) ) {
-				if ( !OnPutOverflow( nSize ) ) {
+			if ( ( m_Put < m_nOffset ) || ( m_Memory.num_allocated() < m_Put - m_nOffset + nSize ) ) {
+				if ( !on_put_overflow( nSize ) ) {
 					m_Error |= PUT_OVERFLOW;
 					return false;
 				}
@@ -1317,7 +1317,7 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			return true;
 		}
 
-		void c_utl_buffer::SeekPut( SeekType_t type, int offset ) {
+		void c_utl_buffer::seek_put( seek_type_t type, int offset ) {
 			int nNextPut = m_Put;
 			switch ( type ) {
 			case SEEK_HEAD:
@@ -1338,32 +1338,32 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			// the entire buffer if you seek outside the current range
 
 			// NOTE: This call will write and will also seek the file to nNextPut.
-			OnPutOverflow( -nNextPut - 1 );
+			on_put_overflow( -nNextPut - 1 );
 			m_Put = nNextPut;
 
-			AddNullTermination();
+			add_null_termination();
 		}
 
-		void c_utl_buffer::ActivateByteSwapping( bool bActivate ) {
-			m_Byteswap.ActivateByteSwapping( bActivate );
+		void c_utl_buffer::activate_byte_swapping( bool bActivate ) {
+			m_Byteswap.activate_byte_swapping( bActivate );
 		}
 
-		void c_utl_buffer::SetBigEndian( bool bigEndian ) {
-			m_Byteswap.SetTargetBigEndian( bigEndian );
+		void c_utl_buffer::set_big_endian( bool bigEndian ) {
+			m_Byteswap.set_target_big_endian( bigEndian );
 		}
 
-		bool c_utl_buffer::IsBigEndian( void ) {
-			return m_Byteswap.IsTargetBigEndian();
+		bool c_utl_buffer::is_big_endian( void ) {
+			return m_Byteswap.is_target_big_endian();
 		}
 
 		//-----------------------------------------------------------------------------
 		// null terminate the buffer
 		//-----------------------------------------------------------------------------
-		void c_utl_buffer::AddNullTermination( void ) {
+		void c_utl_buffer::add_null_termination( void ) {
 			if ( m_Put > m_nMaxPut ) {
-				if ( !IsReadOnly() && ( ( m_Error & PUT_OVERFLOW ) == 0 ) ) {
+				if ( !is_read_only() && ( ( m_Error & PUT_OVERFLOW ) == 0 ) ) {
 					// Add null termination value
-					if ( CheckPut( 1 ) ) {
+					if ( check_put( 1 ) ) {
 						m_Memory[m_Put - m_nOffset] = 0;
 					} else {
 						// Restore the overflow state, it was valid before...
@@ -1379,40 +1379,40 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 		// Returns false if no conversion was necessary (and outBuf is left untouched)
 		// If the conversion occurs, outBuf will be cleared.
 		//-----------------------------------------------------------------------------
-		bool c_utl_buffer::ConvertCRLF( c_utl_buffer& outBuf ) {
-			if ( !IsText() || !outBuf.IsText() )
+		bool c_utl_buffer::convert_crlf( c_utl_buffer& outBuf ) {
+			if ( !is_text() || !outBuf.is_text() )
 				return false;
 
-			if ( ContainsCRLF() == outBuf.ContainsCRLF() )
+			if ( contains_crlf() == outBuf.contains_crlf() )
 				return false;
 
-			int nInCount = TellMaxPut();
+			int nInCount = tell_max_put();
 
-			outBuf.Purge();
-			outBuf.EnsureCapacity( nInCount );
+			outBuf.purge();
+			outBuf.ensure_capacity( nInCount );
 
-			bool bFromCRLF = ContainsCRLF();
+			bool bFromCRLF = contains_crlf();
 
 			// Start reading from the beginning
-			int nGet = TellGet();
-			int nPut = TellPut();
+			int nGet = tell_get();
+			int nPut = tell_put();
 			int nGetDelta = 0;
 			int nPutDelta = 0;
 
-			const char* pBase = (const char*)Base();
+			const char* pBase = (const char*)base();
 			int nCurrGet = 0;
 			while ( nCurrGet < nInCount ) {
 				const char* pCurr = &pBase[nCurrGet];
 				if ( bFromCRLF ) {
 					const char* pNext = V_strnistr( pCurr, "\r\n", nInCount - nCurrGet );
 					if ( !pNext ) {
-						outBuf.Put( pCurr, nInCount - nCurrGet );
+						outBuf.put( pCurr, nInCount - nCurrGet );
 						break;
 					}
 
 					int nBytes = (size_t)pNext - (size_t)pCurr;
-					outBuf.Put( pCurr, nBytes );
-					outBuf.PutChar( '\n' );
+					outBuf.put( pCurr, nBytes );
+					outBuf.put_char( '\n' );
 					nCurrGet += nBytes + 2;
 					if ( nGet >= nCurrGet - 1 ) {
 						--nGetDelta;
@@ -1423,14 +1423,14 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				} else {
 					const char* pNext = V_strnchr( pCurr, '\n', nInCount - nCurrGet );
 					if ( !pNext ) {
-						outBuf.Put( pCurr, nInCount - nCurrGet );
+						outBuf.put( pCurr, nInCount - nCurrGet );
 						break;
 					}
 
 					int nBytes = (size_t)pNext - (size_t)pCurr;
-					outBuf.Put( pCurr, nBytes );
-					outBuf.PutChar( '\r' );
-					outBuf.PutChar( '\n' );
+					outBuf.put( pCurr, nBytes );
+					outBuf.put_char( '\r' );
+					outBuf.put_char( '\n' );
 					nCurrGet += nBytes + 1;
 					if ( nGet >= nCurrGet ) {
 						++nGetDelta;
@@ -1441,36 +1441,36 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 				}
 			}
 
-			assert( nPut + nPutDelta <= outBuf.TellMaxPut() );
+			assert( nPut + nPutDelta <= outBuf.tell_max_put() );
 
-			outBuf.SeekGet( SEEK_HEAD, nGet + nGetDelta );
-			outBuf.SeekPut( SEEK_HEAD, nPut + nPutDelta );
+			outBuf.seek_get( SEEK_HEAD, nGet + nGetDelta );
+			outBuf.seek_put( SEEK_HEAD, nPut + nPutDelta );
 
 			return true;
 		}
 
 		//---------------------------------------------------------------------------
-		// Implementation of CUtlInplaceBuffer
+		// Implementation of c_utl_inplace_buffer
 		//---------------------------------------------------------------------------
 
-		CUtlInplaceBuffer::CUtlInplaceBuffer( int growSize /* = 0 */, int initSize /* = 0 */, int nFlags /* = 0 */ ) :
+		c_utl_inplace_buffer::c_utl_inplace_buffer( int growSize /* = 0 */, int initSize /* = 0 */, int nFlags /* = 0 */ ) :
 			c_utl_buffer( growSize, initSize, nFlags ) {
 			NULL;
 		}
 
-		bool CUtlInplaceBuffer::InplaceGetLinePtr( char** ppszInBufferPtr, int* pnLineLength ) {
-			assert( IsText() && !ContainsCRLF() );
+		bool c_utl_inplace_buffer::inplace_get_line_ptr( char** ppszInBufferPtr, int* pnLineLength ) {
+			assert( is_text() && !contains_crlf() );
 
-			int nLineLen = PeekLineLength();
+			int nLineLen = peek_line_length();
 			if ( nLineLen <= 1 ) {
-				SeekGet( SEEK_TAIL, 0 );
+				seek_get( SEEK_TAIL, 0 );
 				return false;
 			}
 
 			--nLineLen; // because it accounts for putting a terminating null-character
 
-			char* pszLine = (char*)( void* )( PeekGet() );
-			SeekGet( SEEK_CURRENT, nLineLen );
+			char* pszLine = (char*)( void* )( peek_get() );
+			seek_get( SEEK_CURRENT, nLineLen );
 
 			// Set the out args
 			if ( ppszInBufferPtr )
@@ -1482,11 +1482,11 @@ BEGIN_CUSTOM_CHAR_CONVERSION( c_utl_cstring_conversion, s_StringCharConversion, 
 			return true;
 		}
 
-		char* CUtlInplaceBuffer::InplaceGetLinePtr( void ) {
+		char* c_utl_inplace_buffer::inplace_get_line_ptr( void ) {
 			char* pszLine = NULL;
 			int nLineLen = 0;
 
-			if ( InplaceGetLinePtr( &pszLine, &nLineLen ) ) {
+			if ( inplace_get_line_ptr( &pszLine, &nLineLen ) ) {
 				assert( nLineLen >= 1 );
 
 				switch ( pszLine[nLineLen - 1] ) {

@@ -23,6 +23,8 @@ namespace hooks {
 	extern vfunc_hook game_coordinator_vhook;
 	extern vfunc_hook weapon_spread_vhook;
 	extern vfunc_hook sv_cheats_vhook;
+	extern vfunc_hook draw_model_stats_overlay_vhook;
+	extern vfunc_hook mdl_render_vhook;
 	extern recv_prop_hook* spotted_vhook;
 
 	namespace indexes {
@@ -42,6 +44,7 @@ namespace hooks {
 		int cvar_get_bool = 13;
 		int is_connected = 27;
 		int client_command = 7;
+		int draw_model_execute = 21;
 	}
 
 	void initialize();
@@ -134,6 +137,16 @@ namespace hooks {
 	namespace sv_cheats {
 		using fn = bool(__thiscall*)(void*);
 		bool __fastcall hook(void* ecx, void* edx);
+	}
+
+	namespace draw_model_stats_overlay {
+		using fn = bool(__thiscall*)(void*);
+		bool __fastcall hook(void* ecx, void* edx);
+	}
+
+	namespace draw_model_execute {
+		using fn = void(__fastcall*)(void*, int, c_mat_render_context*, const draw_model_state_t&, const model_render_info_t&, matrix3x4*);
+		void __fastcall hook(void* _this, int edx, c_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4* boneo_matrix);
 	}
 
 	namespace wndproc {

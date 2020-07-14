@@ -4,6 +4,11 @@
 extern std::map<int, std::string> fixed_weapon_names_by_id;
 
 namespace visuals {
+	std::array<float, 65> player_alpha;
+	std::array<float, 65> player_alpha_offscreen;
+	std::array<float, 65> last_view_time;
+	std::array<float, 65> last_view_time_offscreen;
+
 	void render();
 	void draw_watermark();
 	void spread_circle();

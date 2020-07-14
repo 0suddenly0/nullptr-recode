@@ -150,10 +150,10 @@ namespace misc {
 
 			fog_enable->set_value(settings::misc::fog::enable);
 			fog_override->set_value(settings::misc::fog::enable);
-			fog_color->set_value(utils::snprintf("%d %d %d", clr.color_char[0], clr.color_char[1], clr.color_char[2]).c_str()); //fog color
+			fog_color->set_value(utils::snprintf("%d %d %d", clr.r(), clr.g(), clr.b()).c_str()); //fog color
 			fog_start->set_value(settings::misc::fog::start_dist);
 			fog_end->set_value(settings::misc::fog::end_dist);
-			fog_destiny->set_value(settings::misc::fog::clr.color_char[3]);
+			fog_destiny->set_value(settings::misc::fog::clr.a<int>());
 		} else if (globals::unloading || !settings::misc::fog::enable) {
 			fog_enable->m_fnChangeCallbacks.m_Size = 0;
 			fog_override->m_fnChangeCallbacks.m_Size = 0;

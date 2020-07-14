@@ -208,7 +208,7 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
                 pos.y += line_height;
             }
 
-            // Count remaining lines
+            // count remaining lines
             int lines_skipped = 0;
             while (line < text_end)
             {
@@ -1066,7 +1066,7 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos)//, float size)
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    // We intentionally allow interaction when clipped so that a mechanical Alt,Right,Validate sequence close a window.
+    // We intentionally allow interaction when clipped so that a mechanical Alt,right,Validate sequence close a window.
     // (this isn't the regular behavior of buttons, but it doesn't affect the user much because navigation tends to keep items visible).
     const ImRect bb(pos, pos + ImVec2(g.FontSize, g.FontSize) + g.Style.FramePadding * 2.0f);
     bool is_clipped = !ItemAdd(bb, id);
@@ -1876,7 +1876,7 @@ bool ImGui::BeginComboMulti(const char* label, const char* preview_value, ImGuiC
     if (has_window_size_constraint)
     {
         g.NextWindowData.Flags |= ImGuiNextWindowDataFlags_HasSizeConstraint;
-        g.NextWindowData.SizeConstraintRect.Min.x = ImMax(g.NextWindowData.SizeConstraintRect.Min.x, w);
+        g.NextWindowData.SizeConstraintRect.Min.x = ImMax(g.NextWindowData.SizeConstraintRect.Min.x, frame_bb.Max.x - frame_bb.Min.x);
     }
     else
     {
@@ -1887,7 +1887,7 @@ bool ImGui::BeginComboMulti(const char* label, const char* preview_value, ImGuiC
         if (flags & ImGuiComboFlags_HeightRegular)     popup_max_height_in_items = 8;
         else if (flags & ImGuiComboFlags_HeightSmall)  popup_max_height_in_items = 4;
         else if (flags & ImGuiComboFlags_HeightLarge)  popup_max_height_in_items = 20;
-        SetNextWindowSizeConstraints(ImVec2(w, 0.0f), ImVec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+        SetNextWindowSizeConstraints(ImVec2(frame_bb.Max.x - frame_bb.Min.x, 0.0f), ImVec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
     }
 
     char name[16];
@@ -1908,7 +1908,7 @@ bool ImGui::BeginComboMulti(const char* label, const char* preview_value, ImGuiC
             ImVec2 pos = FindBestWindowPosForPopupEx(frame_bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox);
             SetNextWindowPos(pos);
         }
-    SetNextWindowSize(ImVec2(window->Size.x - (offset_x * 3) - 1.f - offset_scroll + 7.f, 0.f));
+    SetNextWindowSize(ImVec2(/*window->Size.x - (offset_x * 3) - 1.f - offset_scroll + 7.f*/frame_bb.Max.x - frame_bb.Min.x, 0.f));
     // We don't use BeginPopupEx() solely because we have a custom name string, which we could make an argument to BeginPopupEx()
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove;
 
@@ -2005,7 +2005,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     if (has_window_size_constraint)
     {
         g.NextWindowData.Flags |= ImGuiNextWindowDataFlags_HasSizeConstraint;
-        g.NextWindowData.SizeConstraintRect.Min.x = ImMax(g.NextWindowData.SizeConstraintRect.Min.x, w);
+        g.NextWindowData.SizeConstraintRect.Min.x = ImMax(g.NextWindowData.SizeConstraintRect.Min.x, frame_bb.Max.x - frame_bb.Min.x);
     }
     else
     {
@@ -2016,7 +2016,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         if (flags & ImGuiComboFlags_HeightRegular)     popup_max_height_in_items = 8;
         else if (flags & ImGuiComboFlags_HeightSmall)  popup_max_height_in_items = 4;
         else if (flags & ImGuiComboFlags_HeightLarge)  popup_max_height_in_items = 20;
-        SetNextWindowSizeConstraints(ImVec2(w, 0.0f), ImVec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
+        SetNextWindowSizeConstraints(ImVec2(frame_bb.Max.x - frame_bb.Min.x, 0.0f), ImVec2(FLT_MAX, CalcMaxPopupHeightFromItemCount(popup_max_height_in_items)));
     }
 
     char name[16];
@@ -2037,7 +2037,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
             ImVec2 pos = FindBestWindowPosForPopupEx(frame_bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox);
             SetNextWindowPos(pos);
         }
-    SetNextWindowSize(ImVec2(window->Size.x - (offset_x * 3) - 1.f - offset_scroll + 7.f, 0.f));
+    SetNextWindowSize(ImVec2(/*window->Size.x - (offset_x * 3) - offset_scroll + 7.f*/frame_bb.Max.x - frame_bb.Min.x, 0.f));
     // We don't use BeginPopupEx() solely because we have a custom name string, which we could make an argument to BeginPopupEx()
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove;
 
@@ -3765,7 +3765,7 @@ const char* ImParseFormatFindStart(const char* fmt)
 
 const char* ImParseFormatFindEnd(const char* fmt)
 {
-    // Printf/scanf types modifiers: I/L/h/j/l/t/w/z. Other uppercase letters qualify as types aka end of the format.
+    // printf/scanf types modifiers: I/L/h/j/l/t/w/z. Other uppercase letters qualify as types aka end of the format.
     if (fmt[0] != '%')
         return fmt;
     const unsigned int ignored_uppercase_mask = (1 << ('I'-'A')) | (1 << ('L'-'A'));
@@ -4239,7 +4239,7 @@ static bool STB_TEXTEDIT_INSERTCHARS(STB_TEXTEDIT_STRING* obj, int pos, const Im
     if (!is_resizable && (new_text_len_utf8 + obj->CurLenA + 1 > obj->BufCapacityA))
         return false;
 
-    // Grow internal buffer if needed
+    // grow internal buffer if needed
     if (new_text_len + text_len + 1 > obj->TextW.Size)
     {
         if (!is_resizable)
@@ -5284,7 +5284,7 @@ bool ImGui::ColorEdit3(const char* label, color* _color, ImGuiColorEditFlags fla
 
 // Edit colors components (each component in 0.0f..1.0f range).
 // See enum ImGuiColorEditFlags_ for available options. e.g. Only access 3 floats if ImGuiColorEditFlags_NoAlpha flag is set.
-// With typical options: Left-click on colored square to open color picker. Right-click to open option menu. CTRL-Click over input fields to edit them and TAB to go to next item.
+// With typical options: left-click on colored square to open color picker. right-click to open option menu. CTRL-Click over input fields to edit them and TAB to go to next item.
 bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags flags)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -5293,7 +5293,7 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
 
     if (CalcTextSize(label, FindRenderedTextEnd(label, NULL)).x == 0.f) SameLine();
 
-    float* col[4] = { &_color->color_float[0], &_color->color_float[1], &_color->color_float[2], &_color->color_float[3] };
+    float* col[4] = { &_color->r<float>(), &_color->g<float>(), &_color->b<float>(), &_color->a<float>() };
 
     ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
@@ -5412,7 +5412,7 @@ bool ImGui::ColorEdit4(const char* label, color* _color, ImGuiColorEditFlags fla
 
         window->DC.CursorPos = ImVec2(pos_wind.x + (size_wind_max.x - w_button - (23 + style.ItemInnerSpacing.x) - offset_scroll), pos.y);
 
-        const ImVec4 col_v4(_color->color_float[0], _color->color_float[1], _color->color_float[2], alpha ? _color->color_float[3] : 1.0f);
+        const ImVec4 col_v4(_color->r<float>(), _color->g<float>(), _color->b<float>(), alpha ? _color->a<float>() : 1.0f);
         if (ColorButton("##ColorButton", col_v4, flags))
         {
             if (!(flags & ImGuiColorEditFlags_NoPicker))
@@ -5513,7 +5513,7 @@ bool ImGui::ColorPicker3(const char* label, color* _color, ImGuiColorEditFlags f
     if (!ColorPicker4(label, &col4, flags | ImGuiColorEditFlags_NoAlpha))
         return false;
 
-    *_color = color(col4.color_char[0], col4.color_char[1], col4.color_char[2], 255);
+    *_color = color(col4.r(), col4.g(), col4.b(), 255);
     return true;
 }
 
@@ -5538,7 +5538,7 @@ bool ImGui::ColorPicker4(const char* label, color* _color, ImGuiColorEditFlags f
     if (window->SkipItems)
         return false;
 
-    float* col[4] = { &_color->color_float[0], &_color->color_float[1], &_color->color_float[2], &_color->color_float[3] };
+    float* col[4] = { &_color->r<float>(), &_color->g<float>(), &_color->b<float>(), &_color->a<float>() };
 
     ImDrawList* draw_list = window->DrawList;
     ImGuiStyle& style = g.Style;
@@ -6459,7 +6459,7 @@ void ImGui::TreePop()
     window->DC.TreeDepth--;
     ImU32 tree_depth_mask = (1 << window->DC.TreeDepth);
 
-    // Handle Left arrow to move to parent tree node (when ImGuiTreeNodeFlags_NavLeftJumpsBackHere is enabled)
+    // Handle left arrow to move to parent tree node (when ImGuiTreeNodeFlags_NavLeftJumpsBackHere is enabled)
     if (g.NavMoveDir == ImGuiDir_Left && g.NavWindow == window && NavMoveRequestButNoResultYet())
         if (g.NavIdIsAlive && (window->DC.TreeJumpToParentOnPopMask & tree_depth_mask))
         {
@@ -7297,7 +7297,7 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
             want_close = menu_is_open;
             want_open = !menu_is_open;
         }
-        if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right) // Nav-Right to open
+        if (g.NavId == id && g.NavMoveRequest && g.NavMoveDir == ImGuiDir_Right) // Nav-right to open
         {
             want_open = true;
             NavMoveRequestCancel();
@@ -7356,8 +7356,8 @@ bool ImGui::BeginMenu(const char* label, bool enabled)
 void ImGui::EndMenu()
 {
     // Nav: When a left move request _within our child menu_ failed, close ourselves (the _parent_ menu).
-    // A menu doesn't close itself because EndMenuBar() wants the catch the last Left<>Right inputs.
-    // However, it means that with the current code, a BeginMenu() from outside another menu or a menu-bar won't be closable with the Left direction.
+    // A menu doesn't close itself because EndMenuBar() wants the catch the last left<>right inputs.
+    // However, it means that with the current code, a BeginMenu() from outside another menu or a menu-bar won't be closable with the left direction.
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
     if (g.NavWindow && g.NavWindow->ParentWindow == window && g.NavMoveDir == ImGuiDir_Left && NavMoveRequestButNoResultYet() && window->DC.LayoutType == ImGuiLayoutType_Vertical)
@@ -8346,7 +8346,7 @@ int ImGui::GetColumnIndex()
 int ImGui::GetColumnsCount()
 {
     ImGuiWindow* window = GetCurrentWindowRead();
-    return window->DC.CurrentColumns ? window->DC.CurrentColumns->Count : 1;
+    return window->DC.CurrentColumns ? window->DC.CurrentColumns->count : 1;
 }
 
 float ImGui::GetColumnOffsetFromNorm(const ImGuiColumns* columns, float offset_norm)
@@ -8431,11 +8431,11 @@ void ImGui::SetColumnOffset(int column_index, float offset)
         column_index = columns->Current;
     IM_ASSERT(column_index < columns->Columns.Size);
 
-    const bool preserve_width = !(columns->Flags & ImGuiColumnsFlags_NoPreserveWidths) && (column_index < columns->Count-1);
+    const bool preserve_width = !(columns->Flags & ImGuiColumnsFlags_NoPreserveWidths) && (column_index < columns->count-1);
     const float width = preserve_width ? GetColumnWidthEx(columns, column_index, columns->IsBeingResized) : 0.0f;
 
     if (!(columns->Flags & ImGuiColumnsFlags_NoForceWithinWindow))
-        offset = ImMin(offset, columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->Count - column_index));
+        offset = ImMin(offset, columns->OffMaxX - g.Style.ColumnsMinSpacing * (columns->count - column_index));
     columns->Columns[column_index].OffsetNorm = GetColumnNormFromOffset(columns, offset - columns->OffMinX);
 
     if (preserve_width)
@@ -8469,7 +8469,7 @@ void ImGui::PushColumnsBackground()
 {
     ImGuiWindow* window = GetCurrentWindowRead();
     ImGuiColumns* columns = window->DC.CurrentColumns;
-    if (columns->Count == 1)
+    if (columns->count == 1)
         return;
     columns->Splitter.SetCurrentChannel(window->DrawList, 0);
     int cmd_size = window->DrawList->CmdBuffer.Size;
@@ -8482,7 +8482,7 @@ void ImGui::PopColumnsBackground()
 {
     ImGuiWindow* window = GetCurrentWindowRead();
     ImGuiColumns* columns = window->DC.CurrentColumns;
-    if (columns->Count == 1)
+    if (columns->count == 1)
         return;
     columns->Splitter.SetCurrentChannel(window->DrawList, columns->Current + 1);
     PopClipRect();
@@ -8527,7 +8527,7 @@ void ImGui::BeginColumns(const char* str_id, int columns_count, ImGuiColumnsFlag
     ImGuiColumns* columns = FindOrCreateColumns(window, id);
     IM_ASSERT(columns->ID == id);
     columns->Current = 0;
-    columns->Count = columns_count;
+    columns->count = columns_count;
     columns->Flags = flags;
     window->DC.CurrentColumns = columns;
 
@@ -8573,9 +8573,9 @@ void ImGui::BeginColumns(const char* str_id, int columns_count, ImGuiColumnsFlag
         column->ClipRect.ClipWith(window->ClipRect);
     }
 
-    if (columns->Count > 1)
+    if (columns->count > 1)
     {
-        columns->Splitter.Split(window->DrawList, 1 + columns->Count);
+        columns->Splitter.Split(window->DrawList, 1 + columns->count);
         columns->Splitter.SetCurrentChannel(window->DrawList, 1);
         PushColumnClipRect(0);
     }
@@ -8599,7 +8599,7 @@ void ImGui::NextColumn()
     ImGuiContext& g = *GImGui;
     ImGuiColumns* columns = window->DC.CurrentColumns;
 
-    if (columns->Count == 1)
+    if (columns->count == 1)
     {
         window->DC.CursorPos.x = IM_FLOOR(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
         IM_ASSERT(columns->Current == 0);
@@ -8610,7 +8610,7 @@ void ImGui::NextColumn()
 
     const float column_padding = g.Style.ItemSpacing.x;
     columns->LineMaxY = ImMax(columns->LineMaxY, window->DC.CursorPos.y);
-    if (++columns->Current < columns->Count)
+    if (++columns->Current < columns->count)
     {
         // Columns 1+ ignore IndentX (by canceling it out)
         // FIXME-COLUMNS: Unnecessary, could be locked?
@@ -8649,7 +8649,7 @@ void ImGui::EndColumns()
     IM_ASSERT(columns != NULL);
 
     PopItemWidth();
-    if (columns->Count > 1)
+    if (columns->count > 1)
     {
         PopClipRect();
         columns->Splitter.Merge(window->DrawList);
@@ -8670,7 +8670,7 @@ void ImGui::EndColumns()
         const float y1 = ImMax(columns->HostCursorPosY, window->ClipRect.Min.y);
         const float y2 = ImMin(window->DC.CursorPos.y, window->ClipRect.Max.y);
         int dragging_column = -1;
-        for (int n = 1; n < columns->Count; n++)
+        for (int n = 1; n < columns->count; n++)
         {
             ImGuiColumnData* column = &columns->Columns[n];
             float x = window->Pos.x + GetColumnOffset(n);
@@ -8701,7 +8701,7 @@ void ImGui::EndColumns()
         if (dragging_column != -1)
         {
             if (!columns->IsBeingResized)
-                for (int n = 0; n < columns->Count + 1; n++)
+                for (int n = 0; n < columns->count + 1; n++)
                     columns->Columns[n].OffsetNormBeforeResize = columns->Columns[n].OffsetNorm;
             columns->IsBeingResized = is_being_resized = true;
             float x = GetDraggedColumnOffset(columns, dragging_column);
@@ -8725,7 +8725,7 @@ void ImGui::Columns(int columns_count, const char* id, bool border)
     ImGuiColumnsFlags flags = (border ? 0 : ImGuiColumnsFlags_NoBorder);
     //flags |= ImGuiColumnsFlags_NoPreserveWidths; // NB: Legacy behavior
     ImGuiColumns* columns = window->DC.CurrentColumns;
-    if (columns != NULL && columns->Count == columns_count && columns->Flags == flags)
+    if (columns != NULL && columns->count == columns_count && columns->Flags == flags)
         return;
 
     if (columns != NULL)

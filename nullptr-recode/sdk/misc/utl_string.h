@@ -5,8 +5,7 @@
 
 #include "utl_memory.h"
 
-class c_utl_binary_block
-{
+class c_utl_binary_block {
 public:
     c_utl_binary_block(int growSize = 0, int initSize = 0);
 
@@ -15,21 +14,21 @@ public:
     c_utl_binary_block(const void* pMemory, int nSizeInBytes);
     c_utl_binary_block(const c_utl_binary_block& src);
 
-    void        Get(void *pValue, int nMaxLen) const;
-    void        Set(const void *pValue, int nLen);
-    const void  *Get() const;
-    void        *Get();
+    void        get(void *pValue, int nMaxLen) const;
+    void        set(const void *pValue, int nLen);
+    const void  *get() const;
+    void        *get();
 
     unsigned char& operator[](int i);
     const unsigned char& operator[](int i) const;
 
-    int         Length() const;
-    void        SetLength(int nLength);    // Undefined memory will result
-    bool        IsEmpty() const;
-    void        Clear();
-    void        Purge();
+    int         length() const;
+    void        set_length(int nLength);    // Undefined memory will result
+    bool        is_empty() const;
+    void        clear();
+    void        purge();
 
-    bool        IsReadOnly() const;
+    bool        is_read_only() const;
 
     c_utl_binary_block &operator=(const c_utl_binary_block &src);
 
@@ -45,140 +44,130 @@ private:
 //-----------------------------------------------------------------------------
 // class inlines
 //-----------------------------------------------------------------------------
-const void *c_utl_binary_block::Get() const
-{
-    return m_Memory.Base();
+const void *c_utl_binary_block::get() const {
+    return m_Memory.base();
 }
 
-void *c_utl_binary_block::Get()
-{
-    return m_Memory.Base();
+void *c_utl_binary_block::get() {
+    return m_Memory.base();
 }
 
-int c_utl_binary_block::Length() const
-{
+int c_utl_binary_block::length() const {
     return m_nActualLength;
 }
 
-unsigned char& c_utl_binary_block::operator[](int i)
-{
+unsigned char& c_utl_binary_block::operator[](int i) {
     return m_Memory[i];
 }
 
-const unsigned char& c_utl_binary_block::operator[](int i) const
-{
+const unsigned char& c_utl_binary_block::operator[](int i) const {
     return m_Memory[i];
 }
 
-bool c_utl_binary_block::IsReadOnly() const
-{
-    return m_Memory.IsReadOnly();
+bool c_utl_binary_block::is_read_only() const {
+    return m_Memory.is_read_only();
 }
 
-bool c_utl_binary_block::IsEmpty() const
-{
-    return Length() == 0;
+bool c_utl_binary_block::is_empty() const {
+    return length() == 0;
 }
 
-void c_utl_binary_block::Clear()
-{
-    SetLength(0);
+void c_utl_binary_block::clear() {
+    set_length(0);
 }
 
-void c_utl_binary_block::Purge()
-{
-    SetLength(0);
-    m_Memory.Purge();
+void c_utl_binary_block::purge() {
+    set_length(0);
+    m_Memory.purge();
 }
 
 //-----------------------------------------------------------------------------
 // Simple string class. 
 // NOTE: This is *not* optimal! Use in tools, but not runtime code
 //-----------------------------------------------------------------------------
-class CUtlString
-{
+class c_utl_string {
 public:
-    CUtlString();
-    CUtlString(const char *pString);
-    CUtlString(const CUtlString& string);
+    c_utl_string();
+    c_utl_string(const char *pString);
+    c_utl_string(const c_utl_string& string);
 
     // Attaches the string to external memory. Useful for avoiding a copy
-    CUtlString(void* pMemory, int nSizeInBytes, int nInitialLength);
-    CUtlString(const void* pMemory, int nSizeInBytes);
+    c_utl_string(void* pMemory, int nSizeInBytes, int nInitialLength);
+    c_utl_string(const void* pMemory, int nSizeInBytes);
 
-    const char    *Get() const;
-    void        Set(const char *pValue);
+    const char    *get() const;
+    void        set(const char *pValue);
 
     // Set directly and don't look for a null terminator in pValue.
-    void        SetDirect(const char *pValue, int nChars);
+    void        set_direct(const char *pValue, int nChars);
 
     // Converts to c-strings
     operator const char*() const;
 
     // for compatibility switching items from UtlSymbol
-    const char  *String() const { return Get(); }
+    const char  *string() const { return get(); }
 
     // Returns strlen
-    int            Length() const;
-    bool        IsEmpty() const;
+    int            length() const;
+    bool        is_empty() const;
 
     // Sets the length (used to serialize into the buffer )
     // Note: If nLen != 0, then this adds an extra uint8_t for a null-terminator.    
-    void        SetLength(int nLen);
-    char        *Get();
-    void        Clear();
-    void        Purge();
+    void        set_length(int nLen);
+    char        *get();
+    void        clear();
+    void        purge();
 
     // Strips the trailing slash
-    void        StripTrailingSlash();
+    void        strip_trailing_slash();
 
-    CUtlString &operator=(const CUtlString &src);
-    CUtlString &operator=(const char *src);
+    c_utl_string &operator=(const c_utl_string &src);
+    c_utl_string &operator=(const char *src);
 
     // Test for equality
-    bool operator==(const CUtlString &src) const;
+    bool operator==(const c_utl_string &src) const;
     bool operator==(const char *src) const;
-    bool operator!=(const CUtlString &src) const { return !operator==(src); }
+    bool operator!=(const c_utl_string &src) const { return !operator==(src); }
     bool operator!=(const char *src) const { return !operator==(src); }
 
-    CUtlString &operator+=(const CUtlString &rhs);
-    CUtlString &operator+=(const char *rhs);
-    CUtlString &operator+=(char c);
-    CUtlString &operator+=(int rhs);
-    CUtlString &operator+=(double rhs);
+    c_utl_string &operator+=(const c_utl_string &rhs);
+    c_utl_string &operator+=(const char *rhs);
+    c_utl_string &operator+=(char c);
+    c_utl_string &operator+=(int rhs);
+    c_utl_string &operator+=(double rhs);
 
-    CUtlString operator+(const char *pOther);
-    CUtlString operator+(int rhs);
+    c_utl_string operator+(const char *pOther);
+    c_utl_string operator+(int rhs);
 
-    int Format(const char *pFormat, ...);
+    int format(const char *pFormat, ...);
 
     // Take a piece out of the string.
     // If you only specify nStart, it'll go from nStart to the end.
     // You can use negative numbers and it'll wrap around to the start.
-    CUtlString Slice(int32_t nStart = 0, int32_t nEnd = INT32_MAX);
+    c_utl_string  slice(int32_t nStart = 0, int32_t nEnd = INT32_MAX);
 
     // Grab a substring starting from the left or the right side.
-    CUtlString Left(int32_t nChars);
-    CUtlString Right(int32_t nChars);
+    c_utl_string left(int32_t nChars);
+    c_utl_string right(int32_t nChars);
 
-    // Replace all instances of one character with another.
-    CUtlString Replace(char cFrom, char cTo);
+    // replace all instances of one character with another.
+    c_utl_string replace(char cFrom, char cTo);
 
     // Calls right through to V_MakeAbsolutePath.
-    CUtlString AbsPath(const char *pStartingDir = NULL);
+    c_utl_string abs_path(const char *pStartingDir = NULL);
 
     // Gets the filename (everything except the path.. c:\a\b\c\somefile.txt -> somefile.txt).
-    CUtlString UnqualifiedFilename();
+    c_utl_string unqualified_file_name();
 
     // Strips off one directory. Uses V_StripLastDir but strips the last slash also!
-    CUtlString DirName();
+    c_utl_string dir_name();
 
     // Works like V_ComposeFileName.
-    static CUtlString PathJoin(const char *pStr1, const char *pStr2);
+    static c_utl_string path_join(const char *pStr1, const char *pStr2);
 
     // These can be used for utlvector sorts.
-    static int __cdecl SortCaseInsensitive(const CUtlString *pString1, const CUtlString *pString2);
-    static int __cdecl SortCaseSensitive(const CUtlString *pString1, const CUtlString *pString2);
+    static int __cdecl sort_case_insensitive(const c_utl_string *pString1, const c_utl_string *pString2);
+    static int __cdecl sort_case_sensitive(const c_utl_string *pString1, const c_utl_string *pString2);
 
 private:
     c_utl_binary_block m_Storage;
@@ -188,17 +177,14 @@ private:
 //-----------------------------------------------------------------------------
 // methods
 //-----------------------------------------------------------------------------
-bool CUtlString::IsEmpty() const
-{
-    return Length() == 0;
+bool c_utl_string::is_empty() const {
+    return length() == 0;
 }
 
-int __cdecl CUtlString::SortCaseInsensitive(const CUtlString *pString1, const CUtlString *pString2)
-{
-    return _stricmp(pString1->String(), pString2->String());
+int __cdecl c_utl_string::sort_case_insensitive(const c_utl_string *pString1, const c_utl_string *pString2) {
+    return _stricmp(pString1->string(), pString2->string());
 }
 
-int __cdecl CUtlString::SortCaseSensitive(const CUtlString *pString1, const CUtlString *pString2)
-{
-    return strcmp(pString1->String(), pString2->String());
+int __cdecl c_utl_string::sort_case_sensitive(const c_utl_string *pString1, const c_utl_string *pString2) {
+    return strcmp(pString1->string(), pString2->string());
 }

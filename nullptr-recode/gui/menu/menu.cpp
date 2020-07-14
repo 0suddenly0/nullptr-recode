@@ -28,15 +28,13 @@ namespace menu {
 			null_gui::line(185.f);
 
 			null_gui::create_columns(2); {
-				for (int i = 0; i < input::binds.size(); i++) {
-					auto& cur_bind = input::binds[i];
-
+				for (bind_info* cur_bind : input::binds) {
 					null_gui::text_no_space(cur_bind->name.c_str());
 
 					null_gui::next_column();
 
-					if (cur_bind->flag & bind_info_flags_standart) null_gui::text_no_space(cur_bind->enable ? "enable" : "disable");
-					if (cur_bind->flag & bind_info_flags_side)     null_gui::text_no_space(cur_bind->enable ? "left" : "right");
+					if (cur_bind->flag & bind_info_flags_side)     null_gui::text_no_space(cur_bind->bind->enable ? "left" : "right");
+					else                                           null_gui::text_no_space(cur_bind->bind->enable ? "enable" : "disable");
 
 					null_gui::next_column();
 				}

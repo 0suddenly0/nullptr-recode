@@ -199,6 +199,8 @@
     <ClCompile Include="hooks\hooks.cpp" />
     <ClCompile Include="hooks\hooks\client_command.cpp" />
     <ClCompile Include="hooks\hooks\create_move.cpp" />
+    <ClCompile Include="hooks\hooks\draw_model_execute.cpp" />
+    <ClCompile Include="hooks\hooks\draw_model_stats_overlay.cpp" />
     <ClCompile Include="hooks\hooks\draw_set_color.cpp" />
     <ClCompile Include="hooks\hooks\emit_sound.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />

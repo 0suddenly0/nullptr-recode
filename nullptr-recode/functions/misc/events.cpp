@@ -56,13 +56,14 @@ private:
 				indicator.damage = event->get_int("dmg_health");
 				indicator.killed = event->get_int("health") == 0;
 				indicator.init = false;
-				globals::damage_indicators.push_back(indicator);
+				if(settings::visuals::damage_indicator::enable)
+					globals::damage_indicators.push_back(indicator);
 
 				if(event->get_int("hitgroup") != 0)
 					globals::hitmarkers.push_back(best_impact);
 				globals::hitmarker_last.time_del = sdk::global_vars->curtime + settings::visuals::hitmarker::show_time;
 
-				impacts.erase(impacts.begin() + impact_id);
+				if(impact_id != 0) impacts.erase(impacts.begin() + impact_id);
 
 				items = {
 					render::multicolor_t{ "you hurt ", color(255, 255, 255, 255) },
@@ -217,9 +218,7 @@ private:
 				if (player == sdk::local_player) {
 					if (settings::visuals::impacts::server::enable) {
 						vec3 size(settings::visuals::impacts::server::size, settings::visuals::impacts::server::size, settings::visuals::impacts::server::size);
-						color clr = settings::visuals::impacts::server::clr;
-
-						sdk::debug_overlay->add_box_overlay(position, size, size * -1, qangle(0, 0, 0), clr.color_char[0], clr.color_char[1], clr.color_char[2], clr.color_char[3], settings::visuals::impacts::server::show_time);
+						sdk::debug_overlay->add_box_overlay(position, size, size * -1, qangle(0, 0, 0), settings::visuals::impacts::server::clr, settings::visuals::impacts::server::show_time);
 					}
 
 					bullet_impact_t imp;

@@ -10,8 +10,7 @@
 
 #pragma once
 
-struct characterset_t
-{
+struct characterset_t {
     char Set[256];
 };
 

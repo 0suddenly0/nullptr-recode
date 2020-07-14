@@ -22,38 +22,35 @@ struct characterset_t;
 struct typedescription_t;
 struct datamap_t;
 
-class c_bytes_wap
-{
+class c_bytes_wap {
 public:
-    c_bytes_wap()
-    {
+    c_bytes_wap() {
         // Default behavior sets the target endian to match the machine native endian (no swap).
-        SetTargetBigEndian(IsMachineBigEndian());
+        set_target_big_endian(is_machine_big_endian());
     }
 
     //-----------------------------------------------------------------------------
     // Write a single field.
     //-----------------------------------------------------------------------------
-    void SwapFieldToTargetEndian(void* pOutputBuffer, void *pData, typedescription_t *pField);
+    void swap_field_to_target_endian(void* pOutputBuffer, void *pData, typedescription_t *pField);
 
     //-----------------------------------------------------------------------------
     // Write a block of fields.  Works a bit like the saverestore code.  
     //-----------------------------------------------------------------------------
-    void SwapFieldsToTargetEndian(void *pOutputBuffer, void *pBaseData, datamap_t *pDataMap);
+    void swap_fields_to_target_endian(void *pOutputBuffer, void *pBaseData, datamap_t *pDataMap);
 
     // Swaps fields for the templated type to the output buffer.
-    template<typename T> void SwapFieldsToTargetEndian(T* pOutputBuffer, void *pBaseData, unsigned int objectCount = 1)
-    {
+    template<typename T> void swap_fields_to_target_endian(T* pOutputBuffer, void *pBaseData, unsigned int objectCount = 1) {
         for(unsigned int i = 0; i < objectCount; ++i, ++pOutputBuffer) {
-            SwapFieldsToTargetEndian((void*)pOutputBuffer, pBaseData, &T::m_DataMap);
+            swap_fields_to_target_endian((void*)pOutputBuffer, pBaseData, &T::m_DataMap);
             pBaseData = (uint8_t*)pBaseData + sizeof(T);
         }
     }
 
     // Swaps fields for the templated type in place.
-    template<typename T> void SwapFieldsToTargetEndian(T* pOutputBuffer, unsigned int objectCount = 1)
+    template<typename T> void swap_fields_to_target_endian(T* pOutputBuffer, unsigned int objectCount = 1)
     {
-        SwapFieldsToTargetEndian<T>(pOutputBuffer, (void*)pOutputBuffer, objectCount);
+        swap_fields_to_target_endian<T>(pOutputBuffer, (void*)pOutputBuffer, objectCount);
     }
 
     //-----------------------------------------------------------------------------
@@ -61,8 +58,7 @@ public:
     // (Endienness is effectively detected at compile time when optimizations are
     // enabled)
     //-----------------------------------------------------------------------------
-    static bool IsMachineBigEndian()
-    {
+    static bool is_machine_big_endian() {
         short nIsBigEndian = 1;
 
         // if we are big endian, the first uint8_t will be a 0, if little endian, it will be a one.
@@ -76,23 +72,20 @@ public:
     //		x86 is LITTLE Endian
     //		PowerPC is BIG Endian
     //-----------------------------------------------------------------------------
-    void SetTargetBigEndian(bool bigEndian)
-    {
+    void set_target_big_endian(bool bigEndian) {
         m_bBigEndian = bigEndian;
-        m_bSwapBytes = IsMachineBigEndian() != bigEndian;
+        m_bSwapBytes = is_machine_big_endian() != bigEndian;
     }
 
     // Changes target endian
-    void FlipTargetEndian(void)
-    {
+    void flip_target_endian(void) {
         m_bSwapBytes = !m_bSwapBytes;
         m_bBigEndian = !m_bBigEndian;
     }
 
     // Forces uint8_t swapping state, regardless of endianess
-    void ActivateByteSwapping(bool bActivate)
-    {
-        SetTargetBigEndian(IsMachineBigEndian() != bActivate);
+    void activate_byte_swapping(bool bActivate) {
+        set_target_big_endian(is_machine_big_endian() != bActivate);
     }
 
     //-----------------------------------------------------------------------------
@@ -100,13 +93,11 @@ public:
     //
     // Used to determine when a byteswap needs to take place.
     //-----------------------------------------------------------------------------
-    bool IsSwappingBytes(void)	// Are bytes being swapped?
-    {
+    bool is_swapping_bytes(void) {
         return m_bSwapBytes;
     }
 
-    bool IsTargetBigEndian(void)	// What is the current target endian?
-    {
+    bool is_target_big_endian(void) {
         return m_bBigEndian;
     }
 
@@ -125,14 +116,13 @@ public:
     // ( This is useful for detecting byteswapping in magic numbers in structure 
     // headers for example. )
     //-----------------------------------------------------------------------------
-    template<typename T> int SourceIsNativeEndian(T input, T nativeConstant)
-    {
+    template<typename T> int source_is_native_endian(T input, T nativeConstant) {
         // If it's the same, it isn't byteswapped:
         if(input == nativeConstant)
             return 1;
 
         int output;
-        LowLevelByteSwap<T>(&output, &input);
+        low_level_byte_swap<T>(&output, &input);
         if(output == nativeConstant)
             return 0;
 
@@ -147,8 +137,7 @@ public:
     // If inputBuffer is omitted or NULL, then it is assumed to be the same as
     // outputBuffer - effectively swapping the contents of the buffer in place.
     //-----------------------------------------------------------------------------
-    template<typename T> void SwapBuffer(T* outputBuffer, T* inputBuffer = NULL, int count = 1)
-    {
+    template<typename T> void swap_buffer(T* outputBuffer, T* inputBuffer = NULL, int count = 1) {
         assert(count >= 0);
         assert(outputBuffer);
 
@@ -161,9 +150,9 @@ public:
             inputBuffer = outputBuffer;
         }
 
-        // Swap everything in the buffer:
+        // swap everything in the buffer:
         for(int i = 0; i < count; i++) {
-            LowLevelByteSwap<T>(&outputBuffer[i], &inputBuffer[i]);
+            low_level_byte_swap<T>(&outputBuffer[i], &inputBuffer[i]);
         }
     }
 
@@ -174,8 +163,7 @@ public:
     // If inputBuffer is omitted or NULL, then it is assumed to be the same as
     // outputBuffer - effectively swapping the contents of the buffer in place.
     //-----------------------------------------------------------------------------
-    template<typename T> void SwapBufferToTargetEndian(T* outputBuffer, T* inputBuffer = NULL, int count = 1)
-    {
+    template<typename T> void swap_buffer_to_target_endian(T* outputBuffer, T* inputBuffer = NULL, int count = 1) {
         assert(count >= 0);
         assert(outputBuffer);
 
@@ -200,9 +188,9 @@ public:
 
         }
 
-        // Swap everything in the buffer:
+        // swap everything in the buffer:
         for(int i = 0; i < count; i++) {
-            LowLevelByteSwap<T>(&outputBuffer[i], &inputBuffer[i]);
+            low_level_byte_swap<T>(&outputBuffer[i], &inputBuffer[i]);
         }
     }
 
@@ -211,8 +199,7 @@ private:
     // The lowest level uint8_t swapping workhorse of doom.  output always contains the 
     // swapped version of input.  ( Doesn't compare machine to target endianness )
     //-----------------------------------------------------------------------------
-    template<typename T> static void LowLevelByteSwap(T *output, T *input)
-    {
+    template<typename T> static void low_level_byte_swap(T *output, T *input) {
         T temp = *output;
 #if defined( _X360 )
         // Intrinsics need the source type to be fixed-point
@@ -256,30 +243,27 @@ private:
 //	{ '\t', "t" }
 // END_CHAR_CONVERSION( CStringConversion, '\\' )
 //-----------------------------------------------------------------------------
-class c_utl_char_conversion
-{
+class c_utl_char_conversion {
 public:
-    struct conversion_array_t
-    {
+    struct conversion_array_t {
         char m_nActualChar;
         char *m_pReplacementString;
     };
 
     c_utl_char_conversion(char nEscapeChar, const char *pDelimiter, int nCount, conversion_array_t *pArray);
-    char GetEscapeChar() const;
-    const char *GetDelimiter() const;
-    int GetDelimiterLength() const;
+    char get_escape_char() const;
+    const char* get_delimiter() const;
+    int get_delimiter_length() const;
 
-    const char *GetConversionString(char c) const;
-    int GetConversionLength(char c) const;
-    int MaxConversionLength() const;
+    const char* get_conversion_string(char c) const;
+    int get_conversion_length(char c) const;
+    int max_conversion_length() const;
 
     // Finds a conversion for the passed-in string, returns length
-    virtual char FindConversion(const char *pString, int *pLength);
+    virtual char find_conversion(const char *pString, int *pLength);
 
 protected:
-    struct ConversionInfo_t
-    {
+    struct conversion_info_t {
         int m_nLength;
         char *m_pReplacementString;
     };
@@ -290,7 +274,7 @@ protected:
     int m_nCount;
     int m_nMaxConversionLength;
     char m_pList[255];
-    ConversionInfo_t m_pReplacements[255];
+    conversion_info_t m_pReplacements[255];
 };
 
 #define BEGIN_CHAR_CONVERSION( _name, _delimiter, _escapeChar )	\
@@ -310,37 +294,34 @@ protected:
 //-----------------------------------------------------------------------------
 // Character conversions for C strings
 //-----------------------------------------------------------------------------
-c_utl_char_conversion *GetCStringCharConversion();
+c_utl_char_conversion *get_cstring_char_conversion();
 
 //-----------------------------------------------------------------------------
 // Character conversions for quoted strings, with no escape sequences
 //-----------------------------------------------------------------------------
-c_utl_char_conversion *GetNoEscCharConversion();
+c_utl_char_conversion *get_no_esc_char_conversion();
 
 
 //-----------------------------------------------------------------------------
 // Macro to Set overflow functions easily
 //-----------------------------------------------------------------------------
 #define SetUtlBufferOverflowFuncs( _get, _put )	\
-	SetOverflowFuncs( (UtlBufferOverflowFunc_t)( _get ), static_cast <UtlBufferOverflowFunc_t>( _put ) )
+	set_overflow_funcs( (utl_buffer_overflow_func_t)( _get ), static_cast <utl_buffer_overflow_func_t>( _put ) )
 
 
 //-----------------------------------------------------------------------------
 // Command parsing..
 //-----------------------------------------------------------------------------
-class c_utl_buffer
-{
+class c_utl_buffer {
 public:
-    enum SeekType_t
-    {
+    enum seek_type_t {
         SEEK_HEAD = 0,
         SEEK_CURRENT,
         SEEK_TAIL
     };
 
     // flags
-    enum BufferFlags_t
-    {
+    enum buffer_flags_t {
         TEXT_BUFFER = 0x1,			// Describes how Get + put work (as strings, or binary)
         EXTERNAL_GROWABLE = 0x2,	// This is used w/ external buffers and causes the utlbuf to switch to reallocatable memory if an overflow happens when Putting.
         CONTAINS_CRLF = 0x4,		// For text buffers only, does this contain \n or \n\r?
@@ -349,7 +330,7 @@ public:
     };
 
     // Overflow functions when a Get or put overflows
-    typedef bool (c_utl_buffer::*UtlBufferOverflowFunc_t)(int nSize);
+    typedef bool (c_utl_buffer::*utl_buffer_overflow_func_t)(int nSize);
 
     // Constructors for growable + external buffers for serialization/unserialization
     c_utl_buffer(int growSize = 0, int initSize = 0, int nFlags = 0);
@@ -357,73 +338,72 @@ public:
     // This one isn't actually defined so that we catch contructors that are trying to pass a bool in as the third param.
     c_utl_buffer(const void *pBuffer, int size, bool crap);
 
-    unsigned char	GetFlags() const;
+    unsigned char	get_flags() const;
 
     // NOTE: This will assert if you attempt to recast it in a way that
     // is not compatible. The only valid conversion is binary-> text w/CRLF
-    void			SetBufferType(bool bIsText, bool bContainsCRLF);
+    void			set_buffer_type(bool bIsText, bool bContainsCRLF);
 
     // Makes sure we've got at least this much memory
-    void			EnsureCapacity(int num);
+    void			ensure_capacity(int num);
 
     // Attaches the buffer to external memory....
-    void			SetExternalBuffer(void* pMemory, int nSize, int nInitialPut, int nFlags = 0);
-    bool			IsExternallyAllocated() const;
-    void			AssumeMemory(void *pMemory, int nSize, int nInitialPut, int nFlags = 0);
+    void			set_external_buffer(void* pMemory, int nSize, int nInitialPut, int nFlags = 0);
+    bool			is_externally_allocated() const;
+    void			assume_memory(void *pMemory, int nSize, int nInitialPut, int nFlags = 0);
 
-    __forceinline void ActivateByteSwappingIfBigEndian(void)
-    {
+    __forceinline void activate_byte_swapping_if_big_endian(void) {
         if(IsX360())
-            ActivateByteSwapping(true);
+            activate_byte_swapping(true);
     }
 
 
     // Controls endian-ness of binary utlbufs - default matches the current platform
-    void			ActivateByteSwapping(bool bActivate);
-    void			SetBigEndian(bool bigEndian);
-    bool			IsBigEndian(void);
+    void			activate_byte_swapping(bool bActivate);
+    void			set_big_endian(bool bigEndian);
+    bool			is_big_endian(void);
 
     // Resets the buffer; but doesn't free memory
-    void			Clear();
+    void			clear();
 
     // Clears out the buffer; frees memory
-    void			Purge();
+    void			purge();
 
     // Read stuff out.
     // Binary mode: it'll just read the bits directly in, and characters will be
     //		read for strings until a null character is reached.
     // Text mode: it'll parse the file, turning text #s into real numbers.
-    //		GetString will read a string until a space is reached
-    char			GetChar();
-    unsigned char	GetUnsignedChar();
-    short			GetShort();
-    unsigned short	GetUnsignedShort();
-    int				GetInt();
-    int				GetIntHex();
-    unsigned int	GetUnsignedInt();
-    float			GetFloat();
-    double			GetDouble();
-    void			GetString(char* pString, int nMaxChars = 0);
-    void			Get(void* pMem, int size);
-    void			GetLine(char* pLine, int nMaxChars = 0);
+    //		get_string will read a string until a space is reached
+    char			get_char();
+    unsigned char	get_unsigned_char();
+    short			get_short();
+    unsigned short	get_unsigned_short();
+    int				get_int();
+    int				get_int_hex();
+    unsigned int	get_unsigned_int();
+    float			get_float();
+    double			get_double();
+    void			get_string(char* pString, int nMaxChars = 0);
+    void			get(void* pMem, int size);
+    void			get_line(char* pLine, int nMaxChars = 0);
 
     // Used for getting objects that have a byteswap datadesc defined
-    template <typename T> void GetObjects(T *dest, int count = 1);
+    template <typename T> void get_objects(T *dest, int count = 1);
 
     // This will Get at least 1 uint8_t and up to nSize bytes. 
     // It will return the number of bytes actually read.
-    int				GetUpTo(void *pMem, int nSize);
+    int				get_up_to(void *pMem, int nSize);
 
-    // This version of GetString converts \" to \\ and " to \, etc.
+    // This version of get_string converts \" to \\ and " to \, etc.
     // It also reads a " at the beginning and end of the string
-    void			GetDelimitedString(c_utl_char_conversion *pConv, char *pString, int nMaxChars = 0);
-    char			GetDelimitedChar(c_utl_char_conversion *pConv);
+    void			get_delimited_string(c_utl_char_conversion *pConv, char *pString, int nMaxChars = 0);
+    char			get_delimited_char(c_utl_char_conversion *pConv);
 
     // This will return the # of characters of the string about to be read out
     // NOTE: The count will *include* the terminating 0!!
     // In binary mode, it's the number of characters until the next 0
     // In text mode, it's the number of characters until the next space.
-    int				PeekStringLength();
+    int				peek_string_length();
 
     // This version of PeekStringLength converts \" to \\ and " to \, etc.
     // It also reads a " at the beginning and end of the string
@@ -433,17 +413,17 @@ public:
     // Specifying false for bActualSize will return the pre-translated number of characters
     // including the delimiters and the escape characters. So, \n counts as 2 characters when bActualSize == false
     // and only 1 character when bActualSize == true
-    int				PeekDelimitedStringLength(c_utl_char_conversion *pConv, bool bActualSize = true);
+    int				peek_delimited_string_length(c_utl_char_conversion *pConv, bool bActualSize = true);
 
     // Just like scanf, but doesn't work in binary mode
-    int				Scanf(const char* pFmt, ...);
-    int				VaScanf(const char* pFmt, va_list list);
+    int				scanf(const char* pFmt, ...);
+    int				vascanf(const char* pFmt, va_list list);
 
     // Eats white space, advances Get index
-    void			EatWhiteSpace();
+    void			eat_white_space();
 
     // Eats C++ style comments
-    bool			EatCPPComment();
+    bool			eat_cpp_comment();
 
     // (For text buffers only)
     // Parse a token from the buffer:
@@ -451,156 +431,155 @@ public:
     // (skipping whitespace that leads + trails both delimiters).
     // If successful, the Get index is advanced and the function returns true,
     // otherwise the index is not advanced and the function returns false.
-    bool			ParseToken(const char *pStartingDelim, const char *pEndingDelim, char* pString, int nMaxLen);
+    bool			parse_token(const char *pStartingDelim, const char *pEndingDelim, char* pString, int nMaxLen);
 
     // Advance the Get index until after the particular string is found
     // Do not eat whitespace before starting. Return false if it failed
     // String test is case-insensitive.
-    bool			GetToken(const char *pToken);
+    bool			get_token(const char *pToken);
 
     // Parses the next token, given a Set of character breaks to stop at
     // Returns the length of the token parsed in bytes (-1 if none parsed)
-    int				ParseToken(characterset_t *pBreaks, char *pTokenBuf, int nMaxLen, bool bParseComments = true);
+    int				parse_token(characterset_t *pBreaks, char *pTokenBuf, int nMaxLen, bool bParseComments = true);
 
     // Write stuff in
     // Binary mode: it'll just write the bits directly in, and strings will be
     //		written with a null terminating character
     // Text mode: it'll convert the numbers to text versions
-    //		PutString will not write a terminating character
-    void			PutChar(char c);
-    void			PutUnsignedChar(unsigned char uc);
-    void			PutShort(short s);
-    void			PutUnsignedShort(unsigned short us);
-    void			PutInt(int i);
-    void			PutUnsignedInt(unsigned int u);
-    void			PutFloat(float f);
-    void			PutDouble(double d);
-    void			PutString(const char* pString);
-    void			Put(const void* pMem, int size);
+    //		put_string will not write a terminating character
+    void			put_char(char c);
+    void			put_unsigned_char(unsigned char uc);
+    void			put_short(short s);
+    void			put_unsigned_short(unsigned short us);
+    void			put_int(int i);
+    void			put_unsigned_int(unsigned int u);
+    void			put_float(float f);
+    void			put_double(double d);
+    void			put_string(const char* pString);
+    void			put(const void* pMem, int size);
 
     // Used for putting objects that have a byteswap datadesc defined
-    template <typename T> void PutObjects(T *src, int count = 1);
+    template <typename T> void put_objects(T *src, int count = 1);
 
-    // This version of PutString converts \ to \\ and " to \", etc.
+    // This version of put_string converts \ to \\ and " to \", etc.
     // It also places " at the beginning and end of the string
-    void			PutDelimitedString(c_utl_char_conversion *pConv, const char *pString);
-    void			PutDelimitedChar(c_utl_char_conversion *pConv, char c);
+    void			put_delimited_string(c_utl_char_conversion *pConv, const char *pString);
+    void			put_delimited_char(c_utl_char_conversion *pConv, char c);
 
     // Just like printf, writes a terminating zero in binary mode
-    void			Printf(const char* pFmt, ...);
-    void			VaPrintf(const char* pFmt, va_list list);
+    void			printf(const char* pFmt, ...);
+    void			vaprintf(const char* pFmt, va_list list);
 
     // What am I writing (put)/reading (Get)?
-    void* PeekPut(int offset = 0);
-    const void* PeekGet(int offset = 0) const;
-    const void* PeekGet(int nMaxSize, int nOffset);
+    void* peek_put(int offset = 0);
+    const void* peek_get(int offset = 0) const;
+    const void* peek_get(int nMaxSize, int nOffset);
 
     // Where am I writing (put)/reading (Get)?
-    int TellPut() const;
-    int TellGet() const;
+    int tell_put() const;
+    int tell_get() const;
 
     // What's the most I've ever written?
-    int TellMaxPut() const;
+    int tell_max_put() const;
 
     // How many bytes remain to be read?
     // NOTE: This is not accurate for streaming text files; it overshoots
-    int GetBytesRemaining() const;
+    int get_bytes_remaining() const;
 
     // Change where I'm writing (put)/reading (Get)
-    void SeekPut(SeekType_t type, int offset);
-    void SeekGet(SeekType_t type, int offset);
+    void seek_put(seek_type_t type, int offset);
+    void seek_get(seek_type_t type, int offset);
 
     // Buffer base
-    const void* Base() const;
-    void* Base();
+    const void* base() const;
+    void* base();
 
     // memory allocation size, does *not* reflect size written or read,
-    //	use TellPut or TellGet for that
-    int Size() const;
+    //	use TellPut or tell_get for that
+    int size() const;
 
     // Am I a text buffer?
-    bool IsText() const;
+    bool is_text() const;
 
     // Can I grow if I'm externally allocated?
-    bool IsGrowable() const;
+    bool is_growable() const;
 
     // Am I valid? (overflow or underflow error), Once invalid it stays invalid
-    bool IsValid() const;
+    bool is_valid() const;
 
     // Do I contain carriage return/linefeeds? 
-    bool ContainsCRLF() const;
+    bool contains_crlf() const;
 
     // Am I read-only
-    bool IsReadOnly() const;
+    bool is_read_only() const;
 
     // Converts a buffer from a CRLF buffer to a CR buffer (and back)
     // Returns false if no conversion was necessary (and outBuf is left untouched)
     // If the conversion occurs, outBuf will be cleared.
-    bool ConvertCRLF(c_utl_buffer &outBuf);
+    bool convert_crlf(c_utl_buffer &outBuf);
 
     // Push/pop pretty-printing tabs
-    void PushTab();
-    void PopTab();
+    void push_tab();
+    void pop_tab();
 
     // Temporarily disables pretty print
-    void EnableTabs(bool bEnable);
+    void enable_tabs(bool bEnable);
 
 protected:
     // error flags
-    enum
-    {
+    enum {
         PUT_OVERFLOW = 0x1,
         GET_OVERFLOW = 0x2,
         MAX_ERROR_FLAG = GET_OVERFLOW,
     };
 
-    void SetOverflowFuncs(UtlBufferOverflowFunc_t getFunc, UtlBufferOverflowFunc_t putFunc);
+    void set_overflow_funcs(utl_buffer_overflow_func_t getFunc, utl_buffer_overflow_func_t putFunc);
 
-    bool OnPutOverflow(int nSize);
-    bool OnGetOverflow(int nSize);
+    bool on_put_overflow(int nSize);
+    bool on_get_overflow(int nSize);
 
 protected:
     // Checks if a Get/put is ok
-    bool CheckPut(int size);
-    bool CheckGet(int size);
+    bool check_put(int size);
+    bool check_get(int size);
 
-    void AddNullTermination();
+    void add_null_termination();
 
     // Methods to help with pretty-printing
-    bool WasLastCharacterCR();
-    void PutTabs();
+    bool was_last_character_cr();
+    void put_tabs();
 
     // Help with delimited stuff
-    char GetDelimitedCharInternal(c_utl_char_conversion *pConv);
-    void PutDelimitedCharInternal(c_utl_char_conversion *pConv, char c);
+    char get_delimited_char_internal(c_utl_char_conversion *pConv);
+    void put_delimited_char_internal(c_utl_char_conversion *pConv, char c);
 
     // Default overflow funcs
-    bool PutOverflow(int nSize);
-    bool GetOverflow(int nSize);
+    bool put_overflow(int nSize);
+    bool get_overflow(int nSize);
 
     // Does the next bytes of the buffer match a pattern?
-    bool PeekStringMatch(int nOffset, const char *pString, int nLen);
+    bool peek_string_match(int nOffset, const char *pString, int nLen);
 
     // Peek size of line to come, check memory bound
-    int	PeekLineLength();
+    int	peek_line_length();
 
     // How much whitespace should I skip?
-    int PeekWhiteSpace(int nOffset);
+    int peek_white_space(int nOffset);
 
     // Checks if a peek Get is ok
-    bool CheckPeekGet(int nOffset, int nSize);
+    bool check_peek_get(int nOffset, int nSize);
 
     // Call this to peek arbitrarily long into memory. It doesn't fail unless
     // it can't read *anything* new
-    bool CheckArbitraryPeekGet(int nOffset, int &nIncrement);
+    bool check_arbitrary_peek_get(int nOffset, int &nIncrement);
 
-    template <typename T> void GetType(T& dest, const char *pszFmt);
-    template <typename T> void GetTypeBin(T& dest);
-    template <typename T> void GetObject(T *src);
+    template <typename T> void get_type(T& dest, const char *pszFmt);
+    template <typename T> void get_type_bin(T& dest);
+    template <typename T> void get_object(T *src);
 
-    template <typename T> void PutType(T src, const char *pszFmt);
-    template <typename T> void PutTypeBin(T src);
-    template <typename T> void PutObject(T *src);
+    template <typename T> void put_type(T src, const char *pszFmt);
+    template <typename T> void put_type_bin(T src);
+    template <typename T> void put_object(T *src);
 
     c_utl_memory<unsigned char> m_Memory;
     int m_Get;
@@ -617,85 +596,73 @@ protected:
     int m_nMaxPut;
     int m_nOffset;
 
-    UtlBufferOverflowFunc_t m_GetOverflowFunc;
-    UtlBufferOverflowFunc_t m_PutOverflowFunc;
+    utl_buffer_overflow_func_t m_GetOverflowFunc;
+    utl_buffer_overflow_func_t m_PutOverflowFunc;
 
     c_bytes_wap	m_Byteswap;
 };
 
 
 // Stream style output operators for c_utl_buffer
-c_utl_buffer &operator<<(c_utl_buffer &b, char v)
-{
-    b.PutChar(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, char v) {
+    b.put_char(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, unsigned char v)
-{
-    b.PutUnsignedChar(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, unsigned char v) {
+    b.put_unsigned_char(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, short v)
-{
-    b.PutShort(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, short v) {
+    b.put_short(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, unsigned short v)
-{
-    b.PutUnsignedShort(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, unsigned short v) {
+    b.put_unsigned_short(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, int v)
-{
-    b.PutInt(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, int v) {
+    b.put_int(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, unsigned int v)
-{
-    b.PutUnsignedInt(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, unsigned int v) {
+    b.put_unsigned_int(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, float v)
-{
-    b.PutFloat(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, float v) {
+    b.put_float(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, double v)
-{
-    b.PutDouble(v);
+c_utl_buffer &operator<<(c_utl_buffer &b, double v) {
+    b.put_double(v);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, const char *pv)
-{
-    b.PutString(pv);
+c_utl_buffer &operator<<(c_utl_buffer &b, const char *pv) {
+    b.put_string(pv);
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, const vec3 &v)
-{
+c_utl_buffer &operator<<(c_utl_buffer &b, const vec3 &v) {
     b << v.x << " " << v.y << " " << v.z;
     return b;
 }
 
-c_utl_buffer &operator<<(c_utl_buffer &b, const vec2 &v)
-{
+c_utl_buffer &operator<<(c_utl_buffer &b, const vec2 &v) {
     b << v.x << " " << v.y;
     return b;
 }
 
 
-class CUtlInplaceBuffer : public c_utl_buffer
-{
+class c_utl_inplace_buffer : public c_utl_buffer {
 public:
-    CUtlInplaceBuffer(int growSize = 0, int initSize = 0, int nFlags = 0);
+    c_utl_inplace_buffer(int growSize = 0, int initSize = 0, int nFlags = 0);
 
     //
     // Routines returning buffer-inplace-pointers
@@ -718,7 +685,7 @@ public:
     //
     //			char *pszLine;
     //			int nLineLen;
-    //			while ( pUtlInplaceBuffer->InplaceGetLinePtr( &pszLine, &nLineLen ) )
+    //			while ( pUtlInplaceBuffer->inplace_get_line_ptr( &pszLine, &nLineLen ) )
     //			{
     //				...
     //			}
@@ -731,7 +698,7 @@ public:
     // @returns	true				if line was successfully read
     //			false				when EOF is reached or error occurs
     //
-    bool InplaceGetLinePtr( /* out */ char **ppszInBufferPtr, /* out */ int *pnLineLength);
+    bool inplace_get_line_ptr( /* out */ char **ppszInBufferPtr, /* out */ int *pnLineLength);
 
     //
     // Determines the line length, advances the "Get" pointer offset by the line length,
@@ -745,7 +712,7 @@ public:
     //
     // e.g.:	-------------
     //
-    //			while ( char *pszLine = pUtlInplaceBuffer->InplaceGetLinePtr() )
+    //			while ( char *pszLine = pUtlInplaceBuffer->inplace_get_line_ptr() )
     //			{
     //				...
     //			}
@@ -755,15 +722,14 @@ public:
     // @returns	ptr-to-zero-terminated-line		if line was successfully read and buffer modified
     //			NULL							when EOF is reached or error occurs
     //
-    char * InplaceGetLinePtr(void);
+    char * inplace_get_line_ptr(void);
 };
 
 
 //-----------------------------------------------------------------------------
 // Where am I reading?
 //-----------------------------------------------------------------------------
-int c_utl_buffer::TellGet() const
-{
+int c_utl_buffer::tell_get() const {
     return m_Get;
 }
 
@@ -771,17 +737,15 @@ int c_utl_buffer::TellGet() const
 //-----------------------------------------------------------------------------
 // How many bytes remain to be read?
 //-----------------------------------------------------------------------------
-int c_utl_buffer::GetBytesRemaining() const
-{
-    return m_nMaxPut - TellGet();
+int c_utl_buffer::get_bytes_remaining() const {
+    return m_nMaxPut - tell_get();
 }
 
 
 //-----------------------------------------------------------------------------
 // What am I reading?
 //-----------------------------------------------------------------------------
-const void* c_utl_buffer::PeekGet(int offset) const
-{
+const void* c_utl_buffer::peek_get(int offset) const {
     return &m_Memory[m_Get + offset - m_nOffset];
 }
 
@@ -791,13 +755,12 @@ const void* c_utl_buffer::PeekGet(int offset) const
 //-----------------------------------------------------------------------------
 
 template <typename T>
-void c_utl_buffer::GetObject(T *dest)
-{
-    if(CheckGet(sizeof(T))) {
-        if(!m_Byteswap.IsSwappingBytes() || (sizeof(T) == 1)) {
+void c_utl_buffer::get_object(T *dest) {
+    if(check_get(sizeof(T))) {
+        if(!m_Byteswap.is_swapping_bytes() || (sizeof(T) == 1)) {
             *dest = *(T *)PeekGet();
         } else {
-            m_Byteswap.SwapFieldsToTargetEndian<T>(dest, (T*)PeekGet());
+            m_Byteswap.swap_fields_to_target_endian<T>(dest, (T*)peek_get());
         }
         m_Get += sizeof(T);
     } else {
@@ -807,8 +770,7 @@ void c_utl_buffer::GetObject(T *dest)
 
 
 template <typename T>
-void c_utl_buffer::GetObjects(T *dest, int count)
-{
+void c_utl_buffer::get_objects(T *dest, int count) {
     for(int i = 0; i < count; ++i, ++dest) {
         GetObject<T>(dest);
     }
@@ -816,13 +778,12 @@ void c_utl_buffer::GetObjects(T *dest, int count)
 
 
 template <typename T>
-void c_utl_buffer::GetTypeBin(T &dest)
-{
-    if(CheckGet(sizeof(T))) {
-        if(!m_Byteswap.IsSwappingBytes() || (sizeof(T) == 1)) {
-            dest = *(T *)PeekGet();
+void c_utl_buffer::get_type_bin(T &dest) {
+    if(check_get(sizeof(T))) {
+        if(!m_Byteswap.is_swapping_bytes() || (sizeof(T) == 1)) {
+            dest = *(T *)peek_get();
         } else {
-            m_Byteswap.SwapBufferToTargetEndian<T>(&dest, (T*)PeekGet());
+            m_Byteswap.swap_buffer_to_target_endian<T>(&dest, (T*)peek_get());
         }
         m_Get += sizeof(T);
     } else {
@@ -831,10 +792,9 @@ void c_utl_buffer::GetTypeBin(T &dest)
 }
 
 template <>
-void c_utl_buffer::GetTypeBin< float >(float &dest)
-{
-    if(CheckGet(sizeof(float))) {
-        unsigned int pData = (unsigned int)PeekGet();
+void c_utl_buffer::get_type_bin< float >(float &dest) {
+    if(check_get(sizeof(float))) {
+        unsigned int pData = (unsigned int)peek_get();
         if(IsX360() && (pData & 0x03)) {
             // handle unaligned read
             ((unsigned char*)&dest)[0] = ((unsigned char*)pData)[0];
@@ -845,8 +805,8 @@ void c_utl_buffer::GetTypeBin< float >(float &dest)
             // aligned read
             dest = *(float *)pData;
         }
-        if(m_Byteswap.IsSwappingBytes()) {
-            m_Byteswap.SwapBufferToTargetEndian< float >(&dest, &dest);
+        if(m_Byteswap.is_swapping_bytes()) {
+            m_Byteswap.swap_buffer_to_target_endian< float >(&dest, &dest);
         }
         m_Get += sizeof(float);
     } else {
@@ -855,76 +815,66 @@ void c_utl_buffer::GetTypeBin< float >(float &dest)
 }
 
 template <typename T>
-void c_utl_buffer::GetType(T &dest, const char *pszFmt)
-{
-    if(!IsText()) {
-        GetTypeBin(dest);
+void c_utl_buffer::get_type(T &dest, const char *pszFmt) {
+    if(!is_text()) {
+        get_type_bin(dest);
     } else {
         dest = 0;
-        Scanf(pszFmt, &dest);
+        scanf(pszFmt, &dest);
     }
 }
 
-char c_utl_buffer::GetChar()
-{
+char c_utl_buffer::get_char() {
     char c;
-    GetType(c, "%c");
+    get_type(c, "%c");
     return c;
 }
 
-unsigned char c_utl_buffer::GetUnsignedChar()
-{
+unsigned char c_utl_buffer::get_unsigned_char() {
     unsigned char c;
-    GetType(c, "%u");
+    get_type(c, "%u");
     return c;
 }
 
-short c_utl_buffer::GetShort()
-{
+short c_utl_buffer::get_short() {
     short s;
-    GetType(s, "%d");
+    get_type(s, "%d");
     return s;
 }
 
-unsigned short c_utl_buffer::GetUnsignedShort()
-{
+unsigned short c_utl_buffer::get_unsigned_short() {
     unsigned short s;
-    GetType(s, "%u");
+    get_type(s, "%u");
     return s;
 }
 
-int c_utl_buffer::GetInt()
-{
+int c_utl_buffer::get_int() {
     int i;
-    GetType(i, "%d");
+    get_type(i, "%d");
     return i;
 }
 
-int c_utl_buffer::GetIntHex()
-{
+int c_utl_buffer::get_int_hex() {
     int i;
-    GetType(i, "%x");
+    get_type(i, "%x");
     return i;
 }
 
-unsigned int c_utl_buffer::GetUnsignedInt()
-{
+unsigned int c_utl_buffer::get_unsigned_int() {
     unsigned int u;
-    GetType(u, "%u");
+    get_type(u, "%u");
     return u;
 }
 
-float c_utl_buffer::GetFloat()
-{
+float c_utl_buffer::get_float() {
     float f;
-    GetType(f, "%f");
+    get_type(f, "%f");
     return f;
 }
 
-double c_utl_buffer::GetDouble()
-{
+double c_utl_buffer::get_double() {
     double d;
-    GetType(d, "%f");
+    get_type(d, "%f");
     return d;
 }
 
@@ -932,8 +882,7 @@ double c_utl_buffer::GetDouble()
 //-----------------------------------------------------------------------------
 // Where am I writing?
 //-----------------------------------------------------------------------------
-unsigned char c_utl_buffer::GetFlags() const
-{
+unsigned char c_utl_buffer::get_flags() const {
     return m_Flags;
 }
 
@@ -941,17 +890,15 @@ unsigned char c_utl_buffer::GetFlags() const
 //-----------------------------------------------------------------------------
 // 
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::IsExternallyAllocated() const
-{
-    return m_Memory.IsExternallyAllocated();
+bool c_utl_buffer::is_externally_allocated() const {
+    return m_Memory.is_externally_allocated();
 }
 
 
 //-----------------------------------------------------------------------------
 // Where am I writing?
 //-----------------------------------------------------------------------------
-int c_utl_buffer::TellPut() const
-{
+int c_utl_buffer::tell_put() const {
     return m_Put;
 }
 
@@ -959,8 +906,7 @@ int c_utl_buffer::TellPut() const
 //-----------------------------------------------------------------------------
 // What's the most I've ever written?
 //-----------------------------------------------------------------------------
-int c_utl_buffer::TellMaxPut() const
-{
+int c_utl_buffer::tell_max_put() const {
     return m_nMaxPut;
 }
 
@@ -968,8 +914,7 @@ int c_utl_buffer::TellMaxPut() const
 //-----------------------------------------------------------------------------
 // What am I reading?
 //-----------------------------------------------------------------------------
-void* c_utl_buffer::PeekPut(int offset)
-{
+void* c_utl_buffer::peek_put(int offset) {
     return &m_Memory[m_Put + offset - m_nOffset];
 }
 
@@ -979,68 +924,62 @@ void* c_utl_buffer::PeekPut(int offset)
 //-----------------------------------------------------------------------------
 
 template <typename T>
-void c_utl_buffer::PutObject(T *src)
-{
-    if(CheckPut(sizeof(T))) {
-        if(!m_Byteswap.IsSwappingBytes() || (sizeof(T) == 1)) {
-            *(T *)PeekPut() = *src;
+void c_utl_buffer::put_object(T *src) {
+    if(check_put(sizeof(T))) {
+        if(!m_Byteswap.is_swapping_bytes() || (sizeof(T) == 1)) {
+            *(T *)peek_put() = *src;
         } else {
-            m_Byteswap.SwapFieldsToTargetEndian<T>((T*)PeekPut(), src);
+            m_Byteswap.swap_fields_to_target_endian<T>((T*)peek_put(), src);
         }
         m_Put += sizeof(T);
-        AddNullTermination();
+        add_null_termination();
     }
 }
 
 
 template <typename T>
-void c_utl_buffer::PutObjects(T *src, int count)
-{
+void c_utl_buffer::put_objects(T *src, int count) {
     for(int i = 0; i < count; ++i, ++src) {
-        PutObject<T>(src);
+        put_object<T>(src);
     }
 }
 
 
 template <typename T>
-void c_utl_buffer::PutTypeBin(T src)
-{
-    if(CheckPut(sizeof(T))) {
-        if(!m_Byteswap.IsSwappingBytes() || (sizeof(T) == 1)) {
-            *(T *)PeekPut() = src;
+void c_utl_buffer::put_type_bin(T src) {
+    if(check_put(sizeof(T))) {
+        if(!m_Byteswap.is_swapping_bytes() || (sizeof(T) == 1)) {
+            *(T *)peek_put() = src;
         } else {
-            m_Byteswap.SwapBufferToTargetEndian<T>((T*)PeekPut(), &src);
+            m_Byteswap.swap_buffer_to_target_endian<T>((T*)peek_put(), &src);
         }
         m_Put += sizeof(T);
-        AddNullTermination();
+        add_null_termination();
     }
 }
 
 template <typename T>
-void c_utl_buffer::PutType(T src, const char *pszFmt)
-{
-    if(!IsText()) {
-        PutTypeBin(src);
+void c_utl_buffer::put_type(T src, const char *pszFmt) {
+    if(!is_text()) {
+        put_type_bin(src);
     } else {
-        Printf(pszFmt, src);
+        printf(pszFmt, src);
     }
 }
 
 //-----------------------------------------------------------------------------
 // Methods to help with pretty-printing
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::WasLastCharacterCR()
-{
-    if(!IsText() || (TellPut() == 0))
+bool c_utl_buffer::was_last_character_cr() {
+    if(!is_text() || (tell_put() == 0))
         return false;
-    return (*(const char *)PeekPut(-1) == '\n');
+    return (*(const char *)peek_put(-1) == '\n');
 }
 
-void c_utl_buffer::PutTabs()
-{
+void c_utl_buffer::put_tabs() {
     int nTabCount = (m_Flags & AUTO_TABS_DISABLED) ? 0 : m_nTab;
     for(int i = nTabCount; --i >= 0; ) {
-        PutTypeBin<char>('\t');
+        put_type_bin<char>('\t');
     }
 }
 
@@ -1048,13 +987,11 @@ void c_utl_buffer::PutTabs()
 //-----------------------------------------------------------------------------
 // Push/pop pretty-printing tabs
 //-----------------------------------------------------------------------------
-void c_utl_buffer::PushTab()
-{
+void c_utl_buffer::push_tab() {
     ++m_nTab;
 }
 
-void c_utl_buffer::PopTab()
-{
+void c_utl_buffer::pop_tab() {
     if(--m_nTab < 0) {
         m_nTab = 0;
     }
@@ -1064,8 +1001,7 @@ void c_utl_buffer::PopTab()
 //-----------------------------------------------------------------------------
 // Temporarily disables pretty print
 //-----------------------------------------------------------------------------
-void c_utl_buffer::EnableTabs(bool bEnable)
-{
+void c_utl_buffer::enable_tabs(bool bEnable) {
     if(bEnable) {
         m_Flags &= ~AUTO_TABS_DISABLED;
     } else {
@@ -1073,56 +1009,47 @@ void c_utl_buffer::EnableTabs(bool bEnable)
     }
 }
 
-void c_utl_buffer::PutChar(char c)
-{
-    if(WasLastCharacterCR()) {
-        PutTabs();
+void c_utl_buffer::put_char(char c) {
+    if(was_last_character_cr()) {
+        put_tabs();
     }
 
-    PutTypeBin(c);
+    put_type_bin(c);
 }
 
-void c_utl_buffer::PutUnsignedChar(unsigned char c)
-{
-    PutType(c, "%u");
+void c_utl_buffer::put_unsigned_char(unsigned char c) {
+    put_type(c, "%u");
 }
 
-void  c_utl_buffer::PutShort(short s)
-{
-    PutType(s, "%d");
+void  c_utl_buffer::put_short(short s) {
+    put_type(s, "%d");
 }
 
-void c_utl_buffer::PutUnsignedShort(unsigned short s)
-{
-    PutType(s, "%u");
+void c_utl_buffer::put_unsigned_short(unsigned short s) {
+    put_type(s, "%u");
 }
 
-void c_utl_buffer::PutInt(int i)
-{
-    PutType(i, "%d");
+void c_utl_buffer::put_int(int i ) {
+    put_type(i, "%d");
 }
 
-void c_utl_buffer::PutUnsignedInt(unsigned int u)
-{
-    PutType(u, "%u");
+void c_utl_buffer::put_unsigned_int(unsigned int u) {
+    put_type(u, "%u");
 }
 
-void c_utl_buffer::PutFloat(float f)
-{
-    PutType(f, "%f");
+void c_utl_buffer::put_float(float f) {
+    put_type(f, "%f");
 }
 
-void c_utl_buffer::PutDouble(double d)
-{
-    PutType(d, "%f");
+void c_utl_buffer::put_double(double d) {
+    put_type(d, "%f");
 }
 
 
 //-----------------------------------------------------------------------------
 // Am I a text buffer?
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::IsText() const
-{
+bool c_utl_buffer::is_text() const {
     return (m_Flags & TEXT_BUFFER) != 0;
 }
 
@@ -1130,8 +1057,7 @@ bool c_utl_buffer::IsText() const
 //-----------------------------------------------------------------------------
 // Can I grow if I'm externally allocated?
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::IsGrowable() const
-{
+bool c_utl_buffer::is_growable() const {
     return (m_Flags & EXTERNAL_GROWABLE) != 0;
 }
 
@@ -1139,8 +1065,7 @@ bool c_utl_buffer::IsGrowable() const
 //-----------------------------------------------------------------------------
 // Am I valid? (overflow or underflow error), Once invalid it stays invalid
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::IsValid() const
-{
+bool c_utl_buffer::is_valid() const {
     return m_Error == 0;
 }
 
@@ -1148,17 +1073,15 @@ bool c_utl_buffer::IsValid() const
 //-----------------------------------------------------------------------------
 // Do I contain carriage return/linefeeds? 
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::ContainsCRLF() const
-{
-    return IsText() && ((m_Flags & CONTAINS_CRLF) != 0);
+bool c_utl_buffer::contains_crlf() const {
+    return is_text() && ((m_Flags & CONTAINS_CRLF) != 0);
 }
 
 
 //-----------------------------------------------------------------------------
 // Am I read-only
 //-----------------------------------------------------------------------------
-bool c_utl_buffer::IsReadOnly() const
-{
+bool c_utl_buffer::is_read_only() const {
     return (m_Flags & READ_ONLY) != 0;
 }
 
@@ -1166,42 +1089,37 @@ bool c_utl_buffer::IsReadOnly() const
 //-----------------------------------------------------------------------------
 // Buffer base and size
 //-----------------------------------------------------------------------------
-const void* c_utl_buffer::Base() const
-{
-    return m_Memory.Base();
+const void* c_utl_buffer::base() const {
+    return m_Memory.base();
 }
 
-void* c_utl_buffer::Base()
-{
-    return m_Memory.Base();
+void* c_utl_buffer::base() {
+    return m_Memory.base();
 }
 
-int c_utl_buffer::Size() const
-{
-    return m_Memory.NumAllocated();
+int c_utl_buffer::size() const {
+    return m_Memory.num_allocated();
 }
 
 
 //-----------------------------------------------------------------------------
 // Clears out the buffer; frees memory
 //-----------------------------------------------------------------------------
-void c_utl_buffer::Clear()
-{
+void c_utl_buffer::clear() {
     m_Get = 0;
     m_Put = 0;
     m_Error = 0;
     m_nOffset = 0;
     m_nMaxPut = -1;
-    AddNullTermination();
+    add_null_termination();
 }
 
-void c_utl_buffer::Purge()
-{
+void c_utl_buffer::purge() {
     m_Get = 0;
     m_Put = 0;
     m_nOffset = 0;
     m_nMaxPut = 0;
     m_Error = 0;
-    m_Memory.Purge();
+    m_Memory.purge();
 }
 #pragma warning(default:4127) //conditional operation is constant

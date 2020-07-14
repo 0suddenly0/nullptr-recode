@@ -54,7 +54,7 @@ namespace render {
 	ImDrawList* get_list_for_render();
 
 	ImVec4 get_vec4(color clr) {
-		return ImVec4(clr.color_float[0], clr.color_float[1], clr.color_float[2], clr.color_float[3]);
+		return ImVec4(clr.r<float>(), clr.g<float>(), clr.b<float>(), clr.a<float>());
 	}
 
 	vec2 get_text_size(std::string text, ImFont* font = default_font, int text_size = 12);

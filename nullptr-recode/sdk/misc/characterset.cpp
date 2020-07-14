@@ -19,8 +19,7 @@
 // Input  : *pParseGroup - pointer to the buffer for the group
 //			*pGroupString - null terminated list of characters to flag
 //-----------------------------------------------------------------------------
-void character_set_build(characterset_t *pSetBuffer, const char *pszSetString)
-{
+void character_set_build(characterset_t *pSetBuffer, const char *pszSetString) {
     int i = 0;
 
     // Test our pointers

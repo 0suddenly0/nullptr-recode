@@ -27,8 +27,15 @@ enum esp_types : int {
 	local_player = 2
 };
 
+char* player_tabs[] = {
+	"enemies", 
+	"teammates", 
+	"local player"
+};
+
 struct esp_settings_t {
 	bool enable = false;
+	key_bind_t bind = { 0, 0, false };
 	bool only_visible = false;
 
 	bool skeleton = false;
@@ -38,11 +45,9 @@ struct esp_settings_t {
 	bool health_bar = false;
 	bool health_in_bar = false;
 	bool health_based = false;
-	int health_position = 0;
 
 	bool armor_bar = false;
 	bool armor_in_bar = false;
-	int armor_position = 1;
 
 	bool weapon = false;
 	bool ammo_in_bar = false;
@@ -87,6 +92,8 @@ namespace settings {
 		int bomb_timer_pos = 0;
 
 		namespace esp {
+			bool using_bind = false;
+			key_bind_t bind = { 0, 0, false };
 			std::array<esp_settings_t, 3> esp_items;
 		}
 
@@ -191,6 +198,7 @@ namespace settings {
 			color color_molotov = color(255, 255, 255, 255);
 			color color_decoy = color(255, 255, 255, 255);
 			color color_flash = color(255, 255, 255, 255);
+			color color_tactical = color(255, 255, 255, 255);
 			color color_frag = color(255, 255, 255, 255);
 
 			color color_bar_smoke_back = color(20, 20, 20, 100);

@@ -20,7 +20,7 @@ class c_command;
 #define FCVAR_DEVELOPMENTONLY           (1<<1)  // Hidden in released products. Flag is removed automatically if ALLOW_DEVELOPMENT_CVARS is defined.
 #define FCVAR_GAMEDLL                   (1<<2)  // defined by the game DLL
 #define FCVAR_CLIENTDLL                 (1<<3)  // defined by the client DLL
-#define FCVAR_HIDDEN                    (1<<4)  // Hidden. Doesn't appear in GetOffset or auto complete. Like DEVELOPMENTONLY, but can't be compiled out.
+#define FCVAR_HIDDEN                    (1<<4)  // Hidden. Doesn't appear in get_offset or auto complete. Like DEVELOPMENTONLY, but can't be compiled out.
 
 // convar only                                  
 #define FCVAR_PROTECTED                 (1<<5)  // It's a server cvar, but we don't send the data since it's a password, etc.  Sends 1 if it's not bland/zero, 0 otherwise as value

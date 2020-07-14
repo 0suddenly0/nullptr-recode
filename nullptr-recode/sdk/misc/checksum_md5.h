@@ -4,8 +4,7 @@
 #define MD5_DIGEST_LENGTH 16  
 
 // MD5 Hash
-typedef struct
-{
+typedef struct {
     unsigned int	buf[4];
     unsigned int	bits[2];
     unsigned char	in[64];

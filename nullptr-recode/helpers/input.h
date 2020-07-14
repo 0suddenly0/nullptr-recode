@@ -11,33 +11,29 @@
 
 typedef int bind_info_flags;
 
-enum bind_info_flags_
-{
+enum bind_info_flags_ {
 	bind_info_flags_none = 0,
 	bind_info_flags_standart = 1 << 0,
-	bind_info_flags_side = 1 << 1
+	bind_info_flags_side = 1 << 1,
 };
-
-struct bind_info
-{
-	std::string name;
-	bool enable;
-	bind_info_flags flag;
-};
-
-enum key_bind_type
-{
-    always = 0,
-    press = 1,
-    press_invers = 2,
-    toggle = 3
-};
-
 
 struct key_bind_t {
     int key_id = 0;
     int bind_type = 0;
     bool enable = false;
+};
+
+struct bind_info {
+	std::string name;
+    key_bind_t* bind;
+	bind_info_flags flag;
+};
+
+enum key_bind_type {
+    always = 0,
+    press = 1,
+    press_invers = 2,
+    toggle = 3
 };
 
 enum class key_state {
@@ -50,7 +46,6 @@ enum class key_state {
 DEFINE_ENUM_FLAG_OPERATORS(key_state);
 
 namespace input {
-
     std::vector<bind_info*> binds;
     key_state       key_map[256];
 
@@ -70,7 +65,7 @@ namespace input {
     bool process_keybd_message(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	bind_info* find_bind_info(std::string name);
-	bind_info* create_bind_info(std::string name, bool state, bind_info_flags flag);
+	bind_info* create_bind_info(std::string name, key_bind_t* bind, bind_info_flags flag);
 	void delete_bind_info(std::string name);
     void create_bind(std::string name, bool enable, key_bind_t* bind, bind_info_flags flag);
 	void create_bind(std::string name, bool enable, key_bind_t* bind, float* side, bind_info_flags flag);

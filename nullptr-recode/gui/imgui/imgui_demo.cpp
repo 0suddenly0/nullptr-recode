@@ -180,7 +180,7 @@ void ImGui::ShowUserGuide()
         ImGui::BulletText("CTRL+Mouse Wheel to zoom window contents.");
     ImGui::BulletText("While inputing text:\n");
     ImGui::Indent();
-    ImGui::BulletText("CTRL+Left/Right to word jump.");
+    ImGui::BulletText("CTRL+left/right to word jump.");
     ImGui::BulletText("CTRL+A or double-click to select all.");
     ImGui::BulletText("CTRL+X/C/V to use clipboard cut/copy/paste.");
     ImGui::BulletText("CTRL+Z,CTRL+Y to undo/redo.");
@@ -567,7 +567,7 @@ static void ShowDemoWindowWidgets()
             ImGui::SameLine(); HelpMarker(
                 "USER:\n"
                 "Hold SHIFT or use mouse to select text.\n"
-                "CTRL+Left/Right to word jump.\n"
+                "CTRL+left/right to word jump.\n"
                 "CTRL+A or double-click to select all.\n"
                 "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
                 "CTRL+Z,CTRL+Y undo/redo.\n"
@@ -633,7 +633,7 @@ static void ShowDemoWindowWidgets()
             // Using the format string to display a name instead of an integer.
             // Here we completely omit '%d' from the format string, so it'll only display a name.
             // This technique can also be used with DragInt().
-            enum Element { Element_Fire, Element_Earth, Element_Air, Element_Water, Element_COUNT };
+            enum element { Element_Fire, Element_Earth, Element_Air, Element_Water, Element_COUNT };
             static int elem = Element_Fire;
             const char* elems_names[Element_COUNT] = { "Fire", "Earth", "Air", "Water" };
             const char* elem_name = (elem >= 0 && elem < Element_COUNT) ? elems_names[elem] : "Unknown";
@@ -648,7 +648,7 @@ static void ShowDemoWindowWidgets()
             ImGui::SameLine(); HelpMarker(
                 "Click on the colored square to open a color picker.\n"
                 "Click and hold to use drag and drop.\n"
-                "Right-click on the colored square to show options.\n"
+                "right-click on the colored square to show options.\n"
                 "CTRL+click on individual component to input value.\n");
 
             //ImGui::ColorEdit4("color 2", col2);
@@ -1322,7 +1322,7 @@ static void ShowDemoWindowWidgets()
         ImGui::Checkbox("With Alpha Preview", &alpha_preview);
         ImGui::Checkbox("With Half Alpha Preview", &alpha_half_preview);
         ImGui::Checkbox("With Drag and Drop", &drag_and_drop);
-        ImGui::Checkbox("With Options Menu", &options_menu); ImGui::SameLine(); HelpMarker("Right-click on the individual color widget to show options.");
+        ImGui::Checkbox("With Options Menu", &options_menu); ImGui::SameLine(); HelpMarker("right-click on the individual color widget to show options.");
         ImGui::Checkbox("With HDR", &hdr); ImGui::SameLine(); HelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
         ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
@@ -1722,7 +1722,7 @@ static void ShowDemoWindowWidgets()
             static int mode = 0;
             if (ImGui::RadioButton("Copy", mode == Mode_Copy)) { mode = Mode_Copy; } ImGui::SameLine();
             if (ImGui::RadioButton("Move", mode == Mode_Move)) { mode = Mode_Move; } ImGui::SameLine();
-            if (ImGui::RadioButton("Swap", mode == Mode_Swap)) { mode = Mode_Swap; }
+            if (ImGui::RadioButton("swap", mode == Mode_Swap)) { mode = Mode_Swap; }
             const char* names[9] =
             {
                 "Bobby", "Beatrice", "Betty",
@@ -1746,7 +1746,7 @@ static void ShowDemoWindowWidgets()
                     // the filename and a small preview of the image, etc.)
                     if (mode == Mode_Copy) { ImGui::Text("Copy %s", names[n]); }
                     if (mode == Mode_Move) { ImGui::Text("Move %s", names[n]); }
-                    if (mode == Mode_Swap) { ImGui::Text("Swap %s", names[n]); }
+                    if (mode == Mode_Swap) { ImGui::Text("swap %s", names[n]); }
                     ImGui::EndDragDropSource();
                 }
                 if (ImGui::BeginDragDropTarget())
@@ -2529,7 +2529,7 @@ static void ShowDemoWindowLayout()
             float scroll_max_x = ImGui::GetScrollMaxX();
             ImGui::EndChild();
             ImGui::SameLine();
-            const char* names[] = { "Left", "25%", "Center", "75%", "Right" };
+            const char* names[] = { "left", "25%", "Center", "75%", "right" };
             ImGui::Text("%s\n%.0f/%.0f", names[i], scroll_x, scroll_max_x);
             ImGui::Spacing();
         }
@@ -3080,10 +3080,10 @@ static void ShowDemoWindowColumns()
         ImGui::Columns(2, "word-wrapping");
         ImGui::Separator();
         ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
-        ImGui::TextWrapped("Hello Left");
+        ImGui::TextWrapped("Hello left");
         ImGui::NextColumn();
         ImGui::TextWrapped("The quick brown fox jumps over the lazy dog.");
-        ImGui::TextWrapped("Hello Right");
+        ImGui::TextWrapped("Hello right");
         ImGui::Columns(1);
         ImGui::Separator();
         ImGui::TreePop();
@@ -3706,7 +3706,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             int window_menu_button_position = style.WindowMenuButtonPosition + 1;
             if (ImGui::Combo("WindowMenuButtonPosition", (int*)&window_menu_button_position, "None\0Left\0Right\0"))
                 style.WindowMenuButtonPosition = window_menu_button_position - 1;
-            ImGui::Combo("ColorButtonPosition", (int*)&style.ColorButtonPosition, "Left\0Right\0");
+            ImGui::Combo("ColorButtonPosition", (int*)&style.ColorButtonPosition, "left\0Right\0");
             ImGui::SliderFloat2("ButtonTextAlign", (float*)&style.ButtonTextAlign, 0.0f, 1.0f, "%.2f");
             ImGui::SameLine(); HelpMarker("Alignment applies when a button is larger than its text content.");
             ImGui::SliderFloat2("SelectableTextAlign", (float*)&style.SelectableTextAlign, 0.0f, 1.0f, "%.2f");
@@ -3750,8 +3750,8 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             if (ImGui::RadioButton("Both",   alpha_flags == ImGuiColorEditFlags_AlphaPreviewHalf)) { alpha_flags = ImGuiColorEditFlags_AlphaPreviewHalf; } ImGui::SameLine();
             HelpMarker(
                 "In the color list:\n"
-                "Left-click on colored square to open color picker,\n"
-                "Right-click to open edit options menu.");
+                "left-click on colored square to open color picker,\n"
+                "right-click to open edit options menu.");
 
             ImGui::BeginChild("##colors", ImVec2(0, 0), true, ImGuiWindowFlags_AlwaysVerticalScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar | ImGuiWindowFlags_NavFlattened);
             ImGui::PushItemWidth(-160);
@@ -4485,7 +4485,7 @@ static void ShowExampleAppLayout(bool* p_open)
             ImGui::EndMenuBar();
         }
 
-        // Left
+        // left
         static int selected = 0;
         {
             ImGui::BeginChild("left pane", ImVec2(150, 0), true);
@@ -4500,7 +4500,7 @@ static void ShowExampleAppLayout(bool* p_open)
         }
         ImGui::SameLine();
 
-        // Right
+        // right
         {
             ImGui::BeginGroup();
             ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
@@ -4929,7 +4929,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
             static bool adding_line = false;
             if (ImGui::Button("Clear")) points.clear();
             if (points.Size >= 2) { ImGui::SameLine(); if (ImGui::Button("Undo")) { points.pop_back(); points.pop_back(); } }
-            ImGui::Text("Left-click and drag to add lines,\nRight-click to undo");
+            ImGui::Text("left-click and drag to add lines,\nRight-click to undo");
 
             // Here we are using InvisibleButton() as a convenience to 1) advance the cursor and 2) allows us to use
             // IsItemHovered(). But you can also draw directly and poll mouse/keyboard by yourself.

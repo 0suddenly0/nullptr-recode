@@ -69,7 +69,9 @@ std::map<int, std::string> fixed_weapon_names_by_id = {
 		{ item_definition_index::knife_talon, "knife" },
 		{ item_definition_index::knife_ursus, "knife" },
 		{ item_definition_index::knife_widowmaker, "knife" },
-		{ item_definition_index::taser, "zeus" }
+
+		{ item_definition_index::taser, "zeus" },
+		{ item_definition_index::healthshot, "healthshot"}
 };
 
 const char* clean_item_name(const char* name) {
@@ -87,11 +89,6 @@ struct spectator_t {
 	std::string name;
 	observer_mode_t mode;
 };
-
-float player_alpha[65];
-float player_alpha_offscreen[65];
-float last_view_time[1024];
-float last_view_time_offscreen[1024];
 
 RECT get_bbox(c_base_entity* ent) {
 	RECT rect{};
@@ -147,16 +144,14 @@ RECT get_bbox(c_base_entity* ent) {
 
 class esp_player {
 public:
-	static int get_player_alpha_offscreen(int index, int max = 255)
-	{
-		int i = player_alpha_offscreen[index];
+	static int get_player_alpha_offscreen(int index, int max = 255) {
+		int i = visuals::player_alpha_offscreen[index];
 		i = std::clamp(i, 0, max);
 		return i;
 	}
 
-	static int get_player_alpha(int alpha, int index)
-	{
-		int i = alpha - player_alpha[index];
+	int get_player_alpha(int alpha = 255) {
+		int i = alpha - visuals::player_alpha[player->ent_index()];
 		i = std::clamp(i, 0, 255);
 		return i;
 	}
@@ -184,6 +179,8 @@ public:
 
 		if (!current_settings.enable) return false;
 
+		dormant_color = current_settings.only_visible ? !is_visible : player->is_dormant();
+
 		clr = is_visible ? current_settings.box_visible : current_settings.box_invisible;
 
 		vec3 head = _player->get_hitbox_pos(hitbox_head);
@@ -206,10 +203,195 @@ public:
 		return true;
 	}
 
+	void draw_box() {
+		if (!current_settings.box) return;
+
+		color main = get_color(is_visible ? current_settings.box_visible : current_settings.box_invisible);
+		render::draw_box(bbox.left, bbox.top, bbox.right, bbox.bottom, main);
+		render::draw_box(bbox.left + 1, bbox.top + 1, bbox.right - 1, bbox.bottom - 1, get_color(color(0, 0, 0, 255), true));
+		render::draw_box(bbox.left - 1, bbox.top - 1, bbox.right + 1, bbox.bottom + 1, get_color(color(0, 0, 0, 255), true));
+	}
+
+	void draw_health() {
+		if (!current_settings.health_bar) return;
+
+		int hp = math::clamp(player->health(), 0, 100);
+		float box_w = (float)fabs(bbox.right - bbox.left);
+		float box_h = (float)fabs(bbox.bottom - bbox.top);
+		float off = 7;
+		int height = (box_h * hp) / 100;
+
+		float x = bbox.left - off;
+		float y = bbox.bottom;
+		float w = 4;
+		float h = box_h;
+
+		int green = int(hp * 2.55f);
+		int red = 255 - green;
+
+		render::draw_box(x, y - h - 1.f, x + w, y + 1.f, get_color(current_settings.health_bar_outline, true));
+		render::draw_box_filled(x + 1.f, y - box_h, x + w - 1.f, y, get_color(current_settings.health_bar_background,true));
+		render::draw_box_filled(x + 1, y - height, x + w - 1, y, get_color(current_settings.health_based ? color(red, green, 0, current_settings.health_bar_main.a()) : current_settings.health_bar_main));
+
+		if (current_settings.health_in_bar && hp > 0 && hp < 100) {
+			render::draw_text(utils::snprintf("%d", player->health()), x + 2, y - height, get_color(color(255, 255, 255, 255)), true, true, true);
+		}
+	}
+
+	void draw_armor() {
+		int  armour = math::clamp(player->armor_value(), 0, 100);
+		if (!current_settings.armor_bar || armour <= 0) return;
+
+		float box_w = (float)fabs(bbox.right - bbox.left);
+		float box_h = (float)fabs(bbox.bottom - bbox.top);
+		float off = 7;
+		int height = (box_h * armour) / 100;
+
+		float x = bbox.right + off;
+		float y = bbox.bottom;
+		float w = 4;
+		float h = box_h;
+
+		render::draw_box(x - w, (y - h) - 1.f, x, y + 1.f, get_color(current_settings.armor_bar_outline, true));
+		render::draw_box_filled(x - w + 1.f, (y - h), x - 1.f, y, get_color(current_settings.armor_bar_background, true));
+		render::draw_box_filled(x - w + 1.f, (y - height), x - 1.f, y, get_color(current_settings.armor_bar_main));
+
+		if (current_settings.armor_in_bar && armour > 0 && armour < 100) {
+			render::draw_text(utils::snprintf("%d", player->armor_value()), x - 2, y - height, get_color(color(255, 255, 255, 255)), true, true, true);
+		}
+	}
+
+	void draw_skeleton() {
+		if (!current_settings.skeleton) return;
+		auto model = player->get_model();
+		if (!model) return;
+		studiohdr_t* studio_model = sdk::mdl_info->get_studiomodel(model);
+		if (studio_model) {
+			static matrix3x4 bone_to_world_out[128];
+			if (player->setup_bones(bone_to_world_out, 128, 256, 0.f)) {
+				for (int i = 0; i < studio_model->numbones; i++) {
+					mstudiobone_t* bone = studio_model->get_bone(i);
+					if (!bone || !(bone->flags & 256) || bone->parent == -1)
+						continue;
+
+					vec2 bone_pos1;
+					if (!math::world2screen(vec3(bone_to_world_out[i][0][3], bone_to_world_out[i][1][3], bone_to_world_out[i][2][3]), bone_pos1))
+						continue;
+
+					vec2 bone_pos2;
+					if (!math::world2screen(vec3(bone_to_world_out[bone->parent][0][3], bone_to_world_out[bone->parent][1][3], bone_to_world_out[bone->parent][2][3]), bone_pos2))
+						continue;
+
+					render::draw_line(bone_pos1, bone_pos2, get_color(is_visible ? current_settings.skeleton_visible : current_settings.skeleton_invisible));
+				}
+			}
+		}
+	}
+
+	void draw_flags() {
+		std::vector<std::string> flags;
+
+		bool planting = player->active_weapon()->get_item_definition_index() == item_definition_index::c4 && player->active_weapon()->started_arming();
+		bool reloading = false;
+
+		c_animation_layer* animLayer = player->get_anim_overlay(1);
+		if (animLayer->owner) {
+			int activity = player->get_sequence_activity(animLayer->sequence);
+			reloading = activity == 967 && animLayer->weight != 0.f;
+		}
+
+		if (current_settings.flags_flashed && player->is_flashed(40.f))  flags.push_back("flashed");
+		if (current_settings.flags_defusing && player->is_defusing())    flags.push_back("defusing");
+		if (current_settings.flags_scoped && player->is_scoped())        flags.push_back("scoped");
+		if (current_settings.flags_bomb_carrier && player->has_c4())     flags.push_back("bomb");
+		if (current_settings.flags_planting && planting)                 flags.push_back("planting");
+		if (current_settings.flags_reloading && reloading)               flags.push_back("reloading");
+
+		std::string armor = "";
+		if (current_settings.flags_armor && player->armor_value() > 0) armor += "A ";
+		if (current_settings.flags_helmet && player->has_helmet())     armor += "H";
+
+		if (armor != "") flags.push_back(armor);
+
+		int offset = 4;
+		if (current_settings.armor_bar) offset += 6;
+
+		for (int i = 0; i < flags.size(); i++) {
+			render::draw_text(flags[i], bbox.right + offset, bbox.top + (i * 12), get_color(color(255, 255, 255, 255)));
+		}
+	}
+
+	void draw_weapon() {
+		if (!current_settings.weapon) return;
+		c_base_combat_weapon* weapon = player->active_weapon().get();
+		if (!weapon) return;
+		c_cs_weapon_info* weapon_data = weapon->get_cs_weapondata();
+		if (!weapon_data) return;
+		
+		int ammo = math::clamp(weapon->clip1(), 0, weapon_data->max_clip1);
+
+		c_animation_layer* animLayer = player->get_anim_overlay(1);
+		if (!animLayer->owner) return;
+
+		int activity = player->get_sequence_activity(animLayer->sequence);
+		bool reload_anim = activity == 967 && animLayer->weight != 0.f;
+
+		float offset = 2.f;
+		int w = bbox.right - bbox.left;
+
+		if (current_settings.weapon_ammo) {
+			if (weapon->is_rifle() || weapon->is_sniper() || weapon->is_pistol()) {
+				float box_w = (float)fabs(bbox.right - bbox.left);
+				float width = 0.f;
+
+				if (reload_anim) {
+					float cycle = animLayer->cycle;
+					width = (((box_w * cycle) / 1.f));
+				} else {
+					width = (((box_w * ammo) / weapon_data->max_clip1));
+				}
+
+				float x = bbox.left;
+				float y = bbox.bottom + 7;
+				float w = 4;
+
+				render::draw_box(x - 1.f, y - w, x + box_w + 1, y, get_color(current_settings.ammo_bar_outline, true));
+				render::draw_box_filled(x, y - w + 1.f, x + box_w, y - 1.f, get_color(current_settings.ammo_bar_background, true));
+				render::draw_box_filled(x, y - w + 1.f, x + width, y - 1.f, get_color(current_settings.ammo_bar_main));
+
+				int reload_percentage = (100 * animLayer->cycle) / 1.f;
+				if (weapon->clip1() != weapon_data->max_clip1 && weapon->clip1() > 0 && activity != 967 && current_settings.ammo_in_bar) {
+					render::draw_text(utils::snprintf("%d", weapon->clip1()), x + width, y - 2, get_color(color(255, 255, 255, 255)), true, true, true);
+				} else if (activity == 967 && reload_percentage != 99 && current_settings.ammo_in_bar) {
+					render::draw_text(utils::snprintf("%d%%", reload_percentage), x + width, y - 2, get_color(color(255, 255, 255, 255)), true, true, true);
+				}
+
+				offset += 5.f;
+			}
+		}
+
+		render::draw_text(fixed_weapon_names_by_id[weapon->get_item_definition_index()] == "" ? weapon_data->hud_name + 7 : fixed_weapon_names_by_id[weapon->get_item_definition_index()], (bbox.left + w * 0.5f), bbox.bottom + offset, get_color(color(255, 255, 255, 255)), true, true);
+	}
+
+	void draw_name() {
+		if (!current_settings.name) return;
+		render::draw_text(player->get_player_info().szName, vec2(feet_pos.x, head_pos.y - 8), get_color(color(255, 255, 255, 255)), true, true, true);
+	}
+
+	color get_color(color base, bool only_alpha = false) {
+		color main;
+		if ((player->is_dormant() || (current_settings.only_visible && !is_visible)) && !only_alpha) {
+			return color(current_settings.dormant, get_player_alpha());
+		} else {
+			return color(base, get_player_alpha(base.a()));
+		}
+	}
+
 	c_base_player* player;
 	bool          is_enemy;
 	bool          is_visible;
 	bool          is_localplayer;
+	bool          dormant_color;
 	color         clr;
 	vec2          head_pos;
 	vec2          feet_pos;
@@ -303,6 +485,9 @@ namespace visuals {
 						} else if (hdrName.find("smoke") != std::string::npos) {
 							name = "smoke";
 							clr = settings::visuals::grenades::color_smoke;
+						} else if (hdrName.find("sensor") != std::string::npos) {
+							name = hdrName;
+							clr = settings::visuals::grenades::color_tactical;
 						}
 					}
 				}
@@ -338,7 +523,7 @@ namespace visuals {
 							math::vector_transform(hitbox->bbmax, boneMatrix_actual[hitbox->bone], max_actual);
 
 							color clr = settings::visuals::hitbox::clr;
-							sdk::debug_overlay->add_capsule_overlay(min_actual, max_actual, hitbox->m_flRadius, clr.color_char[0], clr.color_char[1], clr.color_char[2], clr.color_char[3], settings::visuals::hitbox::show_time);
+							sdk::debug_overlay->add_capsule_overlay(min_actual, max_actual, hitbox->m_flRadius, clr.r(), clr.g(), clr.b(), clr.a(), settings::visuals::hitbox::show_time);
 						}
 					}
 				}
@@ -496,23 +681,20 @@ namespace visuals {
 		static int last_count = 0;
 		c_utl_vector<client_hit_verify_t>& client_impact_list = sdk::local_player->get_client_impacts();
 
-		for (int i = client_impact_list.Count(); i > last_count; i--) {
+		for (int i = client_impact_list.count(); i > last_count; i--) {
 			if (settings::visuals::impacts::client::enable) {
 				sdk::debug_overlay->add_box_overlay(
 					client_impact_list[i - 1].pos,
 					vec3(-settings::visuals::impacts::client::size, -settings::visuals::impacts::client::size, -settings::visuals::impacts::client::size),
 					vec3(settings::visuals::impacts::client::size, settings::visuals::impacts::client::size, settings::visuals::impacts::client::size),
 					qangle(0, 0, 0),
-					settings::visuals::impacts::client::clr.color_char[0],
-					settings::visuals::impacts::client::clr.color_char[1],
-					settings::visuals::impacts::client::clr.color_char[2],
-					settings::visuals::impacts::client::clr.color_char[3],
+					settings::visuals::impacts::client::clr,
 					settings::visuals::impacts::client::show_time);
 			}
 		}
 
-		if (client_impact_list.Count() != last_count)
-			last_count = client_impact_list.Count();
+		if (client_impact_list.count() != last_count)
+			last_count = client_impact_list.count();
 	}
 
 	void spectator_list() {
@@ -856,11 +1038,11 @@ namespace visuals {
 			if (ent->is_gun()) {
 				float width = (((box_w * std::clamp(ent->clip1(), 0, ent->get_cs_weapondata()->max_clip1)) / ent->get_cs_weapondata()->max_clip1));
 
-				render::draw_box(bbox.left - 1.f, bbox.top + 3.f, bbox.right + 1.f, bbox.top + 7.f, settings::visuals::dropped_weapon::bar_outline);
-				render::draw_box_filled(bbox.left, bbox.top + 4, bbox.right, bbox.top + 6, settings::visuals::dropped_weapon::bar_background);
-				render::draw_box_filled(bbox.left, bbox.top + 4, bbox.left + (int)width, bbox.top + 6, settings::visuals::dropped_weapon::bar_main);
+				render::draw_box(bbox.left - 1.f, bbox.top + 4.f, bbox.right + 1.f, bbox.top + 8.f, settings::visuals::dropped_weapon::bar_outline);
+				render::draw_box_filled(bbox.left, bbox.top + 5, bbox.right, bbox.top + 7, settings::visuals::dropped_weapon::bar_background);
+				render::draw_box_filled(bbox.left, bbox.top + 5, bbox.left + (int)width, bbox.top + 7, settings::visuals::dropped_weapon::bar_main);
 				if (ent->clip1() != ent->get_cs_weapondata()->max_clip1 && ent->clip1() > 0 && settings::visuals::dropped_weapon::ammo_in_bar) {
-					render::draw_text(std::to_string(ent->clip1()), bbox.left + width, bbox.top + 5.f, color(255, 255, 255, 255), true, true, true);
+					render::draw_text(std::to_string(ent->clip1()), bbox.left + width, bbox.top + 6.f, color(255, 255, 255, 255), true, true, true);
 				}
 				offsett += 4.f;
 			}
@@ -898,12 +1080,40 @@ namespace visuals {
 				offscreen(cur_player);
 
 				esp_player player = esp_player();
-				if (player.begin(cur_player)) {
+				if (player.begin(cur_player) && (!settings::visuals::esp::using_bind || settings::visuals::esp::bind.enable)) {
+					if (!player.current_settings.only_visible) {
+						if (!cur_player->is_dormant()) {
+							last_view_time[cur_player->ent_index()] = sdk::global_vars->curtime;
+						}
+						if (cur_player->is_dormant()) {
+							if(sdk::global_vars->curtime - last_view_time[cur_player->ent_index()] > 2) player_alpha[cur_player->ent_index()] = utils::lerp(player_alpha[cur_player->ent_index()], 255.f, 0.15f);
+							else if(sdk::global_vars->curtime - last_view_time[cur_player->ent_index()] < 2) player_alpha[cur_player->ent_index()] = (player.current_settings.dormant.a() - 255) * -1;
+						} else if (!(cur_player->is_dormant())) {
+							player_alpha[cur_player->ent_index()] = utils::lerp(player_alpha[cur_player->ent_index()], 0.f, 0.02f);
+						}
+					} else if (player.current_settings.only_visible) {
+						if (player.is_visible) {
+							last_view_time[cur_player->ent_index()] = sdk::global_vars->curtime;
+						}
+						if (!player.is_visible) {
+							if (sdk::global_vars->curtime - last_view_time[cur_player->ent_index()] > 2) player_alpha[cur_player->ent_index()] = utils::lerp(player_alpha[cur_player->ent_index()], 255.f, 0.15f);
+							else if (sdk::global_vars->curtime - last_view_time[cur_player->ent_index()] < 2) player_alpha[cur_player->ent_index()] = (player.current_settings.dormant.a() - 255) * -1;
+						} else if (player.is_visible) {
+							player_alpha[cur_player->ent_index()] = utils::lerp(player_alpha[cur_player->ent_index()], 0.f, 0.02f);
+						}
+					}
+
+					player.draw_skeleton();
+					player.draw_box();
+					player.draw_health();
+					player.draw_armor();
+					player.draw_weapon();
+					player.draw_flags();
+					player.draw_name();
 				}
-			}
-			else if (settings::visuals::dropped_weapon::enable && ent->is_weapon())
+			} else if (settings::visuals::dropped_weapon::enable && ent->is_weapon()) {
 				draw_weapons((c_base_combat_weapon*)(ent));
-			else if (ent->get_client_class()->class_id == class_id::c_inferno && settings::visuals::grenades::enable && settings::visuals::grenades::molotov_radius) {
+			} else if (ent->get_client_class()->class_id == class_id::c_inferno && settings::visuals::grenades::enable && settings::visuals::grenades::molotov_radius) {
 				c_base_inferno* inferno = (c_base_inferno*)ent;
 				if (!inferno) continue;
 
@@ -1088,8 +1298,7 @@ namespace visuals {
 			return result;
 		}
 
-		float get_radius(item_definition_index type_locl)
-		{
+		float get_radius(item_definition_index type_locl) {
 			switch (type_locl) {
 			case item_definition_index::smokegrenade: 
 				return 114.f;
@@ -1116,6 +1325,9 @@ namespace visuals {
 			case item_definition_index::molotov:
 			case item_definition_index::incgrenade:
 				if (tr.fraction != 1.0f && tr.plane.normal.z > 0.7f)
+					return true;
+			case item_definition_index::tagrenade:
+				if (tr.fraction != 1.0f)
 					return true;
 			case item_definition_index::flashbang:
 			case item_definition_index::hegrenade:

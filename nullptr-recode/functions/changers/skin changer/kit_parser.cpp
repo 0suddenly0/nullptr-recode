@@ -41,7 +41,7 @@ struct head_t {
 	int _unknown; //0x0014
 	int last_element; //0x0018
 }; //Size=0x001C
-   // could use CUtlString but this is just easier and CUtlString isn't needed anywhere else
+   // could use c_utl_string but this is just easier and c_utl_string isn't needed anywhere else
 struct string_t {
 	char* buffer; //0x0000
 	int capacity; //0x0004

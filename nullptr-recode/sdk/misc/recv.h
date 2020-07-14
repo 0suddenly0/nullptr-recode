@@ -2,8 +2,7 @@
 
 #include <string>
 
-enum send_prop_type
-{
+enum send_prop_type {
     DPT_Int = 0,
     DPT_Float,
     DPT_Vector,
@@ -15,8 +14,7 @@ enum send_prop_type
     DPT_NUMSendPropTypes
 };
 
-class d_variant
-{
+class d_variant {
 public:
     union
     {
@@ -33,8 +31,7 @@ public:
 class recv_table;
 class recv_prop;
 
-class c_recv_proxy_data
-{
+class c_recv_proxy_data {
 public:
     const recv_prop*     recv_prop;        // The property it's receiving.
     d_variant		    value;            // The value given to you to store.
@@ -64,8 +61,7 @@ typedef void(*array_length_recv_proxy_fn)(void *pStruct, int objectID, int curre
 // NOTE: don't ever return null from a DataTable receive proxy function. Bad things will happen.
 typedef void(*data_table_recv_var_proxy_fn)(const recv_prop *pProp, void **pOut, void *pData, int objectID);
 
-class recv_prop
-{
+class recv_prop {
 public:
     char*                           var_name;
     send_prop_type                  recv_type;
@@ -90,8 +86,7 @@ public:
 
 };
 
-class recv_table
-{
+class recv_table {
 public:
     recv_prop*              p_props;
     int                     n_props;
@@ -101,43 +96,34 @@ public:
     bool                    in_main_list;
 };
 
-recv_var_proxy_fn recv_prop::get_proxy_fn() const
-{
+recv_var_proxy_fn recv_prop::get_proxy_fn() const {
     return proxy_fn;
 }
 
-void recv_prop::set_proxy_fn(recv_var_proxy_fn fn)
-{
+void recv_prop::set_proxy_fn(recv_var_proxy_fn fn) {
     proxy_fn = fn;
 }
 
-data_table_recv_var_proxy_fn recv_prop::get_data_table_proxy_fn() const
-{
+data_table_recv_var_proxy_fn recv_prop::get_data_table_proxy_fn() const {
     return data_table_proxy_fn;
 }
 
-void recv_prop::set_data_table_proxy_fn(data_table_recv_var_proxy_fn fn)
-{
+void recv_prop::set_data_table_proxy_fn(data_table_recv_var_proxy_fn fn) {
     data_table_proxy_fn = fn;
 }
 
-class recv_prop_hook
-{
+class recv_prop_hook {
 public:
-	recv_prop_hook(recv_prop* prop, const recv_var_proxy_fn proxy_fn) : m_property(prop), m_original_proxy_fn(prop->proxy_fn)
-	{
+	recv_prop_hook(recv_prop* prop, const recv_var_proxy_fn proxy_fn) : m_property(prop), m_original_proxy_fn(prop->proxy_fn) {
 		set_proxy_function(proxy_fn);
 	}
-	~recv_prop_hook()
-	{
+	~recv_prop_hook() {
 		m_property->proxy_fn = m_original_proxy_fn;
 	}
-	auto get_original_function() const -> recv_var_proxy_fn
-	{
+	auto get_original_function() const -> recv_var_proxy_fn {
 		return m_original_proxy_fn;
 	}
-	auto set_proxy_function(const recv_var_proxy_fn proxy_fn) const -> void
-	{
+	auto set_proxy_function(const recv_var_proxy_fn proxy_fn) const -> void {
 		m_property->proxy_fn = proxy_fn;
 	}
 private:

@@ -22,8 +22,7 @@
 //			in[16] - 
 // Output : static void
 //-----------------------------------------------------------------------------
-static void MD5Transform(unsigned int buf[4], unsigned int const in[16])
-{
+static void MD5Transform(unsigned int buf[4], unsigned int const in[16]) {
     register unsigned int a, b, c, d;
 
     a = buf[0];
@@ -110,8 +109,7 @@ static void MD5Transform(unsigned int buf[4], unsigned int const in[16])
 
 // Input  : *ctx - 
 //-----------------------------------------------------------------------------
-void MD5Init(MD5Context_t *ctx)
-{
+void MD5Init(MD5Context_t *ctx) {
     ctx->buf[0] = 0x67452301;
     ctx->buf[1] = 0xefcdab89;
     ctx->buf[2] = 0x98badcfe;
@@ -127,8 +125,7 @@ void MD5Init(MD5Context_t *ctx)
 //			*buf - 
 //			len - 
 //-----------------------------------------------------------------------------
-void MD5Update(MD5Context_t *ctx, unsigned char const *buf, unsigned int len)
-{
+void MD5Update(MD5Context_t *ctx, unsigned char const *buf, unsigned int len) {
     unsigned int t;
 
     /* Update bitcount */
@@ -176,8 +173,7 @@ void MD5Update(MD5Context_t *ctx, unsigned char const *buf, unsigned int len)
 // Input  : digest[MD5_DIGEST_LENGTH] - 
 //			*ctx - 
 //-----------------------------------------------------------------------------
-void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t *ctx)
-{
+void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t *ctx) {
     unsigned count;
     unsigned char *p;
 
@@ -223,8 +219,7 @@ void MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5Context_t *ctx)
 //			hashlen - 
 // Output : char
 //-----------------------------------------------------------------------------
-char *MD5_Print(unsigned char *hash, int hashlen)
-{
+char *MD5_Print(unsigned char *hash, int hashlen) {
     static char szReturn[64] = "";
     return szReturn;
 }
@@ -234,8 +229,7 @@ char *MD5_Print(unsigned char *hash, int hashlen)
 // Input  : seed number
 // Output : pseudo random number
 //-----------------------------------------------------------------------------
-unsigned int MD5_PseudoRandom(unsigned int nSeed)
-{
+unsigned int MD5_PseudoRandom(unsigned int nSeed) {
     MD5Context_t ctx;
     unsigned char digest[MD5_DIGEST_LENGTH]; // The MD5 Hash
 

@@ -118,7 +118,7 @@ public:
 
 class i_command_completion_callback {
 public:
-    virtual int  command_completion_callback(const char *pPartial, c_utl_vector<CUtlString> &commands) = 0;
+    virtual int  command_completion_callback(const char *pPartial, c_utl_vector<c_utl_string> &commands) = 0;
 };
 
 //-----------------------------------------------------------------------------
@@ -130,7 +130,7 @@ class con_command_base {
     friend class con_command;
     friend void convar_register(int nCVarFlag, i_con_command_base_accessor *pAccessor);
 
-    // FIXME: Remove when convar changes are done
+    // FIXME: remove when convar changes are done
     friend class CDefaultCvar;
 
 public:
@@ -202,7 +202,7 @@ public:
 
     virtual         ~con_command(void);
     virtual bool    is_command(void) const;
-    virtual int     auto_complete_suggest(const char *partial, c_utl_vector<CUtlString> &commands);
+    virtual int     auto_complete_suggest(const char *partial, c_utl_vector<c_utl_string> &commands);
     virtual bool    can_auto_complete(void);
     virtual void    dispatch(const c_command &command);
 
@@ -267,7 +267,7 @@ public:
     void install_change_callback(FnChangeCallback_t callback, bool bInvoke = true);
     void remove_change_callback(FnChangeCallback_t callbackToRemove);
 
-    int get_change_callback_count() const { return m_pParent->m_fnChangeCallbacks.Count(); }
+    int get_change_callback_count() const { return m_pParent->m_fnChangeCallbacks.count(); }
     FnChangeCallback_t get_change_callback(int slot) const { return m_pParent->m_fnChangeCallbacks[slot]; }
 
     // Retrieve value

@@ -145,14 +145,14 @@ namespace render {
 		if (center_y) pos.y -= textSize.y / 2.0f;
 
 		if (outline) {
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
-			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.color_float[3])), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x + 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
+			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
 		}
 		draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y), ImGui::GetColorU32(get_vec4(clr)), text.c_str());
 

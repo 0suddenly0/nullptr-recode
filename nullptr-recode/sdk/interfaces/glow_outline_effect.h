@@ -42,7 +42,7 @@ public:
     int register_glow_object(c_client_entity *pEntity, const vec3 &vGlowColor, float flGlowAlpha, bool bRenderWhenOccluded, bool bRenderWhenUnoccluded, int nSplitScreenSlot) {
         int nIndex;
         if(m_nFirstFreeSlot == glow_object_definition::END_OF_FREE_LIST) {
-            nIndex = m_GlowObjectDefinitions.AddToTail();
+            nIndex = m_GlowObjectDefinitions.add_to_tail();
         } else {
             nIndex = m_nFirstFreeSlot;
             m_nFirstFreeSlot = m_GlowObjectDefinitions[nIndex].m_nNextFreeSlot;
@@ -91,7 +91,7 @@ public:
     }
 
     bool has_glow_effect(c_client_entity *pEntity) const {
-        for(int i = 0; i < m_GlowObjectDefinitions.Count(); ++i) {
+        for(int i = 0; i < m_GlowObjectDefinitions.count(); ++i) {
             if(!m_GlowObjectDefinitions[i].is_unused() && m_GlowObjectDefinitions[i].m_pEntity == pEntity) {
                 return true;
             }

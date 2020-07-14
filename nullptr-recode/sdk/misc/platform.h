@@ -433,7 +433,7 @@
 // Disable annoying unhelpful warnings
 //-----------------------------------------------------------------------------
 #ifdef COMPILER_MSVC
-// Remove warnings from warning level 4.
+// remove warnings from warning level 4.
 #pragma warning(disable : 4514) // warning C4514: 'acosl' : unreferenced inline function has been removed
 #pragma warning(disable : 4100) // warning C4100: 'hwnd' : unreferenced formal parameter
 #pragma warning(disable : 4127) // warning C4127: conditional expression is constant
