@@ -79,7 +79,7 @@ public:
 
 class c_sp_shared_memory;
 class c_gamestats_data;
-class key_values;
+class c_key_values;
 class c_steam_api_context;
 struct frustum_t;
 
@@ -326,7 +326,7 @@ public:
 	virtual void                  set_connection_password(char const *pchCurrentPW) = 0;
 	virtual c_steam_api_context*     get_steam_api_context() = 0;
 	virtual void                  submit_stat_record(char const *szMapName, unsigned int uiBlobVersion, unsigned int uiBlobSize, const void *pvBlob) = 0;
-	virtual void                  server_cmd_key_values(key_values *pkey_values) = 0; // 203
+	virtual void                  server_cmd_key_values(c_key_values *pkey_values) = 0; // 203
 	virtual void                  sphere_paint_surface(const model_t* model, const vec3& location, unsigned char chr, float fl1, float fl2) = 0;
 	virtual bool                  has_paintmap(void) = 0;
 	virtual void                  enable_paintmap_render() = 0;
@@ -352,7 +352,7 @@ public:
 	virtual bool                  audio_language_changed(void) = 0;
 	virtual bool                  is_auto_save_in_progress(void) = 0;
 	virtual void                  start_loading_screen_for_command(const char* command) = 0;
-	virtual void                  start_loading_screen_for_key_values(key_values* values) = 0;
+	virtual void                  start_loading_screen_for_key_values(c_key_values* values) = 0;
 	virtual void                  sos_set_opvar_float(const char*, float) = 0;
 	virtual void                  sos_get_opvar_float(const char*, float &) = 0;
 	virtual bool                  is_subscribed_map(const char*, bool) = 0;
@@ -360,7 +360,7 @@ public:
 	virtual void                  get_demo_playback_parameters(void) = 0;
 	virtual int                   get_client_version(void) = 0;
 	virtual bool                  is_demo_skipping(void) = 0;
-	virtual void                  set_demo_important_event_data(const key_values* values) = 0;
+	virtual void                  set_demo_important_event_data(const c_key_values* values) = 0;
 	virtual void                  clear_events(void) = 0;
 	virtual int                   get_safe_zone_xmin(void) = 0;
 	virtual bool                  is_voice_recording(void) = 0;

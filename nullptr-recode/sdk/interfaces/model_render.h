@@ -56,7 +56,7 @@ class c_mat_render_context;
 class data_cache_handle_t;
 class c_texture;
 class c_material_var;
-class key_values;
+class c_key_values;
 struct model_t;
 struct mstudioanimdesc_t;
 struct mstudioseqdesc_t;
@@ -179,7 +179,7 @@ public:
     virtual void                    get_color_modulation(float *r, float *g, float *b) = 0;
     virtual bool                    is_translucent_under_modulation(float fAlphaModulation = 1.0f) const = 0;
     virtual c_material_var*          find_var_fast(char const *pVarName, unsigned int *pToken) = 0;
-    virtual void                    set_shader_and_params(key_values *pkey_values) = 0;
+    virtual void                    set_shader_and_params(c_key_values *pkey_values) = 0;
     virtual const char*             get_shader_name() const = 0;
     virtual void                    delete_if_unreferenced() = 0;
     virtual bool                    is_sprite_card() = 0;

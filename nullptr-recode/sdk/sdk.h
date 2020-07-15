@@ -8,6 +8,7 @@
 #include "../helpers/math/qangle.h"
 #include "../helpers/math/vector.h"
 
+#include "interfaces/material_var.h"
 #include "interfaces/studio.h"
 #include "interfaces/steam.h"
 #include "interfaces/net_message.h"
@@ -52,7 +53,6 @@
 
 #include "../helpers/netvars.h"
 
-//class c_local_player;
 class c_game_rules;
 class c_player_resource;
 
@@ -69,8 +69,6 @@ public:
 private:
 	c_base_player** m_local;
 };
-/*#include "structures/c_game_rules.h"
-#include "structures/c_player_resource.h"*/
 
 namespace sdk {
 	extern HWND                      game_hwnd;

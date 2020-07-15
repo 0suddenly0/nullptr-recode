@@ -167,6 +167,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\chams\chams.cpp" />
     <ClCompile Include="functions\changers\profile changer\profile_changer.cpp" />
     <ClCompile Include="functions\changers\skin changer\kit_parser.cpp" />
     <ClCompile Include="functions\changers\skin changer\parser.cpp" />
@@ -221,6 +222,7 @@
     <ClCompile Include="hooks\vfunc.cpp" />
     <ClCompile Include="render\render.cpp" />
     <ClCompile Include="sdk\interfaces\convar_sys.cpp" />
+    <ClCompile Include="sdk\interfaces\material_var.h" />
     <ClCompile Include="sdk\misc\characterset.cpp" />
     <ClCompile Include="sdk\misc\checksum_crc.cpp" />
     <ClCompile Include="sdk\misc\checksum_md5.cpp" />
@@ -231,6 +233,7 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions\chams\chams.h" />
     <ClInclude Include="functions\changers\profile changer\profile_changer.h" />
     <ClInclude Include="functions\changers\skin changer\item_definitions.h" />
     <ClInclude Include="functions\changers\skin changer\kit_parser.h" />
@@ -285,6 +288,7 @@
     <ClInclude Include="sdk\interfaces\convar.h" />
     <ClInclude Include="sdk\interfaces\convar_sys.h" />
     <ClInclude Include="sdk\interfaces\cvar.h" />
+    <ClInclude Include="sdk\interfaces\key_values.h" />
     <ClInclude Include="sdk\interfaces\debug_overlay.h" />
     <ClInclude Include="sdk\interfaces\engine_client.h" />
     <ClInclude Include="sdk\interfaces\engine_sound.h" />

@@ -8,9 +8,9 @@
 #include "settings/globals.h"
 #include "hooks/hooks.h"
 #include "helpers/netvars.h"
+#include "functions/chams/chams.h"
 
 DWORD WINAPI attach(LPVOID base) {
-
 	if (utils::wait_for_modules(10000, { L"client.dll", L"engine.dll", L"shaderapidx9.dll" }) == WAIT_TIMEOUT) {
 		return FALSE;
 	}
@@ -29,6 +29,8 @@ DWORD WINAPI attach(LPVOID base) {
 		sdk::initialize();
 		sdk::print();
 		utils::console_print("[-] sdk initialized\n");
+
+		chams::init();
 
 		utils::console_print("[-] initialization netvars...\n");
 		netvar::initialize();

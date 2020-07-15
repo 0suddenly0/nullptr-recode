@@ -9,7 +9,8 @@
 enum class tabs_type {
     standart = 0,
     big = 1,
-    spac = 2
+    spac = 2,
+    spac_child = 3
 };
 
 template<size_t N>
@@ -32,18 +33,18 @@ void render_tabs(char* (&names)[N], int& activetab, float w, float h) {
 }
 
 template<size_t N>
-void render_tabsMain(char* (&names)[N], int& activetab, float w, float h) {
+void render_tabsMain(char* (&names)[N], int& activetab, float w, float h, bool in_child) {
     bool values[N] = { false };
     values[activetab] = true;
     for (auto i = 0; i < N; ++i) {
         if (i == 0) {
-            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 1))
+            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 1, in_child))
                 activetab = i;
         } else if (i == N - 1) {
-            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 2))
+            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 2, in_child))
                 activetab = i;
         } else {
-            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 0))
+            if (ImGui::ToggleButtonMain(names[i], &values[i], ImVec2{ w, h }, 0, in_child))
                 activetab = i;
         }
         if (i < N - 1) ImGui::SameLine();
@@ -155,7 +156,7 @@ namespace null_gui {
 
     template<size_t T>
     inline void horizontal(int& tab, char* (&tabs)[T], tabs_type type = tabs_type::standart) {
-        auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x - (type == tabs_type::spac ? (6 * _countof(tabs)) : 0)) / _countof(tabs);
+        auto tabs_w = (ImGui::GetWindowSize().x - ImGui::GetCursorPos().x - ImGui::GetStyle().WindowPadding.x - (type == tabs_type::spac || type == tabs_type::spac_child ? (6 *_countof(tabs) - 6) : 0)) / _countof(tabs);
 
         switch (type) {
         case tabs_type::standart:
@@ -172,7 +173,13 @@ namespace null_gui {
             break;
         case tabs_type::spac:
             ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(6, 6)); {
-                render_tabsMain(tabs, tab, tabs_w, 20.f);
+                render_tabsMain(tabs, tab, tabs_w, 20.f, false);
+            }
+            ImGui::PopStyleVar();
+            break;
+        case tabs_type::spac_child:
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(6, 6)); {
+                render_tabsMain(tabs, tab, tabs_w, 20.f, true);
             }
             ImGui::PopStyleVar();
             break;

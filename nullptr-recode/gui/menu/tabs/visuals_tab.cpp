@@ -1,13 +1,24 @@
 #include "../menu.h"
 int esp_player_tab = 0;
 
+int chams_player_tab = 0;
+std::array<int, 3> chams_player_layer;
+
+int chams_ragdoll_tab = 0;
+std::array<int, 2> chams_ragdoll_layer;
+
+int chams_weapon_tab = 0;
+std::array<int, 2> chams_weapon_layer;
+
+int chams_hands_layer = 0;
+
 namespace menu {
 	void visuals_tab() {
-		auto settings_cur = &settings::visuals::esp::esp_items[esp_player_tab];
-
 		null_gui::create_columns(2);
 		switch (global_visuals_tab) {
-		case 0:
+		case 0: {
+			auto settings_cur = &settings::visuals::esp::esp_items[esp_player_tab];
+
 			null_gui::begin_group("general##child", vec2(0, 101)); {
 				null_gui::horizontal(esp_player_tab, player_tabs);
 				null_gui::check_box("enable", &settings_cur->enable);
@@ -71,13 +82,77 @@ namespace menu {
 
 			}
 			null_gui::end_group();
-			break;
-		case 1:
-		case 2:
+		} break;
+		case 1: {
+			auto settings_cur = &settings::visuals::chams::player_items[chams_player_tab].layers[chams_player_layer[chams_player_tab]];
+
+			null_gui::begin_group("general##child", vec2(0, 127)); {
+				null_gui::horizontal(chams_player_tab, player_tabs);
+				null_gui::horizontal(chams_player_layer[chams_player_tab], layer_tabs, tabs_type::spac_child);
+				null_gui::check_box("enable", &settings_cur->enable);
+				null_gui::check_box("use bind", &settings::visuals::chams::using_bind);
+				null_gui::key_bind("##use_bind", &settings::visuals::chams::bind);
+			}
+			null_gui::end_group();
+
+			null_gui::begin_group("settings##players visial", vec2(0, 0)); {
+				null_gui::check_box("visible only", &settings_cur->only_visible);
+
+				null_gui::combo("type", &settings_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+
+				null_gui::color_edit("color visible", &settings_cur->visible);
+				null_gui::color_edit("color invisible", &settings_cur->invisible);
+			}
+			null_gui::end_group();
+		} break;
+		case 2: {
+			chams_layer_settings_t* settings_ragdoll_cur = &settings::visuals::chams::ragdoll_items[chams_ragdoll_tab].layers[chams_ragdoll_layer[chams_ragdoll_tab]];
+			null_gui::begin_group("general##child", vec2(0, 103)); {
+				null_gui::horizontal(chams_ragdoll_tab, ragdoll_tabs);
+				null_gui::horizontal(chams_ragdoll_layer[chams_ragdoll_tab], layer_tabs, tabs_type::spac_child);
+				null_gui::check_box("enable##ragdoll", &settings_ragdoll_cur->enable);
+			}
+			null_gui::end_group();
+
+			null_gui::begin_group("settings##players visial", vec2(0, 0)); {
+				null_gui::check_box("visible only##ragdoll", &settings_ragdoll_cur->only_visible);
+
+				null_gui::combo("type##hands", &settings_ragdoll_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+
+				null_gui::color_edit("color visible##ragdoll", &settings_ragdoll_cur->visible);
+				null_gui::color_edit("color invisible##ragdoll", &settings_ragdoll_cur->invisible);
+			}
+			null_gui::end_group();
+
+			null_gui::next_column();
+
+			chams_layer_settings_t* settings_hands_cur = &settings::visuals::chams::hands.layers[chams_hands_layer];
+			null_gui::begin_group("hands##child", vec2(0, 138)); {
+				null_gui::horizontal(chams_hands_layer, layer_tabs, tabs_type::spac_child);
+				null_gui::check_box("enable##hands", &settings_hands_cur->enable);
+
+				null_gui::combo("type##hands", &settings_hands_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+
+				null_gui::color_edit("color##hands", &settings_hands_cur->visible);
+			}
+			null_gui::end_group();
+
+			chams_layer_settings_t* settings_weapons_cur = &settings::visuals::chams::weapon_items[chams_weapon_tab].layers[chams_weapon_layer[chams_weapon_tab]];
+			null_gui::begin_group("weapons##child", vec2(0, 164)); {
+				null_gui::horizontal(chams_weapon_tab, weapon_tabs);
+				null_gui::horizontal(chams_weapon_layer[chams_weapon_tab], layer_tabs, tabs_type::spac_child);
+				null_gui::check_box("enable##weapons", &settings_weapons_cur->enable);
+
+				null_gui::combo("type##weapons", &settings_weapons_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+
+				null_gui::color_edit("color##weapons", &settings_weapons_cur->visible);
+			}
+			null_gui::end_group();
+		} break;
 		case 3:
 			null_gui::text("soon...");
 			break;
-		case 4:
+		case 4: {
 			null_gui::begin_group("general"); {
 				null_gui::check_box("offscreen", &settings::visuals::ofc::enable);
 				null_gui::tooltip_items("##offscreen", []() {
@@ -167,8 +242,8 @@ namespace menu {
 					null_gui::check_box("use custom color for scripts", &settings::visuals::logs::lua.using_custom_color);
 					null_gui::color_edit("##color scripts log", &settings::visuals::logs::lua.custm_color);
 					});
-				null_gui::multi_combo("show on screen##scripts log", std::vector<std::string>{ "hit", "buy", "planting", "defusing", "configs", "scripts" }, std::vector<bool*>{ &settings::visuals::logs::hurt.enable_screen, &settings::visuals::logs::player_buy.enable_screen, & settings::visuals::logs::planting.enable_screen, &settings::visuals::logs::defusing.enable_screen, &settings::visuals::logs::config.enable_screen, &settings::visuals::logs::lua.enable_screen });
-				null_gui::multi_combo("show in console##scripts log", std::vector<std::string>{ "hit", "buy", "planting", "defusing", "configs", "scripts" }, std::vector<bool*>{ &settings::visuals::logs::hurt.enable_console, &settings::visuals::logs::player_buy.enable_console, &settings::visuals::logs::planting.enable_console, &settings::visuals::logs::defusing.enable_console, &settings::visuals::logs::config.enable_console, &settings::visuals::logs::lua.enable_console });
+				null_gui::multi_combo("show on screen##scripts log", std::vector<std::string>{ "hit", "buy", "planting", "defusing", "configs", "scripts" }, std::vector<bool*>{ &settings::visuals::logs::hurt.enable_screen, & settings::visuals::logs::player_buy.enable_screen, & settings::visuals::logs::planting.enable_screen, & settings::visuals::logs::defusing.enable_screen, & settings::visuals::logs::config.enable_screen, & settings::visuals::logs::lua.enable_screen });
+				null_gui::multi_combo("show in console##scripts log", std::vector<std::string>{ "hit", "buy", "planting", "defusing", "configs", "scripts" }, std::vector<bool*>{ &settings::visuals::logs::hurt.enable_console, & settings::visuals::logs::player_buy.enable_console, & settings::visuals::logs::planting.enable_console, & settings::visuals::logs::defusing.enable_console, & settings::visuals::logs::config.enable_console, & settings::visuals::logs::lua.enable_console });
 			}
 			null_gui::end_group();
 
@@ -185,7 +260,7 @@ namespace menu {
 				case 0:
 					null_gui::color_edit("name##smoke", &settings::visuals::grenades::color_smoke);
 					null_gui::new_line();
-					null_gui::multi_combo("time display type###smoke", std::vector<std::string>{"bar", "text", "radius"}, std::vector<bool*>{ &settings::visuals::grenades::smoke_bar, &settings::visuals::grenades::smoke_timer, &settings::visuals::grenades::smoke_radius });
+					null_gui::multi_combo("time display type###smoke", std::vector<std::string>{"bar", "text", "radius"}, std::vector<bool*>{ &settings::visuals::grenades::smoke_bar, & settings::visuals::grenades::smoke_timer, & settings::visuals::grenades::smoke_radius });
 					if (settings::visuals::grenades::smoke_bar) {
 						null_gui::color_edit("bar main##smoke", &settings::visuals::grenades::color_bar_smoke_main);
 						null_gui::color_edit("bar back##smoke", &settings::visuals::grenades::color_bar_smoke_back);
@@ -207,13 +282,13 @@ namespace menu {
 				case 5:
 					null_gui::color_edit("name##molotov", &settings::visuals::grenades::color_molotov);
 					null_gui::new_line();
-					null_gui::multi_combo("time display type##molotov", std::vector<std::string>{"bar", "text", "radius"}, std::vector<bool*>{ &settings::visuals::grenades::molotov_bar, &settings::visuals::grenades::molotov_timer, &settings::visuals::grenades::molotov_radius });
+					null_gui::multi_combo("time display type##molotov", std::vector<std::string>{"bar", "text", "radius"}, std::vector<bool*>{ &settings::visuals::grenades::molotov_bar, & settings::visuals::grenades::molotov_timer, & settings::visuals::grenades::molotov_radius });
 					if (settings::visuals::grenades::molotov_bar) {
 						null_gui::color_edit("bar main##molotov", &settings::visuals::grenades::color_bar_molotov_main);
 						null_gui::color_edit("bar back##molotov", &settings::visuals::grenades::color_bar_molotov_back);
 						null_gui::color_edit("radius##molotov", &settings::visuals::grenades::color_molotov_radius);
 					}
-					break; 
+					break;
 				}
 			}
 			null_gui::end_group();
@@ -231,14 +306,14 @@ namespace menu {
 			}
 			null_gui::end_group();
 
-			null_gui::begin_group("draw hitbox", vec2(0, 100)); {
+			null_gui::begin_group("draw hitbox", vec2(0, 105)); {
 				null_gui::check_box("enable##hitbox", &settings::visuals::hitbox::enable);
 				null_gui::color_edit("##color hitbox", &settings::visuals::hitbox::clr);
 				null_gui::slider_float("show time", &settings::visuals::hitbox::show_time, 0.f, 10.f, "%.1f");
 				null_gui::check_box("show only when kill", &settings::visuals::hitbox::show_only_kill);
 			}
 			null_gui::end_group();
-			break;
+		} break;
 		}
 	}
 }

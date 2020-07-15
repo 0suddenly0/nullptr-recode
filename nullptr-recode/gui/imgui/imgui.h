@@ -548,7 +548,7 @@ namespace ImGui
     // - Attention! We currently have inconsistencies between window-local and absolute positions we will aim to fix with future API:
     //    Window-local coordinates:   SameLine(), GetCursorPos(), SetCursorPos(), GetCursorStartPos(), GetContentRegionMax(), GetWindowContentRegion*(), PushTextWrapPos()
     //    Absolute coordinate:        GetCursorScreenPos(), SetCursorScreenPos(), all ImDrawList:: functions.
-    IMGUI_API bool          ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0); // 1 - left; 2 - right
+    IMGUI_API bool          ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0, bool child = false); // 1 - left; 2 - right
     IMGUI_API bool          ToggleButtonSelect(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0, bool KeyBind = false); // 1 - left; 2 - right
     IMGUI_API bool          ToggleButton(const char* label, bool* v, const ImVec2& size_arg = ImVec2(0, 0), int side = 0); // 1 - left; 2 - right
     IMGUI_API void          Separator(float size = 0.f);                                                    // separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator.

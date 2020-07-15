@@ -27,15 +27,54 @@ enum esp_types : int {
 	local_player = 2
 };
 
+enum chams_layer : int {
+	lower = 0,
+	upper = 1
+};
+
+enum weapon_chams_types : int {
+	in_hands = 0,
+	dropped = 1
+};
+
+
+struct chams_layer_settings_t {
+	bool enable = false;
+	bool only_visible = false;
+
+	int type = 0;
+
+	color visible = color(255, 255, 255, 255);
+	color invisible = color(0, 0, 0, 255);
+};
+
+struct chams_settings_t {
+	std::array< chams_layer_settings_t, 2 > layers;
+};
+
 char* player_tabs[] = {
 	"enemies", 
 	"teammates", 
 	"local player"
 };
 
+char* layer_tabs[] = {
+	"bottom",
+	"upper"
+};
+
+char* ragdoll_tabs[] = {
+	"enemies",
+	"teammates",
+};
+
+char* weapon_tabs[] = {
+	"in hands",
+	"dropped",
+};
+
 struct esp_settings_t {
 	bool enable = false;
-	key_bind_t bind = { 0, 0, false };
 	bool only_visible = false;
 
 	bool skeleton = false;
@@ -95,6 +134,16 @@ namespace settings {
 			bool using_bind = false;
 			key_bind_t bind = { 0, 0, false };
 			std::array<esp_settings_t, 3> esp_items;
+		}
+
+		namespace chams {
+			bool using_bind = false;
+			key_bind_t bind = { 0, 0, false };
+			std::array<chams_settings_t, 3> player_items;
+
+			std::array<chams_settings_t, 2> ragdoll_items;
+			std::array<chams_settings_t, 2> weapon_items;
+			chams_settings_t hands;
 		}
 
 		namespace logs {

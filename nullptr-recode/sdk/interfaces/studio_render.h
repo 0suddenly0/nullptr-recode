@@ -116,7 +116,8 @@ public:
   }
 
   bool is_forced_material_override() {
-      if (!m_pForcedMaterial) return m_nForcedMaterialType == override_type::depth_write || m_nForcedMaterialType == override_type::ssao_depth_write; // see CStudioRenderContext::IsForcedMaterialOverride
+      if (!m_pForcedMaterial) 
+          return m_nForcedMaterialType == override_type::depth_write || m_nForcedMaterialType == override_type::ssao_depth_write; // see CStudioRenderContext::IsForcedMaterialOverride
       return strstr(m_pForcedMaterial->get_name(), "dev/glow");
   }
 };

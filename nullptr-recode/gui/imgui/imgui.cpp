@@ -7098,7 +7098,7 @@ bool ImGui::ItemAdd(const ImRect& bb, ImGuiID id, const ImRect* nav_bb_arg)
     return true;
 }
 
-bool ImGui::ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg, int side)
+bool ImGui::ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg, int side, bool child)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -7123,7 +7123,7 @@ bool ImGui::ToggleButtonMain(const char* label, bool* v, const ImVec2& size_arg,
     bool pressed = ImGui::ButtonBehavior(bb, id, &hovered, &held, flags);
 
     // Render
-    const ImU32 col = ImGui::GetColorU32(*v ? ImGuiCol_TitleBg : (hovered ? ImGuiCol_ChildBg : ImGuiCol_TitleBgActive));
+    const ImU32 col = child ? ImGui::GetColorU32(*v ? ImGuiCol_TitleBg : (hovered ? ImGuiCol_TitleBgActive : ImGuiCol_ChildBg)) : ImGui::GetColorU32(*v ? ImGuiCol_TitleBg : (hovered ? ImGuiCol_ChildBg : ImGuiCol_TitleBgActive));
 
     window->DrawList->AddRectFilled(bb.Min, bb.Max, col, style.FrameRounding);
     RenderTextClipped(bb.Min + style.FramePadding, bb.Max - style.FramePadding, label, NULL, &label_size, style.ButtonTextAlign, &bb);
