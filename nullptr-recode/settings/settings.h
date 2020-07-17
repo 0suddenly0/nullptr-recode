@@ -262,7 +262,13 @@ namespace settings {
 		namespace props {
 			bool enable = false;
 			int alpha = 255;
-			bool request = false;
+		}
+
+		namespace fog {
+			bool enable = false;
+			color clr = color(50, 50, 50, 120);
+			float start_dist = 20.f;
+			float end_dist = 100.f;
 		}
 
 		namespace grenade_prediction {
@@ -295,13 +301,6 @@ namespace settings {
 		bool disable_zoom_border = false;
 		bool unlock_inventory = false;
 		bool chat_filter_bypass = true;
-
-		namespace fog {
-			bool enable = false;
-			color clr = color(50, 50, 50, 120);
-			float start_dist = 20.f;
-			float end_dist = 100.f;
-		}
 
 		namespace bhop {
 			bool enable = false;

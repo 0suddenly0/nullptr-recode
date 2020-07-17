@@ -17,7 +17,7 @@ namespace menu {
 		null_gui::create_columns(2);
 		switch (global_visuals_tab) {
 		case 0: {
-			auto settings_cur = &settings::visuals::esp::esp_items[esp_player_tab];
+			esp_settings_t* settings_cur = &settings::visuals::esp::esp_items[esp_player_tab];
 
 			null_gui::begin_group("general##child", vec2(0, 101)); {
 				null_gui::horizontal(esp_player_tab, player_tabs);
@@ -84,7 +84,7 @@ namespace menu {
 			null_gui::end_group();
 		} break;
 		case 1: {
-			auto settings_cur = &settings::visuals::chams::player_items[chams_player_tab].layers[chams_player_layer[chams_player_tab]];
+			chams_layer_settings_t* settings_cur = &settings::visuals::chams::player_items[chams_player_tab].layers[chams_player_layer[chams_player_tab]];
 
 			null_gui::begin_group("general##child", vec2(0, 127)); {
 				null_gui::horizontal(chams_player_tab, player_tabs);
@@ -166,9 +166,6 @@ namespace menu {
 				if (settings::visuals::props::enable) {
 					null_gui::tooltip_items("##asus props", []() {
 						null_gui::slider_int("alpha##asus props", &settings::visuals::props::alpha, 0, 255);
-						if (null_gui::button("set##asus props")) {
-							settings::visuals::props::request = true;
-						}
 						});
 				}
 				null_gui::check_box("bomb timer", &settings::visuals::bomb_timer);
@@ -197,10 +194,10 @@ namespace menu {
 					null_gui::color_edit("##radiuscolor_genpred", &settings::visuals::grenade_prediction::radius_color);
 					null_gui::slider_float("line thickness##genpred", &settings::visuals::grenade_prediction::line_thickness, 0.f, 5.f, "%.1f");
 					null_gui::slider_float("colision box size##genpred", &settings::visuals::grenade_prediction::colision_box_size, 0.f, 10.f, "%.1f");
-					null_gui::slider_float("main colision box size##genpred", &settings::visuals::grenade_prediction::main_colision_box_size, 0.f, 10.f, "%.1f");
+					null_gui::slider_float("last colision box size##genpred", &settings::visuals::grenade_prediction::main_colision_box_size, 0.f, 10.f, "%.1f");
 					null_gui::color_edit("line color##genpred", &settings::visuals::grenade_prediction::main);
 					null_gui::color_edit("colision box color##genpred", &settings::visuals::grenade_prediction::main_box);
-					null_gui::color_edit("end colision box color##genpred", &settings::visuals::grenade_prediction::end_box);
+					null_gui::color_edit("last colision box color##genpred", &settings::visuals::grenade_prediction::end_box);
 					});
 				null_gui::check_box("client impact", &settings::visuals::impacts::client::enable);
 				null_gui::tooltip_items("##client impact settings", []() {
@@ -225,7 +222,7 @@ namespace menu {
 					null_gui::check_box("ammo in bar##dropped weapons", &settings::visuals::dropped_weapon::ammo_in_bar);
 					null_gui::color_edit("ammo bar main", &settings::visuals::dropped_weapon::bar_main);
 					null_gui::color_edit("ammo bar background", &settings::visuals::dropped_weapon::bar_background);
-					null_gui::color_edit("ammo bar outlien", &settings::visuals::dropped_weapon::bar_outline);
+					null_gui::color_edit("ammo bar outline", &settings::visuals::dropped_weapon::bar_outline);
 					});
 				null_gui::check_box("enable logs##logs", &settings::visuals::logs::enable);
 				null_gui::tooltip_items("##log settings", []() {
@@ -264,6 +261,8 @@ namespace menu {
 					if (settings::visuals::grenades::smoke_bar) {
 						null_gui::color_edit("bar main##smoke", &settings::visuals::grenades::color_bar_smoke_main);
 						null_gui::color_edit("bar back##smoke", &settings::visuals::grenades::color_bar_smoke_back);
+					}
+					if (settings::visuals::grenades::smoke_radius) {
 						null_gui::color_edit("radius##smoke", &settings::visuals::grenades::color_smoke_radius);
 					}
 					break;
@@ -286,6 +285,8 @@ namespace menu {
 					if (settings::visuals::grenades::molotov_bar) {
 						null_gui::color_edit("bar main##molotov", &settings::visuals::grenades::color_bar_molotov_main);
 						null_gui::color_edit("bar back##molotov", &settings::visuals::grenades::color_bar_molotov_back);
+					}
+					if (settings::visuals::grenades::molotov_radius) {
 						null_gui::color_edit("radius##molotov", &settings::visuals::grenades::color_molotov_radius);
 					}
 					break;
@@ -294,15 +295,14 @@ namespace menu {
 			null_gui::end_group();
 
 			null_gui::begin_group("fog##visuals", vec2(0, 111)); {
-				null_gui::check_box("enable##fog", &settings::misc::fog::enable);
-				null_gui::color_edit("##color_fog", &settings::misc::fog::clr);
+				null_gui::check_box("enable##fog", &settings::visuals::fog::enable);
+				null_gui::color_edit("##color_fog", &settings::visuals::fog::clr);
 
-				float max_min = settings::misc::fog::end_dist - 10;
+				float max_min = settings::visuals::fog::end_dist - 10;
+				max_min = math::clamp(max_min, 0.f, settings::visuals::fog::end_dist);
 
-				max_min = std::clamp(max_min, 0.f, settings::misc::fog::end_dist);
-
-				null_gui::slider_float("fog start dist", &settings::misc::fog::start_dist, 0.f, max_min, "%.0f");
-				null_gui::slider_float("fog end dist", &settings::misc::fog::end_dist, 0.f, 10000.f, "%.0f");
+				null_gui::slider_float("fog start dist", &settings::visuals::fog::start_dist, 0.f, max_min, "%.0f");
+				null_gui::slider_float("fog end dist", &settings::visuals::fog::end_dist, 0.f, 10000.f, "%.0f");
 			}
 			null_gui::end_group();
 

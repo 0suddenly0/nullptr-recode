@@ -138,7 +138,7 @@ namespace misc {
 		static const float fog_end_bec = fog_end->get_float();
 		static const float fog_destiny_bec = fog_destiny->get_float();
 
-		if (settings::misc::fog::enable && !globals::unloading) {
+		if (settings::visuals::fog::enable && !globals::unloading) {
 			fog_enable->m_fnChangeCallbacks.m_Size = 0;
 			fog_override->m_fnChangeCallbacks.m_Size = 0;
 			fog_color->m_fnChangeCallbacks.m_Size = 0;
@@ -146,15 +146,15 @@ namespace misc {
 			fog_end->m_fnChangeCallbacks.m_Size = 0;
 			fog_destiny->m_fnChangeCallbacks.m_Size = 0;
 
-			color clr = settings::misc::fog::clr;
+			color clr = settings::visuals::fog::clr;
 
-			fog_enable->set_value(settings::misc::fog::enable);
-			fog_override->set_value(settings::misc::fog::enable);
+			fog_enable->set_value(settings::visuals::fog::enable);
+			fog_override->set_value(settings::visuals::fog::enable);
 			fog_color->set_value(utils::snprintf("%d %d %d", clr.r(), clr.g(), clr.b()).c_str()); //fog color
-			fog_start->set_value(settings::misc::fog::start_dist);
-			fog_end->set_value(settings::misc::fog::end_dist);
-			fog_destiny->set_value(settings::misc::fog::clr.a<int>());
-		} else if (globals::unloading || !settings::misc::fog::enable) {
+			fog_start->set_value(settings::visuals::fog::start_dist);
+			fog_end->set_value(settings::visuals::fog::end_dist);
+			fog_destiny->set_value(settings::visuals::fog::clr.a());
+		} else if (globals::unloading || !settings::visuals::fog::enable) {
 			fog_enable->m_fnChangeCallbacks.m_Size = 0;
 			fog_override->m_fnChangeCallbacks.m_Size = 0;
 			fog_color->m_fnChangeCallbacks.m_Size = 0;

@@ -823,6 +823,7 @@ namespace visuals {
 	void asus_props() {
 		if (!sdk::engine_client->is_in_game() || !sdk::local_player) return;
 
+		static int old_alpha = 255;
 		static convar* r_drawstaticprops = sdk::cvar->find_var("r_drawstaticprops");
 		if (settings::visuals::props::enable && !globals::unloading) {
 			r_drawstaticprops->m_fnChangeCallbacks.m_Size = 0; 
@@ -832,17 +833,17 @@ namespace visuals {
 			r_drawstaticprops->set_value(1);
 		}
 
-		if (settings::visuals::props::request || globals::unloading) {
+		if (old_alpha != settings::visuals::props::alpha || globals::unloading) {
 			for (material_handle_t i = sdk::mat_system->first_material(); i != sdk::mat_system->invalid_material(); i = sdk::mat_system->next_material(i)) {
 				c_material* material = sdk::mat_system->get_material(i);
 				if (!material) continue;
 
 				if (strstr(material->get_texture_group_name(), "StaticProp")) {
-					if (settings::visuals::props::request && !globals::unloading) material->alpha_modulate(settings::visuals::props::alpha / 255.f);
+					if (old_alpha != settings::visuals::props::alpha && !globals::unloading) material->alpha_modulate(settings::visuals::props::alpha / 255.f);
 					else material->alpha_modulate(1.0f);
 				}
 			}
-			settings::visuals::props::request = false;
+			old_alpha = settings::visuals::props::alpha;
 		}
 	}
 

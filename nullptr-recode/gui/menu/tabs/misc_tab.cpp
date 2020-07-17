@@ -118,7 +118,6 @@ namespace menu {
 				if (null_gui::button("apply##clan", true)) {
 					settings::misc::clantag::clantag = temp_clantag;
 					settings::misc::clantag::clantag_visible = temp_clantag;
-					sdk::engine_client->client_cmd("say salam");
 				}
 
 				null_gui::combo("animation", &settings::misc::clantag::custom_type, std::vector<std::string>{"none", "type 1", "type 2"});

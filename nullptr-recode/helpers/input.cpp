@@ -39,6 +39,7 @@ namespace input {
 		create_bind("edge jump", settings::misc::edge_jump::enable, &settings::misc::edge_jump::bind, bind_info_flags_standart);
 		create_bind("third person", settings::misc::third_person::enable, &settings::misc::third_person::bind, bind_info_flags_standart);
 		create_bind("esp", settings::visuals::esp::using_bind, &settings::visuals::esp::bind, bind_info_flags_standart);
+		create_bind("chams", settings::visuals::chams::using_bind, &settings::visuals::chams::bind, bind_info_flags_standart);
 	}
 
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {

@@ -68,7 +68,7 @@ namespace chams {
                 && !std::strstr(info.pModel->szName + 17, "parachute")
                 && !std::strstr(info.pModel->szName + 17, "fists")
                 && entity) {
-                weapons(o_dme, entity, std::strstr(info.pModel->szName, "models/weapons/w_") && std::strstr(info.pModel->szName, "_dropped.mdl"));
+                can_draw_original = weapons(o_dme, entity, std::strstr(info.pModel->szName, "models/weapons/w_") && std::strstr(info.pModel->szName, "_dropped.mdl"));
             }
         } else if (entity && strstr(info.pModel->szName, "models/player")) {
             can_draw_original = entity->is_alive() ? players(o_dme, entity) : ragdolls(o_dme, entity);
@@ -80,47 +80,52 @@ namespace chams {
 
     bool players(std::function<void()> o_dme, c_base_player* player) {
         bool ret = true;
-        if (player->team_num() != sdk::local_player->team_num()) {
-            for (auto& layer : settings::visuals::chams::player_items[esp_types::enemies].layers) {
-                if (!layer.enable)
-                    continue;
 
-                override_mat(true, layer.type, layer.invisible);
-                o_dme();
-                if (!layer.only_visible) {
-                    override_mat(false, layer.type, layer.visible);
+        if (!settings::visuals::chams::using_bind || settings::visuals::chams::bind.enable) {
+            if (player->team_num() != sdk::local_player->team_num()) {
+                for (auto& layer : settings::visuals::chams::player_items[esp_types::enemies].layers) {
+                    if (!layer.enable)
+                        continue;
+
+                    override_mat(true, layer.type, layer.invisible);
                     o_dme();
-                }
+                    if (!layer.only_visible) {
+                        override_mat(false, layer.type, layer.visible);
+                        o_dme();
+                    }
 
-                ret = false;
+                    ret = false;
+                }
             }
-        } else if (player->team_num() == sdk::local_player->team_num() && player != sdk::local_player) {
-            for (auto& layer : settings::visuals::chams::player_items[esp_types::teammates].layers) {
-                if (!layer.enable)
-                    continue;
+            else if (player->team_num() == sdk::local_player->team_num() && player != sdk::local_player) {
+                for (auto& layer : settings::visuals::chams::player_items[esp_types::teammates].layers) {
+                    if (!layer.enable)
+                        continue;
 
-                override_mat(true, layer.type, layer.invisible);
-                o_dme();
-                if (!layer.only_visible) {
-                    override_mat(false, layer.type, layer.visible);
+                    override_mat(true, layer.type, layer.invisible);
                     o_dme();
-                }
+                    if (!layer.only_visible) {
+                        override_mat(false, layer.type, layer.visible);
+                        o_dme();
+                    }
 
-                ret = false;
+                    ret = false;
+                }
             }
-        } else if (player == sdk::local_player) {
-            for (auto& layer : settings::visuals::chams::player_items[esp_types::local_player].layers) {
-                if (!layer.enable)
-                    continue;
+            else if (player == sdk::local_player) {
+                for (auto& layer : settings::visuals::chams::player_items[esp_types::local_player].layers) {
+                    if (!layer.enable)
+                        continue;
 
-                override_mat(true, layer.type, layer.invisible);
-                o_dme();
-                if (!layer.only_visible) {
-                    override_mat(false, layer.type, layer.visible);
+                    override_mat(true, layer.type, layer.invisible);
                     o_dme();
-                }
+                    if (!layer.only_visible) {
+                        override_mat(false, layer.type, layer.visible);
+                        o_dme();
+                    }
 
-                ret = false;
+                    ret = false;
+                }
             }
         }
 
