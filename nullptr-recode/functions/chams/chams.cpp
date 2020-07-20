@@ -87,12 +87,12 @@ namespace chams {
                     if (!layer.enable)
                         continue;
 
-                    override_mat(true, layer.type, layer.invisible);
-                    o_dme();
                     if (!layer.only_visible) {
-                        override_mat(false, layer.type, layer.visible);
+                        override_mat(true, layer.type, layer.invisible);
                         o_dme();
                     }
+                    override_mat(false, layer.type, layer.visible);
+                    o_dme();
 
                     ret = false;
                 }
@@ -102,12 +102,12 @@ namespace chams {
                     if (!layer.enable)
                         continue;
 
-                    override_mat(true, layer.type, layer.invisible);
-                    o_dme();
                     if (!layer.only_visible) {
-                        override_mat(false, layer.type, layer.visible);
+                        override_mat(true, layer.type, layer.invisible);
                         o_dme();
                     }
+                    override_mat(false, layer.type, layer.visible);
+                    o_dme();
 
                     ret = false;
                 }
@@ -117,12 +117,12 @@ namespace chams {
                     if (!layer.enable)
                         continue;
 
-                    override_mat(true, layer.type, layer.invisible);
-                    o_dme();
                     if (!layer.only_visible) {
-                        override_mat(false, layer.type, layer.visible);
+                        override_mat(true, layer.type, layer.invisible);
                         o_dme();
                     }
+                    override_mat(false, layer.type, layer.visible);
+                    o_dme();
 
                     ret = false;
                 }
@@ -139,12 +139,12 @@ namespace chams {
                 if (!layer.enable)
                     continue;
 
-                override_mat(true, layer.type, layer.invisible);
-                o_dme();
                 if (!layer.only_visible) {
-                    override_mat(false, layer.type, layer.visible);
+                    override_mat(true, layer.type, layer.invisible);
                     o_dme();
                 }
+                override_mat(false, layer.type, layer.visible);
+                o_dme();
 
                 ret = false;
             }
@@ -153,12 +153,12 @@ namespace chams {
                 if (!layer.enable)
                     continue;
 
-                override_mat(true, layer.type, layer.invisible);
-                o_dme();
                 if (!layer.only_visible) {
-                    override_mat(false, layer.type, layer.visible);
+                    override_mat(true, layer.type, layer.invisible);
                     o_dme();
                 }
+                override_mat(false, layer.type, layer.visible);
+                o_dme();
 
                 ret = false;
             }
@@ -241,10 +241,7 @@ namespace chams {
         if (const auto alpha = material->find_var("$alpha", nullptr, false)) alpha->set_value(clr.a<float>());
         if (const auto envmaptint = material->find_var("$envmaptint", nullptr, false)) envmaptint->set_value(vec3(clr.r<float>(), clr.g<float>(), clr.b<float>()));
 
-        //if (const auto ignorez = material->find_var("$ignorez", nullptr, false)) {
-        //    ignorez->set_value(1.f);
-            //notify::add("гучи флип флап", "фак ит ю хит йюр бич ин май сакс");
-        //}
+        //ya byl bukhoy kogda pisal eto, khz pochemu, no menya porvalo s etoy khuyni
 
         material->set_material_var_flag(MATERIAL_VAR_IGNOREZ, visible_check);
 

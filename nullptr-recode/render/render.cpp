@@ -106,6 +106,15 @@ namespace render {
 		return math::to_vec2(font->CalcTextSizeA(text_size, FLT_MAX, 0, text.c_str()));
 	}
 
+	void draw_poly_filled(std::vector<vec2> poligons, color clr) {
+		std::vector<ImVec2> buf;
+		for (vec2& pol : poligons) {
+			buf.push_back(math::to_imvec2(pol));
+		}
+
+		draw_list->AddConvexPolyFilled(buf.data(), buf.size(), ImGui::GetColorU32(get_vec4(clr)));
+	}
+
 	void draw_triangle_filled(std::array<vec2, 3> poligons, color clr) {
 		draw_list->AddTriangleFilled(math::to_imvec2(poligons[0]), math::to_imvec2(poligons[1]), math::to_imvec2(poligons[2]), ImGui::GetColorU32(get_vec4(clr)));
 	}
@@ -200,5 +209,27 @@ namespace render {
 
 			draw_line(start2d, end2d, clr);
 		}
+	}
+
+	void draw_circle_3d_filled(vec3 pos, float points, float radius, color clr) {
+		float step = (float)M_PI * 2.0f / points;
+
+		std::vector<vec2> pos_poly;
+
+		for (float a = 0; a < (M_PI * 2.0f); a += step) {
+			vec3 start(radius * cosf(a) + pos.x, radius * sinf(a) + pos.y, pos.z);
+			vec3 end(radius * cosf(a + step) + pos.x, radius * sinf(a + step) + pos.y, pos.z);
+
+			vec2 start2d, end2d;
+			if (!math::world2screen(start, start2d) || !math::world2screen(end, end2d))
+				continue;
+
+			pos_poly.push_back(start2d);
+			pos_poly.push_back(end2d);
+
+			draw_line(start2d, end2d, clr);
+		}
+
+		draw_poly_filled(pos_poly, color(clr, clr.a() - 200));
 	}
 }

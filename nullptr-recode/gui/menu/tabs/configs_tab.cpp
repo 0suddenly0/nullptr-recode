@@ -1,7 +1,6 @@
 #include "../menu.h"
 #include "../../../helpers/config_sys/config_sys.h"
 
-color log_color = notify::get_log_color(settings::visuals::logs::config);
 bool is_configs_loaded = false;
 bool is_configs_loaded_skin = false;
 std::string current_config;
@@ -49,7 +48,7 @@ bool check_config_load(bool skin) {
 				{
 					if (config::standart::load(current_config)) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ current_config, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " loaded", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -64,7 +63,7 @@ bool check_config_load(bool skin) {
 				{
 					if (config::skins::load(current_config_skin)) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ current_config_skin, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " loaded", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -104,7 +103,7 @@ bool check_config_save(bool skin) {
 				if (!current_config.empty()) {
 					if (config::standart::save(current_config)) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ current_config, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " saved", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -117,7 +116,7 @@ bool check_config_save(bool skin) {
 				{
 					if (config::skins::save(current_config_skin)) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ current_config_skin, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " saved", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -157,7 +156,7 @@ bool check_config_del(bool skin) {
 				if (!current_config.empty()) {
 					if (file_sys::remove("C:\\nullptr\\standart\\" + current_config + ".null")) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config, log_color},
+							render::multicolor_t{ current_config, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " deleted", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -171,7 +170,7 @@ bool check_config_del(bool skin) {
 				if (!current_config_skin.empty()) {
 					if (file_sys::remove("C:\\nullptr\\skins\\" + current_config_skin + ".null")) {
 						std::vector<render::multicolor_t> items = {
-							render::multicolor_t{ current_config_skin, log_color},
+							render::multicolor_t{ current_config_skin, notify::get_log_color(settings::visuals::logs::config)},
 							render::multicolor_t{ " deleted", color(255, 255, 255, 255)},
 						};
 						notify::add("config", items, settings::visuals::logs::config);
@@ -203,7 +202,6 @@ bool check_config_del(bool skin) {
 
 namespace menu {
 	void configs_tab() {
-		log_color = notify::get_log_color(settings::visuals::logs::config);
 		bool can_open = !load_request && !load_request_skin && !save_request && !save_request_skin && !del_request && !del_request_skin;
 
 		null_gui::create_columns(2);
@@ -212,7 +210,7 @@ namespace menu {
 
 			if (!is_configs_loaded) {
 				is_configs_loaded = true;
-				configs = get_configs("standart");
+				configs = get_configs(config::standart::_config.dir_name);
 			}
 
 			static std::string config_name;
@@ -223,7 +221,7 @@ namespace menu {
 
 				if (config::standart::save(current_config)) {
 					std::vector<render::multicolor_t> items = {
-						render::multicolor_t{ current_config, log_color},
+						render::multicolor_t{ current_config, notify::get_log_color(settings::visuals::logs::config)},
 						render::multicolor_t{ " created", color(255, 255, 255, 255)},
 					};
 					notify::add("config", items, settings::visuals::logs::config);
@@ -250,9 +248,9 @@ namespace menu {
 
 									if (rename(old_name.c_str(), new_name.c_str()) == 0) {
 										std::vector<render::multicolor_t> items = {
-											render::multicolor_t{ cur_config, log_color},
+											render::multicolor_t{ cur_config, notify::get_log_color(settings::visuals::logs::config)},
 											render::multicolor_t{ " renamed to ", color(255, 255, 255, 255)},
-											render::multicolor_t{ config_rename, log_color}
+											render::multicolor_t{ config_rename, notify::get_log_color(settings::visuals::logs::config)}
 										};
 										notify::add("config", items, settings::visuals::logs::config);
 									}
@@ -300,7 +298,7 @@ namespace menu {
 
 			if (!is_configs_loaded_skin) {
 				is_configs_loaded_skin = true;
-				configs = get_configs("skins");
+				configs = get_configs(config::skins::_config.dir_name);
 			}
 
 			static std::string config_name;
@@ -311,7 +309,7 @@ namespace menu {
 
 				if (config::skins::save(current_config_skin)) {
 					std::vector<render::multicolor_t> items = {
-						render::multicolor_t{ current_config_skin, log_color},
+						render::multicolor_t{ current_config_skin, notify::get_log_color(settings::visuals::logs::config)},
 						render::multicolor_t{ " created", color(255, 255, 255, 255)},
 					};
 					notify::add("config", items, settings::visuals::logs::config);
@@ -337,9 +335,9 @@ namespace menu {
 
 									if (rename(old_name.c_str(), new_name.c_str()) == 0) {
 										std::vector<render::multicolor_t> items = {
-											render::multicolor_t{ cur_config, log_color},
+											render::multicolor_t{ cur_config, notify::get_log_color(settings::visuals::logs::config)},
 											render::multicolor_t{ " renamed to ", color(255, 255, 255, 255)},
-											render::multicolor_t{ config_rename, log_color}
+											render::multicolor_t{ config_rename, notify::get_log_color(settings::visuals::logs::config)}
 										};
 										notify::add("config", items, settings::visuals::logs::config);
 									}

@@ -143,7 +143,7 @@ public:
             }
         }
 
-        return !(pEntityHandle == pSkip);
+        return !(((c_client_entity*)pEntityHandle)->get_client_class() == pSkip);
     }
 
     virtual trace_type get_trace_type() const {

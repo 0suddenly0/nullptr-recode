@@ -472,7 +472,7 @@ namespace misc {
 				qangle wish_angle = cmd->viewangles;
 
 				auto speed = velocity.length();
-				auto ideal_strafe = std::clamp(RAD2DEG(atan(15.f / speed)), 0.0f, 90.0f);
+				auto ideal_strafe = math::clamp(RAD2DEG(atan(15.f / speed)), 0.0f, 90.0f);
 
 				if (cmd->forwardmove > 0.0f) cmd->forwardmove = 0.0f;
 
@@ -487,7 +487,7 @@ namespace misc {
 					qangle velocity_direction;
 					math::vector_angles(velocity, velocity_direction);
 					auto velocity_delta = std::remainderf(wish_angle.yaw - velocity_direction.yaw, 360.0f);
-					auto retrack = std::clamp(RAD2DEG(atan(30.0f / speed)), 0.0f, 90.0f) * 10.f;
+					auto retrack = math::clamp(RAD2DEG(atan(30.0f / speed)), 0.0f, 90.0f) * 10.f;
 					if (velocity_delta <= retrack || speed <= 15.0f) {
 						if (-(retrack) <= velocity_delta || speed <= 15.0f) {
 							wish_angle.yaw += side * ideal_strafe;

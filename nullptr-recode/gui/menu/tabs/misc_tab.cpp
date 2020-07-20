@@ -130,13 +130,13 @@ namespace menu {
 		null_gui::end_group();
 
 		null_gui::begin_group("windows", vec2(0, 100)); {
-			null_gui::check_box("bind window", &settings::windows::bind_window_show);
+			null_gui::check_box("bind window", &settings::windows::bind_window.show);
 			null_gui::tooltip_items("##bind window settings", []() {
-				null_gui::slider_int("window alpha##bind window", &settings::windows::bind_window_alpha, 0, 255);
+				null_gui::slider_int("window alpha##bind window", &settings::windows::bind_window.alpha, 0, 255);
 				});
-			null_gui::check_box("spectator list window", &settings::windows::spectator_list_show);
+			null_gui::check_box("spectator list window", &settings::windows::spectator_list.show);
 			null_gui::tooltip_items("##spectator list settings", []() {
-				null_gui::slider_int("window alpha##spectator list", &settings::windows::spectator_list_alpha, 0, 255);
+				null_gui::slider_int("window alpha##spectator list", &settings::windows::spectator_list.alpha, 0, 255);
 				});
 		}
 		null_gui::end_group();

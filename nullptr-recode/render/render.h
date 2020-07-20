@@ -59,6 +59,7 @@ namespace render {
 
 	vec2 get_text_size(std::string text, ImFont* font = default_font, int text_size = 12);
 
+	void draw_poly_filled(std::vector<vec2> poligons, color clr);
 	void draw_triangle_filled(std::array<vec2, 3> poligons, color clr);
 	void draw_triangle(std::array<vec2, 3> poligons, color clr);
 
@@ -123,4 +124,10 @@ namespace render {
 		draw_circle_3d(vec3(x, y, z), radius, points, clr);
 	}
 	void draw_circle_3d(vec3 pos, float points, float radius, color clr);
+
+	template<typename T>
+	void draw_circle_3d_filled(T x, T y, T z, float radius, int points, color clr) {
+		draw_circle_3d_filled(vec3(x, y, z), radius, points, clr);
+	}
+	void draw_circle_3d_filled(vec3 pos, float points, float radius, color clr);
 }

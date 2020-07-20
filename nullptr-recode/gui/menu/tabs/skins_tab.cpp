@@ -47,7 +47,7 @@ namespace menu {
 			static float next_enb_time = 0;
 			float time_to_next_up = sdk::global_vars->curtime;
 
-			if (next_enb_time - sdk::global_vars->curtime < 2.f) time_to_next_up = std::clamp(next_enb_time - sdk::global_vars->curtime, 0.f, 1.f);
+			if (next_enb_time - sdk::global_vars->curtime < 2.f) time_to_next_up = math::clamp(next_enb_time - sdk::global_vars->curtime, 0.f, 1.f);
 			else next_enb_time = sdk::global_vars->curtime;
 
 			if (null_gui::button(utils::snprintf("update (%.1f)", time_to_next_up).c_str(), true)) {

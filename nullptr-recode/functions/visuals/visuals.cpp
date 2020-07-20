@@ -146,18 +146,18 @@ class esp_player {
 public:
 	static int get_player_alpha_offscreen(int index, int max = 255) {
 		int i = visuals::player_alpha_offscreen[index];
-		i = std::clamp(i, 0, max);
+		i = math::clamp(i, 0, max);
 		return i;
 	}
 
 	int get_player_alpha(int alpha = 255) {
 		int i = alpha - visuals::player_alpha[player->ent_index()];
-		i = std::clamp(i, 0, 255);
+		i = math::clamp(i, 0, 255);
 		return i;
 	}
 
 	bool begin(c_base_player* _player) {
-		if (!_player->is_alive()) return false;
+		if (!sdk::local_player || !_player->is_alive()) return false;
 
 		player = _player;
 		is_localplayer = sdk::local_player->ent_index() == _player->ent_index();
@@ -404,12 +404,12 @@ namespace visuals {
 		hitmarker();
 		damage_indicator();
 		bomb_indicator();
-		grenades();
 		spread_circle();
 		impact();
 		grenade_prediction::paint();
 		draw_watermark();
 		entity_loop();
+		grenades();
 	}
 
 	void draw_watermark() {
@@ -466,7 +466,7 @@ namespace visuals {
 				studiohdr_t* hdr = sdk::mdl_info->get_studiomodel(model);
 				if (hdr) {
 					std::string hdrName = hdr->szName;
-					if (hdrName.find("thrown") != std::string::npos || hdrName.find("dropped") != std::string::npos) {
+					if (hdrName.find("thrown") != std::string::npos) {
 						if (hdrName.find("flashbang") != std::string::npos) {
 							name = "flash";
 							clr = settings::visuals::grenades::color_flash;
@@ -494,8 +494,7 @@ namespace visuals {
 
 				if (!name.empty()) {
 					vec2 pos;
-					if (math::world2screen(entity->vec_origin(), pos))
-					{
+					if (math::world2screen(entity->vec_origin(), pos)) {
 						render::draw_text(name, pos, clr, true, true);
 					}
 				}
@@ -550,6 +549,10 @@ namespace visuals {
 				continue;
 			}
 
+			if (settings::visuals::grenades::smoke_radius) {
+				render::draw_circle_3d_filled(cur_smoke.position, 50, grenade_prediction::get_radius(smokegrenade), settings::visuals::grenades::color_smoke_radius);
+			}
+
 			if (math::world2screen(cur_smoke.position, position)) {
 				std::string life_time = utils::snprintf("%.1f", cur_smoke.time_to_expire - sdk::global_vars->curtime);
 
@@ -565,10 +568,6 @@ namespace visuals {
 				} else if (settings::visuals::grenades::smoke_timer) {
 					render::draw_text(life_time, vec2(position.x, position.y + 10), settings::visuals::grenades::color_smoke, true, true);
 				}
-			}
-
-			if (settings::visuals::grenades::smoke_radius) {
-				render::draw_circle_3d(cur_smoke.position, 50, grenade_prediction::get_radius(smokegrenade), settings::visuals::grenades::color_smoke_radius);
 			}
 		}
 
@@ -733,11 +732,11 @@ namespace visuals {
 			}
 		}
 
-		bool show_window = (!spectators.empty() || globals::show_menu) && settings::windows::spectator_list_show;
-		null_gui::deep::set_next_window_alpha(settings::windows::spectator_list_alpha / 255.f);
+		bool show_window = (!spectators.empty() || globals::show_menu) && settings::windows::spectator_list.show;
+		null_gui::deep::set_next_window_alpha(settings::windows::spectator_list.alpha / 255.f);
 
 		null_gui::begin_window("spectator list", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | (globals::show_menu && show_window ? 0 : ImGuiWindowFlags_NoMove)); {
-			settings::windows::bind_window_pos = null_gui::deep::get_window_pos();
+			settings::windows::spectator_list.pos = null_gui::deep::get_window_pos();
 			null_gui::deep::set_window_hidden(!show_window);
 			null_gui::deep::set_cursor_y(22);
 
@@ -1037,7 +1036,7 @@ namespace visuals {
 		float offsett = 3.f;
 		if (settings::visuals::dropped_weapon::ammo_bar) {
 			if (ent->is_gun()) {
-				float width = (((box_w * std::clamp(ent->clip1(), 0, ent->get_cs_weapondata()->max_clip1)) / ent->get_cs_weapondata()->max_clip1));
+				float width = (((box_w * math::clamp(ent->clip1(), 0, ent->get_cs_weapondata()->max_clip1)) / ent->get_cs_weapondata()->max_clip1));
 
 				render::draw_box(bbox.left - 1.f, bbox.top + 4.f, bbox.right + 1.f, bbox.top + 8.f, settings::visuals::dropped_weapon::bar_outline);
 				render::draw_box_filled(bbox.left, bbox.top + 5, bbox.right, bbox.top + 7, settings::visuals::dropped_weapon::bar_background);
@@ -1118,7 +1117,7 @@ namespace visuals {
 				c_base_inferno* inferno = (c_base_inferno*)ent;
 				if (!inferno) continue;
 
-				render::draw_circle_3d(inferno->vec_origin(), 50, inferno->fire_count() * 10.f, settings::visuals::grenades::color_molotov_radius);
+				render::draw_circle_3d_filled(inferno->vec_origin(), 50, inferno->fire_count() * 10.f, settings::visuals::grenades::color_molotov_radius);
 			}
 		}
 	}
@@ -1176,7 +1175,7 @@ namespace visuals {
 				draw_box(other_collisions.rbegin()->first, settings::visuals::grenade_prediction::end_box, settings::visuals::grenade_prediction::main_colision_box_size);
 
 				if (settings::visuals::grenade_prediction::radius && get_radius() != 0.f) {
-					render::draw_circle_3d(other_collisions.rbegin()->first, 50, get_radius(), settings::visuals::grenade_prediction::radius_color);
+					render::draw_circle_3d_filled(other_collisions.rbegin()->first, 50, get_radius(), settings::visuals::grenade_prediction::radius_color);
 				}
 
 				std::string EntName;
@@ -1316,6 +1315,10 @@ namespace visuals {
 		bool check_detonate(const vec3& vecThrow, const trace_t& tr, int tick, float interval) {
 			firegrenade_didnt_hit = false;
 			switch (type) {
+			case item_definition_index::tagrenade:
+				if (tr.fraction != 1.0f)
+					return true;
+				return false;
 			case item_definition_index::smokegrenade:
 			case item_definition_index::decoy:
 				if (vecThrow.length() < 0.1f) {
@@ -1326,9 +1329,6 @@ namespace visuals {
 			case item_definition_index::molotov:
 			case item_definition_index::incgrenade:
 				if (tr.fraction != 1.0f && tr.plane.normal.z > 0.7f)
-					return true;
-			case item_definition_index::tagrenade:
-				if (tr.fraction != 1.0f)
 					return true;
 			case item_definition_index::flashbang:
 			case item_definition_index::hegrenade:

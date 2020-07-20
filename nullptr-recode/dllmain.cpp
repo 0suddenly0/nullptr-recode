@@ -20,8 +20,8 @@ DWORD WINAPI attach(LPVOID base) {
 #endif
 
 	try {	
-		config::skins::setup_vars();
-		config::standart::setup_vars();
+		config::skins::setup();
+		config::standart::setup();
 
 		utils::console_print("[-] injected\n");
 

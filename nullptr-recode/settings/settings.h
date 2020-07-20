@@ -52,6 +52,13 @@ struct chams_settings_t {
 	std::array< chams_layer_settings_t, 2 > layers;
 };
 
+struct window_settings_t {
+	std::string name;
+	int alpha;
+	vec2 pos;
+	bool show;
+};
+
 char* player_tabs[] = {
 	"enemies", 
 	"teammates", 
@@ -391,12 +398,7 @@ namespace settings {
 	}
 
 	namespace windows {
-		bool bind_window_show = false;
-		int bind_window_alpha = 255;
-		vec2 bind_window_pos = vec2(100, 100);
-
-		bool spectator_list_show = false;
-		int spectator_list_alpha = 255;
-		vec2 spectator_list_pos = vec2(300, 100);
+		window_settings_t bind_window = { "binds", 255, vec2(100, 100), false };
+		window_settings_t spectator_list = { "spectator list", 255, vec2(100, 100), false };
 	}
 }

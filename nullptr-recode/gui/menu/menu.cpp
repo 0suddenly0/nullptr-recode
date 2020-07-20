@@ -9,11 +9,11 @@ namespace menu {
 	void draw_bind_window() {
 		input::create_binds();
 
-		bool show_window = input::binds.size() > 0 && settings::windows::bind_window_show;
-		null_gui::deep::set_next_window_alpha(settings::windows::bind_window_alpha / 255.f);
+		bool show_window = input::binds.size() > 0 && settings::windows::bind_window.show;
+		null_gui::deep::set_next_window_alpha(settings::windows::bind_window.alpha / 255.f);
 
 		null_gui::begin_window("binds", (bool*)0, vec2(0, 0), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse); {
-			settings::windows::bind_window_pos = null_gui::deep::get_window_pos();
+			settings::windows::bind_window.pos = null_gui::deep::get_window_pos();
 			null_gui::deep::set_window_hidden(!show_window);
 			null_gui::deep::set_cursor_y(22);
 

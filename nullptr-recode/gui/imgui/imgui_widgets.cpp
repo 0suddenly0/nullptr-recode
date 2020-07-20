@@ -5968,7 +5968,7 @@ bool ImGui::ColorButton(const char* desc_id, const ImVec4& col, ImGuiColorEditFl
 
     // Tooltip
     if (!(flags & ImGuiColorEditFlags_NoTooltip) && hovered)
-        ColorTooltip(desc_id, &col.x, flags & (ImGuiColorEditFlags__InputMask | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_AlphaPreviewHalf));
+        ColorTooltip(desc_id, &col.x, flags/* & (ImGuiColorEditFlags__InputMask | ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_AlphaPreview | ImGuiColorEditFlags_AlphaPreviewHalf)*/);
 
     return pressed;
 }
@@ -6003,10 +6003,10 @@ void ImGui::ColorTooltip(const char* text, const float* col, ImGuiColorEditFlags
     ImVec4 cf(col[0], col[1], col[2], (flags & ImGuiColorEditFlags_NoAlpha) ? 1.0f : col[3]);
     int cr = IM_F32_TO_INT8_SAT(col[0]), cg = IM_F32_TO_INT8_SAT(col[1]), cb = IM_F32_TO_INT8_SAT(col[2]), ca = (flags & ImGuiColorEditFlags_NoAlpha) ? 255 : IM_F32_TO_INT8_SAT(col[3]);
 
-    if (flags & ImGuiColorEditFlags_NoAlpha)
+    if (!(flags & ImGuiColorEditFlags_AlphaBar))
         Text("R: %d, G: %d, B: %d", cr, cg, cb, cr, cg, cb, col[0], col[1], col[2]);
     else
-        Text("R:%d, G:%d, B:%d, A:%d", cr, cg, cb, ca, cr, cg, cb, ca, col[0], col[1], col[2], col[3]);
+        Text("R: %d, G: %d, B: %d, A: %d", cr, cg, cb, ca, cr, cg, cb, ca, col[0], col[1], col[2], col[3]);
 
     EndTooltip();
 }
@@ -6027,7 +6027,7 @@ void ImGui::ColorEditOptionsPopup(float* col, ImGuiColorEditFlags flags)
         color_copy[0] = col[0];
         color_copy[1] = col[1];
         color_copy[2] = col[2];
-        if(flags & ImGuiColorEditFlags_AlphaBar) color_copy[3] = col[3];
+        color_copy[3] = col[3];
     }
     if (Button("paste", ImVec2(50, 0)))
     {

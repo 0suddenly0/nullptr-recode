@@ -276,7 +276,6 @@ namespace skin_changer {
 				auto& icon_override_map = settings::changers::skin::m_icon_overrides;
 				const auto& original_item = weapon_models_info.at(definition_index);
 				if (original_item.icon && icon_override_map.count(original_item.icon)) {
-					notify::add("debug", "test");
 					icon_override_map.erase(icon_override_map.at(original_item.icon));
 				}
 			}

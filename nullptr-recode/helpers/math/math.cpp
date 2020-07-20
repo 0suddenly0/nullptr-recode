@@ -132,9 +132,9 @@ namespace math {
 			correct_movement.y = cmd_right_norm.x * v24 + cmd_right_norm.y * v23 + cmd_right_norm.z * v25 + (cmd_right_norm.x * v22 + cmd_right_norm.y * v26 + cmd_right_norm.z * v28) + (cmd_right_norm.x * v29 + cmd_right_norm.y * v30 + cmd_right_norm.z * v27);
 			correct_movement.z = cmd_up_norm.x * v23 + cmd_up_norm.y * v24 + cmd_up_norm.z * v25 + (cmd_up_norm.x * v26 + cmd_up_norm.y * v22 + cmd_up_norm.z * v28) + (cmd_up_norm.x * v30 + cmd_up_norm.y * v29 + cmd_up_norm.z * v27);
 
-			correct_movement.x = std::clamp(correct_movement.x, -450.f, 450.f);
-			correct_movement.y = std::clamp(correct_movement.y, -450.f, 450.f);
-			correct_movement.z = std::clamp(correct_movement.z, -320.f, 320.f);
+			correct_movement.x = math::clamp(correct_movement.x, -450.f, 450.f);
+			correct_movement.y = math::clamp(correct_movement.y, -450.f, 450.f);
+			correct_movement.z = math::clamp(correct_movement.z, -320.f, 320.f);
 
 			m_Cmd->forwardmove = correct_movement.x;
 			m_Cmd->sidemove = correct_movement.y;

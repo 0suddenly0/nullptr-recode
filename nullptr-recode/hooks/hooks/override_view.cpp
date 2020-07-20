@@ -23,8 +23,7 @@ namespace hooks {
 			}
 
 			auto view_model = (c_base_player*)(sdk::entity_list->get_client_entity_from_handle(sdk::local_player->view_model()));
-			if (view_model)
-			{
+			if (view_model && sdk::local_player && !sdk::local_player->is_scoped()) {
 				static convar* hand = sdk::cvar->find_var("cl_righthand");
 				vec3 temp_angle = view->angles;
 				temp_angle.z = (settings::misc::viewmodel::save_roll_side ? (hand->get_bool() == true ? -settings::misc::viewmodel::roll : settings::misc::viewmodel::roll) : settings::misc::viewmodel::roll * -1);

@@ -36,7 +36,7 @@ public:
 	}
 
 	static float get_bomb_damage() {
-		c_base_player* bomb = c_base_player::get_spectating_player();
+		c_base_player* bomb = get_bomb_player();
 
 		if (!bomb)
 			return 0.f;
