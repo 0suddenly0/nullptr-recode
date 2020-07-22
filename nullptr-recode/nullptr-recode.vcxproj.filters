@@ -80,9 +80,6 @@
     <Filter Include="sources\helpers\configs_sys">
       <UniqueIdentifier>{87428552-a071-4da7-82fb-748016361a1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\functions\chams">
-      <UniqueIdentifier>{38309a37-7e6c-4593-9e24-d0deb82c3e80}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -274,11 +271,23 @@
     <ClCompile Include="hooks\hooks\draw_model_execute.cpp">
       <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
-    <ClCompile Include="functions\chams\chams.cpp">
-      <Filter>sources\functions\chams</Filter>
-    </ClCompile>
     <ClCompile Include="sdk\interfaces\material_var.h">
       <Filter>sources\sdk\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\do_post_screen_space_effects.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\visuals\chams.cpp">
+      <Filter>sources\functions\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\visuals\glow.cpp">
+      <Filter>sources\functions\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\list_leaves_in_box.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="hooks\hooks\sequence.cpp">
+      <Filter>sources\hooks\hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -630,11 +639,14 @@
     <ClInclude Include="functions\misc\events.h">
       <Filter>sources\functions\misc</Filter>
     </ClInclude>
-    <ClInclude Include="functions\chams\chams.h">
-      <Filter>sources\functions\chams</Filter>
-    </ClInclude>
     <ClInclude Include="sdk\interfaces\key_values.h">
       <Filter>sources\sdk\interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\visuals\chams.h">
+      <Filter>sources\functions\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\visuals\glow.h">
+      <Filter>sources\functions\visuals</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

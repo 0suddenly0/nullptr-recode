@@ -181,7 +181,7 @@ public:
 	virtual int                   game_lump_size(int lumpId) const = 0; // 40
 	virtual bool                  load_game_lump(int lumpId, void* pBuffer, int size) = 0;
 	virtual int                   level_leaf_count() const = 0;
-	virtual c_spatial_query*        get_bsp_treequery() = 0;
+	virtual c_spatial_query*        get_bsp_tree_query() = 0;
 	virtual void                  linear_to_gamma(float* linear, float* gamma) = 0;
 	virtual float                 light_style_value(int style) = 0; // 45
 	virtual void                  compute_dynamic_lighting(const vec3& pt, const vec3* pNormal, vec3& color) = 0;

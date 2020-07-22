@@ -1,5 +1,6 @@
 #include "../menu.h"
 int esp_player_tab = 0;
+int glow_player_tab = 0;
 
 int chams_player_tab = 0;
 std::array<int, 3> chams_player_layer;
@@ -59,7 +60,7 @@ namespace menu {
 
 			null_gui::next_column();
 
-			null_gui::begin_group("colors##players_visial", vec2(0, 0)); {
+			null_gui::begin_group("colors##players_", vec2(0, 0)); {
 				null_gui::color_edit("dormant", &settings_cur->dormant);
 				null_gui::new_line();
 				null_gui::color_edit("visible", &settings_cur->box_visible);
@@ -95,7 +96,7 @@ namespace menu {
 			}
 			null_gui::end_group();
 
-			null_gui::begin_group("settings##players visial", vec2(0, 0)); {
+			null_gui::begin_group("settings##players", vec2(0, 0)); {
 				null_gui::check_box("visible only", &settings_cur->only_visible);
 
 				null_gui::combo("type", &settings_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
@@ -114,7 +115,7 @@ namespace menu {
 			}
 			null_gui::end_group();
 
-			null_gui::begin_group("settings##players visial", vec2(0, 0)); {
+			null_gui::begin_group("settings##players", vec2(0, 0)); {
 				null_gui::check_box("visible only##ragdoll", &settings_ragdoll_cur->only_visible);
 
 				null_gui::combo("type##hands", &settings_ragdoll_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
@@ -149,9 +150,28 @@ namespace menu {
 			}
 			null_gui::end_group();
 		} break;
-		case 3:
-			null_gui::text("soon...");
-			break;
+		case 3: {
+			auto settings_cur = &settings::visuals::glow::glow_items[glow_player_tab];
+
+			static char* glow_types[] = { "standart outline", "glow pulsing", "inner outline", "inner outline pulsing" };
+
+			null_gui::create_columns(2);
+			null_gui::begin_group("general##childglow", vec2(0, 101)); {
+				null_gui::horizontal(glow_player_tab, player_tabs);
+				null_gui::check_box("enable", &settings_cur->enable);
+				null_gui::check_box("use bind", &settings::visuals::glow::using_bind);
+				null_gui::key_bind("##use_bind", &settings::visuals::glow::bind);
+			}
+			null_gui::end_group();
+
+			null_gui::begin_group("players##visuals_players", vec2(0, 0)); {
+				null_gui::check_box("only visible", &settings_cur->visible_only);
+				null_gui::combo("type##glow", &settings_cur->type, std::vector<std::string>{ "standart outline", "glow pulsing", "inner outline", "inner outline pulsing" });
+				null_gui::color_edit("visible color", &settings_cur->visible);
+				null_gui::color_edit("invisible color", &settings_cur->in_visible);
+			}
+			null_gui::end_group();
+		} break;
 		case 4: {
 			null_gui::begin_group("general"); {
 				null_gui::check_box("offscreen", &settings::visuals::ofc::enable);

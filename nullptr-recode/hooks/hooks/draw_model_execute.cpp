@@ -1,5 +1,5 @@
 #include "../hooks.h"
-#include "../../functions/chams/chams.h"
+#include "../../functions/visuals/chams.h"
 
 namespace hooks {
 	void __fastcall draw_model_execute::hook(void* _this, int edx, c_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4* boneo_matrix) {

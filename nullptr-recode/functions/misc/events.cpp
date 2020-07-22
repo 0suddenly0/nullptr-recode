@@ -97,6 +97,16 @@ private:
 			}
 		}
 
+		if (strstr(event->get_name(), "player_death")) {
+			if (sdk::engine_client->get_player_for_user_id(event->get_int("attacker")) == sdk::engine_client->get_local_player()) {
+				const auto icon_override = skin_changer::get_icon_override(event->get_string("weapon"));
+
+				if (icon_override) {
+					event->set_string("weapon", icon_override);
+				}
+			}
+		}
+
 		if (strstr(event->get_name(), "item_purchase")) {
 			int userid = event->get_int("userid");
 			if (!userid) return;

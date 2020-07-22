@@ -52,6 +52,16 @@ struct chams_settings_t {
 	std::array< chams_layer_settings_t, 2 > layers;
 };
 
+struct glow_settings_t {
+	bool enable = false;
+	bool visible_only = false;
+
+	color visible = { 0, 0, 0, 255 };
+	color in_visible = { 0, 0, 0, 255 };
+
+	int type = 0;
+};
+
 struct window_settings_t {
 	std::string name;
 	int alpha;
@@ -141,6 +151,12 @@ namespace settings {
 			bool using_bind = false;
 			key_bind_t bind = { 0, 0, false };
 			std::array<esp_settings_t, 3> esp_items;
+		}
+
+		namespace glow {
+			bool using_bind = false;
+			key_bind_t bind = { 0, 0, false };
+			std::array<glow_settings_t, 3> glow_items;
 		}
 
 		namespace chams {

@@ -9,6 +9,7 @@
 #include "../functions/misc/engine_prediction.h"
 
 #pragma intrinsic(_ReturnAddress)  
+#pragma intrinsic(_AddressOfReturnAddress)
 
 namespace hooks {
 	extern vfunc_hook d3d9device_vhook;
@@ -25,7 +26,9 @@ namespace hooks {
 	extern vfunc_hook sv_cheats_vhook;
 	extern vfunc_hook draw_model_stats_overlay_vhook;
 	extern vfunc_hook mdl_render_vhook;
+	extern vfunc_hook bsp_query_vhook;
 	extern recv_prop_hook* spotted_vhook;
+	extern recv_prop_hook* sequence_vhook;
 
 	namespace indexes {
 		int send_net_msg = 40;
@@ -45,6 +48,8 @@ namespace hooks {
 		int is_connected = 27;
 		int client_command = 7;
 		int draw_model_execute = 21;
+		int do_post_screen_space_effects = 44;
+		int list_leaves_in_box = 6;
 	}
 
 	void initialize();
@@ -147,6 +152,20 @@ namespace hooks {
 	namespace draw_model_execute {
 		using fn = void(__fastcall*)(void*, int, c_mat_render_context*, const draw_model_state_t&, const model_render_info_t&, matrix3x4*);
 		void __fastcall hook(void* _this, int edx, c_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4* boneo_matrix);
+	}
+
+	namespace do_post_screen_space_effects {
+		using fn = int(__thiscall*)(c_client_mode*, int);
+		int  __stdcall hook(int a1);
+	}
+
+	namespace list_leaves_in_box {
+		using fn = int(__thiscall*)(void*, const vec3&, const vec3&, unsigned short*, int);
+		int __fastcall hook(void* _this, int, vec3& mins, vec3& maxs, unsigned short* pList, int listMax);
+	}
+
+	namespace sequence {
+		void hook(const c_recv_proxy_data* data, void* ent, void* out);
 	}
 
 	namespace wndproc {

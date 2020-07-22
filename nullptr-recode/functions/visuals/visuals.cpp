@@ -533,13 +533,6 @@ namespace visuals {
 	void grenades() {
 		if (!settings::visuals::grenades::enable) return;
 
-		for (int i = 0; i < sdk::entity_list->get_highest_entity_index(); i++) {
-			c_base_entity* entity = (c_base_entity*)(sdk::entity_list->get_client_entity(i));
-			if (entity && entity != sdk::local_player) {
-				grenade_names(entity);
-			}
-		}
-
 		for (int i = 0; i < globals::smoke_info.size(); i++) {
 			grenade_info_t cur_smoke = globals::smoke_info[i];
 			vec2 position;
@@ -598,6 +591,13 @@ namespace visuals {
 				} else if (settings::visuals::grenades::molotov_timer) {
 					render::draw_text(life_time, vec2(position.x, position.y + 10), settings::visuals::grenades::color_molotov, true, true);
 				}
+			}
+		}
+
+		for (int i = 0; i < sdk::entity_list->get_highest_entity_index(); i++) {
+			c_base_entity* entity = (c_base_entity*)(sdk::entity_list->get_client_entity(i));
+			if (entity && entity != sdk::local_player) {
+				grenade_names(entity);
 			}
 		}
 	}

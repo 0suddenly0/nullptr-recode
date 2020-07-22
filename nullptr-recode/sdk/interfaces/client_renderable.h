@@ -13,7 +13,7 @@ struct model_t;
 
 class c_client_renderable {
 public:
-	virtual c_client_renderable*       get_iclient_unknown() = 0;
+	virtual c_client_unknown*          get_client_unknown() = 0;
 	virtual vec3 const&                get_render_origin(void) = 0;
 	virtual qangle const&              get_render_angles(void) = 0;
 	virtual bool                       should_draw(void) = 0;

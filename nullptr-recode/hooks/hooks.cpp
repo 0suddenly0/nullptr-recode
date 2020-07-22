@@ -34,7 +34,9 @@ namespace hooks {
 	vfunc_hook sv_cheats_vhook;
 	vfunc_hook draw_model_stats_overlay_vhook;
 	vfunc_hook mdl_render_vhook;
+	vfunc_hook bsp_query_vhook;
 	recv_prop_hook* spotted_vhook;
+	recv_prop_hook* sequence_vhook;
 
 	void initialize() {
 		wndproc::o_wnd_proc = (wndproc::WNDPROC)SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::hook);
@@ -55,7 +57,8 @@ namespace hooks {
 		client_vhook.hook_index(indexes::create_move,        create_move_hook_proxy);
 
 		client_mode_vhook.setup(sdk::client_mode);
-		client_mode_vhook.hook_index(indexes::override_view, override_view::hook);
+		client_mode_vhook.hook_index(indexes::do_post_screen_space_effects, do_post_screen_space_effects::hook);
+		client_mode_vhook.hook_index(indexes::override_view,                override_view::hook);
 
 		sound_vhook.setup(sdk::engine_sound);
 		sound_vhook.hook_index(indexes::emit_sound, emit_sound::hook);
@@ -71,6 +74,9 @@ namespace hooks {
 		mdl_render_vhook.setup(sdk::mdl_render);
 		mdl_render_vhook.hook_index(indexes::draw_model_execute, draw_model_execute::hook);
 
+		bsp_query_vhook.setup(sdk::engine_client->get_bsp_tree_query());
+		bsp_query_vhook.hook_index(indexes::list_leaves_in_box, list_leaves_in_box::hook);
+
 		weapon_spread_vhook.setup(sdk::cvar->find_var("weapon_debug_spread_show"));
 		weapon_spread_vhook.hook_index(indexes::cvar_get_bool, weapon_spread::hook);
 
@@ -81,6 +87,7 @@ namespace hooks {
 		draw_model_stats_overlay_vhook.hook_index(indexes::cvar_get_bool, draw_model_stats_overlay::hook);
 
 		spotted_vhook = new recv_prop_hook(c_base_entity::spotted(), spotted::hook);
+		sequence_vhook = new recv_prop_hook(c_base_view_model::sequence(), sequence::hook);
 
 		event_manager::initialization();
 	}
@@ -99,7 +106,9 @@ namespace hooks {
 		sv_cheats_vhook.unhook_all();
 		draw_model_stats_overlay_vhook.unhook_all();
 		mdl_render_vhook.unhook_all();
+		bsp_query_vhook.unhook_all();
 		spotted_vhook->~recv_prop_hook();
+		sequence_vhook->~recv_prop_hook();
 
 		event_manager::shutdown();
 		profile_changer::send_update_messages();

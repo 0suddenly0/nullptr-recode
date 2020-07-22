@@ -167,7 +167,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="functions\chams\chams.cpp" />
     <ClCompile Include="functions\changers\profile changer\profile_changer.cpp" />
     <ClCompile Include="functions\changers\skin changer\kit_parser.cpp" />
     <ClCompile Include="functions\changers\skin changer\parser.cpp" />
@@ -177,6 +176,8 @@
     <ClCompile Include="functions\misc\misc.cpp" />
     <ClCompile Include="functions\notify\notify.cpp" />
     <ClCompile Include="functions\visuals\background.cpp" />
+    <ClCompile Include="functions\visuals\chams.cpp" />
+    <ClCompile Include="functions\visuals\glow.cpp" />
     <ClCompile Include="functions\visuals\visuals.cpp" />
     <ClCompile Include="gui\imgui\imgui.cpp" />
     <ClCompile Include="gui\imgui\imgui_demo.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="hooks\hooks.cpp" />
     <ClCompile Include="hooks\hooks\client_command.cpp" />
     <ClCompile Include="hooks\hooks\create_move.cpp" />
+    <ClCompile Include="hooks\hooks\do_post_screen_space_effects.cpp" />
     <ClCompile Include="hooks\hooks\draw_model_execute.cpp" />
     <ClCompile Include="hooks\hooks\draw_model_stats_overlay.cpp" />
     <ClCompile Include="hooks\hooks\draw_set_color.cpp" />
@@ -208,6 +210,7 @@
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
     <ClCompile Include="hooks\hooks\is_connected.cpp" />
     <ClCompile Include="hooks\hooks\is_playing_demo.cpp" />
+    <ClCompile Include="hooks\hooks\list_leaves_in_box.cpp" />
     <ClCompile Include="hooks\hooks\lock_cursor.cpp" />
     <ClCompile Include="hooks\hooks\override_view.cpp" />
     <ClCompile Include="hooks\hooks\paint_traverse.cpp" />
@@ -215,6 +218,7 @@
     <ClCompile Include="hooks\hooks\retrieve_message.cpp" />
     <ClCompile Include="hooks\hooks\send_datagram.cpp" />
     <ClCompile Include="hooks\hooks\send_net_msg.cpp" />
+    <ClCompile Include="hooks\hooks\sequence.cpp" />
     <ClCompile Include="hooks\hooks\spotted.cpp" />
     <ClCompile Include="hooks\hooks\sv_cheats.cpp" />
     <ClCompile Include="hooks\hooks\weapon_spread.cpp" />
@@ -233,7 +237,6 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="functions\chams\chams.h" />
     <ClInclude Include="functions\changers\profile changer\profile_changer.h" />
     <ClInclude Include="functions\changers\skin changer\item_definitions.h" />
     <ClInclude Include="functions\changers\skin changer\kit_parser.h" />
@@ -244,6 +247,8 @@
     <ClInclude Include="functions\misc\misc.h" />
     <ClInclude Include="functions\notify\notify.h" />
     <ClInclude Include="functions\visuals\background.h" />
+    <ClInclude Include="functions\visuals\chams.h" />
+    <ClInclude Include="functions\visuals\glow.h" />
     <ClInclude Include="functions\visuals\visuals.h" />
     <ClInclude Include="gui\imgui\imconfig.h" />
     <ClInclude Include="gui\imgui\imgui.h" />

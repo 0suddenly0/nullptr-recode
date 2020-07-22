@@ -216,8 +216,8 @@ namespace chams {
 	c_material* create_material(const std::string& material_name, const std::string& shader_type, const std::string& material_data) {
 		const auto key_values = (c_key_values*)(sdk::mem_alloc->alloc(36u));
 
-		key_values->init(shader_type.c_str());
-		key_values->load_from_buffer(material_name.c_str(), material_data.c_str());
+		key_values->init_key(shader_type.c_str());
+		key_values->load_from_buffer_key(material_name.c_str(), material_data.c_str());
 
         return sdk::mat_system->create_material(material_name.c_str(), key_values);
 	}

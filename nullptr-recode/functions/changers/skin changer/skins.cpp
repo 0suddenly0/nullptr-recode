@@ -180,7 +180,7 @@ namespace skin_changer {
 
 		const std::vector<weapon_name> knife_names_preview = {
 			{0, "default"},
-			{item_definition_index::knife_t, "weapon_knife"},
+			{item_definition_index::knife_t, "weapon_knife_t"},
 			{item_definition_index::knife, "weapon_knife"},
 			{item_definition_index::knife_bayonet, "weapon_bayonet"},
 			{item_definition_index::knife_css, "weapon_knife_css"},

@@ -8,7 +8,8 @@
 #include "settings/globals.h"
 #include "hooks/hooks.h"
 #include "helpers/netvars.h"
-#include "functions/chams/chams.h"
+#include "functions/visuals/chams.h"
+#include "functions/visuals/glow.h"
 
 DWORD WINAPI attach(LPVOID base) {
 	if (utils::wait_for_modules(10000, { L"client.dll", L"engine.dll", L"shaderapidx9.dll" }) == WAIT_TIMEOUT) {
@@ -86,6 +87,7 @@ BOOL WINAPI detach() {
 #endif
 
 	hooks::unhook();
+	glow::shutdown();
 	render::destroy();
 
 	return TRUE;
