@@ -14,6 +14,8 @@ namespace menu {
 	std::string temp_clantag = "";
 	int global_visuals_tab = 0;
 
+	legitbot_settings_t* legitbot_settings = nullptr;
+
 	void draw_bind_window();
 	void draw_main_window();
 

@@ -83,7 +83,10 @@ public:
 	virtual bool                  set_http_request_raw_post_body(HTTPRequestHandle hRequest, const char* pchContentType, std::uint8_t* pubBody, std::uint32_t unBodyLen) = 0;
 };
 
-class c_steam_friends;
+class c_steam_friends {
+public: 
+	virtual const char* get_persona_name() = 0;
+};
 
 class c_steam_client {
 public:

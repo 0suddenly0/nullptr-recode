@@ -12,6 +12,7 @@ namespace visuals {
 	void render();
 	void draw_watermark();
 	void spread_circle();
+	void draw_fov();
 	void draw_capsule_hitbox(c_base_player* player, bool dead);
 	void grenade_names(c_base_entity* entity);
 	void grenades();

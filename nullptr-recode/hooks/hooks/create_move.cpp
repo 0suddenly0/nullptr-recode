@@ -1,4 +1,5 @@
 #include "../hooks.h"
+#include "../../functions/legitbot/legitbot.h"
 
 namespace hooks {
 	void __stdcall create_move::hook(int sequence_number, float input_sample_frametime, bool active, bool& send_packet) {
@@ -33,6 +34,8 @@ namespace hooks {
 		misc::clan_tag::init();
 
 		engine_prediction::begin(cmd); {
+			legitbot::run(cmd);
+			legit_backtrack::run(cmd);
 			visuals::grenade_prediction::tick(cmd->buttons);
 			misc::edge_jump(cmd, old_flags);
 			misc::block_bot(cmd);

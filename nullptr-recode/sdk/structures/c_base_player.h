@@ -130,7 +130,7 @@ public:
 	}
 
 	c_user_cmd*& current_command() {
-		static auto currentCommand = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "89 BE ? ? ? ? E8 ? ? ? ? 85 FF") + 2);
+		static uint32_t currentCommand = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "89 BE ? ? ? ? E8 ? ? ? ? 85 FF") + 2);
 		return *(c_user_cmd**)((uintptr_t)this + currentCommand);
 	}
 
@@ -193,7 +193,7 @@ public:
 	}
 
 	static void update_animation_state(c_csgo_player_animstate* state, qangle angle) {
-		static auto UpdateAnimState = utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24");
+		static uint8_t* UpdateAnimState = utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24");
 
 		if (!UpdateAnimState)
 			return;
@@ -213,16 +213,14 @@ public:
 		}
 	}
 	static void reset_animation_state(c_csgo_player_animstate* state) {
-		using ResetAnimState_t = void(__thiscall*)(c_csgo_player_animstate*);
-		static auto reset_anim_state = (ResetAnimState_t)utils::pattern_scan(GetModuleHandleA("client.dll"), "56 6A 01 68 ? ? ? ? 8B F1");
+		static auto reset_anim_state = (void(__thiscall*)(c_csgo_player_animstate*))utils::pattern_scan(GetModuleHandleA("client.dll"), "56 6A 01 68 ? ? ? ? 8B F1");
 		if (!reset_anim_state)
 			return;
 
 		reset_anim_state(state);
 	}
 	void create_animation_state(c_csgo_player_animstate* state) {
-		using CreateAnimState_t = void(__thiscall*)(c_csgo_player_animstate*, c_base_player*);
-		static auto CreateAnimState = (CreateAnimState_t)utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 56 8B F1 B9 ? ? ? ? C7 46");
+		static auto CreateAnimState = (void(__thiscall*)(c_csgo_player_animstate*, c_base_player*))utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 56 8B F1 B9 ? ? ? ? C7 46");
 		if (!CreateAnimState)
 			return;
 
@@ -239,7 +237,7 @@ public:
 		return *(vec3*)((uintptr_t)this + _m_vecBaseVelocity);
 	}
 
-	vec3        get_eye_pos() {
+	vec3 get_eye_pos() {
 		auto duckAmount = this->duck_amount();
 		return vec_origin() + vec3(0.0f, 0.0f, ((1.0f - duckAmount) * 18.0f) + 46.0f);
 	}

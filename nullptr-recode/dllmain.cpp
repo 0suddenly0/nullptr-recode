@@ -10,6 +10,7 @@
 #include "helpers/netvars.h"
 #include "functions/visuals/chams.h"
 #include "functions/visuals/glow.h"
+#include "functions/changers/skin changer/kit_parser.h"
 
 DWORD WINAPI attach(LPVOID base) {
 	if (utils::wait_for_modules(10000, { L"client.dll", L"engine.dll", L"shaderapidx9.dll" }) == WAIT_TIMEOUT) {
@@ -25,12 +26,12 @@ DWORD WINAPI attach(LPVOID base) {
 		config::standart::setup();
 
 		utils::console_print("[-] injected\n");
-
+		
 		utils::console_print("[-] initialization sdk...\n");
 		sdk::initialize();
 		sdk::print();
 		utils::console_print("[-] sdk initialized\n");
-
+		
 		chams::init();
 
 		utils::console_print("[-] initialization netvars...\n");

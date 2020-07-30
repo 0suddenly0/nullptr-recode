@@ -1,6 +1,7 @@
 #include "visuals.h"
 #include "../../settings/settings.h"
 #include "../../sdk/structures/structures.h"
+#include "../legitbot/legitbot.h"
 
 std::map<int, std::string> fixed_weapon_names_by_id = {
 		{ item_definition_index::usp_silencer, "usp" },
@@ -277,9 +278,8 @@ public:
 					vec2 bone_pos1;
 					if (!math::world2screen(vec3(bone_to_world_out[i][0][3], bone_to_world_out[i][1][3], bone_to_world_out[i][2][3]), bone_pos1))
 						continue;
-
 					vec2 bone_pos2;
-					if (!math::world2screen(vec3(bone_to_world_out[bone->parent][0][3], bone_to_world_out[bone->parent][1][3], bone_to_world_out[bone->parent][2][3]), bone_pos2))
+					if (!math::world2screen(vec3(bone_to_world_out[bone->parent][0][3], bone_to_world_out[bone->parent][1][3], bone_to_world_out[bone->parent][2][3]), bone_pos2)) 
 						continue;
 
 					render::draw_line(bone_pos1, bone_pos2, get_color(is_visible ? current_settings.skeleton_visible : current_settings.skeleton_invisible));
@@ -325,7 +325,7 @@ public:
 		if (!current_settings.weapon) return;
 		c_base_combat_weapon* weapon = player->active_weapon().get();
 		if (!weapon) return;
-		c_cs_weapon_info* weapon_data = weapon->get_cs_weapondata();
+		c_cs_weapon_info* weapon_data = weapon->get_cs_weapon_data();
 		if (!weapon_data) return;
 		
 		int ammo = math::clamp(weapon->clip1(), 0, weapon_data->max_clip1);
@@ -410,6 +410,7 @@ namespace visuals {
 		draw_watermark();
 		entity_loop();
 		grenades();
+		draw_fov();
 	}
 
 	void draw_watermark() {
@@ -422,7 +423,7 @@ namespace visuals {
 		float rounding = 4.f;
 
 		vec2 screen_size = utils::get_screen_size();
-		std::string watermark_text = utils::snprintf("nullptr | %s | fps: %i", utils::current_date_time().c_str(), null_gui::deep::get_framerate());
+		std::string watermark_text = utils::snprintf("nullptr | %s | %s | fps: %d", sdk::steam_friends->get_persona_name(), utils::current_date_time().c_str(), null_gui::deep::get_framerate());
 		vec2 watermark_text_size = render::get_text_size(watermark_text);	
 
 		vec2 bar_start_position  = vec2(screen_size.x - offsets.x - watermark_text_size.x - offsets_text.x, offsets.y);
@@ -442,14 +443,18 @@ namespace visuals {
 		c_base_combat_weapon* weapon = sdk::local_player->active_weapon().get();
 		if (!weapon) return;
 
-		float spreed = weapon->get_inaccuracy() * 800;
-		int w, h;
-		int centre_w, centre_h;
-		sdk::engine_client->get_screen_size(w, h);
-		centre_w = w / 2;
-		centre_h = h / 2;
+		render::draw_circle_filled(utils::get_screen_size() / 2, math::scale_with_fov(weapon->get_inaccuracy() * 60), 40, settings::visuals::spread_circle::clr);
+	}
 
-		render::draw_circle_filled(centre_w, centre_h, spreed, 40, settings::visuals::spread_circle::clr);
+	void draw_fov() {
+		if (!sdk::local_player || !sdk::local_player->is_alive() || !sdk::engine_client->is_in_game() || !legitbot::get_settings() || !legitbot::get_settings()->enabled)
+			return;
+
+		if (settings::visuals::aimbot_fov::standart_filled)	render::draw_circle_filled(utils::get_screen_size() / 2, math::scale_with_fov(legitbot::get_settings()->fov), 60, settings::visuals::aimbot_fov::standart_filled_clr);
+		if (settings::visuals::aimbot_fov::standart_outline) render::draw_circle(utils::get_screen_size() / 2, math::scale_with_fov(legitbot::get_settings()->fov), 60, settings::visuals::aimbot_fov::standart_outline_clr);
+
+		if (legitbot::get_settings()->silent && settings::visuals::aimbot_fov::silent_filled) render::draw_circle_filled(utils::get_screen_size() / 2, math::scale_with_fov(legitbot::get_settings()->silent_fov), 60, settings::visuals::aimbot_fov::silent_filled_clr);
+		if (legitbot::get_settings()->silent && settings::visuals::aimbot_fov::silent_outline) render::draw_circle(utils::get_screen_size() / 2, math::scale_with_fov(legitbot::get_settings()->silent_fov), 60, settings::visuals::aimbot_fov::silent_outline_clr);
 	}
 
 	void grenade_names(c_base_entity* entity) {
@@ -809,7 +814,7 @@ namespace visuals {
 				if (!material) continue;
 
 				if (strstr(material->get_texture_group_name(), "World")) {
-					if (settings::visuals::night_mode && !globals::unloading) material->color_modulate(0.18, 0.18, 0.15);
+					if (settings::visuals::night_mode && !globals::unloading) material->color_modulate(0.10, 0.10, 0.08);
 					else material->color_modulate(1.0f, 1.0f, 1.0f);
 				}
 			}
@@ -1003,9 +1008,9 @@ namespace visuals {
 
 		vec2 screen_center = vec2(width * .5f, height * .5f);
 
-		const float angle_yaw_rad = DEG2RAD(viewangles.yaw - math::calc_angle(c_base_player::get_spectating_player()->get_eye_pos(), player->get_hitbox_pos(hitbox_pelvis)).yaw - 90);
-		const float new_point_x = screen_center.x + ((((width - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * cos(angle_yaw_rad)) + (int)(6.0f * (((float)settings::visuals::ofc::size - 4.f) / 16.0f));
-		const float new_point_y = screen_center.y + ((((height - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * sin(angle_yaw_rad));
+		const float angle = viewangles.yaw - math::calc_angle(c_base_player::get_spectating_player()->get_eye_pos(), player->get_hitbox_pos(hitbox_pelvis)).yaw - 90;
+		const float new_point_x = screen_center.x + ((((width - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * cos(DEG2RAD(angle))) + (int)(6.0f * (((float)settings::visuals::ofc::size - 4.f) / 16.0f));
+		const float new_point_y = screen_center.y + ((((height - (settings::visuals::ofc::size * 3)) * 0.5f) * (settings::visuals::ofc::range / 100.0f)) * sin(DEG2RAD(angle)));
 
 		std::array<vec2, 3> points{
 			vec2(new_point_x - settings::visuals::ofc::size, new_point_y - settings::visuals::ofc::size),
@@ -1013,9 +1018,14 @@ namespace visuals {
 			vec2(new_point_x - settings::visuals::ofc::size, new_point_y + settings::visuals::ofc::size)
 		};
 
-		math::rotate_triangle(points, viewangles.yaw - math::calc_angle(c_base_player::get_spectating_player()->get_eye_pos(), player->get_hitbox_pos(hitbox_pelvis)).yaw - 90);
-		render::draw_triangle_filled(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index(), 100)));
-		render::draw_triangle(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index())));
+		math::rotate_triangle(points, angle);
+		if (settings::visuals::ofc::type == 0) {
+			render::draw_triangle_filled(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index(), 100)));
+			render::draw_triangle(points, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index())));
+		} else {
+			render::draw_arc(utils::get_screen_size() / 2, (settings::visuals::ofc::range * 4.6) - 5, angle - settings::visuals::ofc::size, angle + settings::visuals::ofc::size, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index(), 100)), 2.f);
+			render::draw_arc(utils::get_screen_size() / 2, (settings::visuals::ofc::range * 4.6), angle - settings::visuals::ofc::size, angle + settings::visuals::ofc::size, color(settings::visuals::ofc::clr, esp_player::get_player_alpha_offscreen(player->ent_index())), 4.f);
+		}
 	}
 
 	void draw_weapons(c_base_combat_weapon* ent) {
@@ -1035,13 +1045,13 @@ namespace visuals {
 		float box_w = (float)fabs(bbox.right - bbox.left);
 		float offsett = 3.f;
 		if (settings::visuals::dropped_weapon::ammo_bar) {
-			if (ent->is_gun()) {
-				float width = (((box_w * math::clamp(ent->clip1(), 0, ent->get_cs_weapondata()->max_clip1)) / ent->get_cs_weapondata()->max_clip1));
+			if (ent->is_gun() && ent->get_cs_weapon_data()->weapon_type != weapon_type_knife) {
+				float width = (((box_w * math::clamp(ent->clip1(), 0, ent->get_cs_weapon_data()->max_clip1)) / ent->get_cs_weapon_data()->max_clip1));
 
 				render::draw_box(bbox.left - 1.f, bbox.top + 4.f, bbox.right + 1.f, bbox.top + 8.f, settings::visuals::dropped_weapon::bar_outline);
 				render::draw_box_filled(bbox.left, bbox.top + 5, bbox.right, bbox.top + 7, settings::visuals::dropped_weapon::bar_background);
 				render::draw_box_filled(bbox.left, bbox.top + 5, bbox.left + (int)width, bbox.top + 7, settings::visuals::dropped_weapon::bar_main);
-				if (ent->clip1() != ent->get_cs_weapondata()->max_clip1 && ent->clip1() > 0 && settings::visuals::dropped_weapon::ammo_in_bar) {
+				if (ent->clip1() != ent->get_cs_weapon_data()->max_clip1 && ent->clip1() > 0 && settings::visuals::dropped_weapon::ammo_in_bar) {
 					render::draw_text(std::to_string(ent->clip1()), bbox.left + width, bbox.top + 6.f, color(255, 255, 255, 255), true, true, true);
 				}
 				offsett += 4.f;

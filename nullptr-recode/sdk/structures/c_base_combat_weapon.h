@@ -16,13 +16,13 @@ public:
 	NETVAR(int32_t, world_dropped_model_index, "DT_BaseCombatWeapon", "m_iWorldDroppedModelIndex");
 	NETVAR(bool, pin_pulled, "DT_BaseCSGrenade", "m_bPinPulled");
 	NETVAR(float_t, throw_time, "DT_BaseCSGrenade", "m_fThrowTime");
-	NETVAR(float_t, postpone_fire_ready_time, "DT_BaseCombatWeapon", "m_flPostponeFireReadyTime");
+	NETVAR(float_t, postpone_fire_ready_time, "DT_WeaponCSBase", "m_flPostponeFireReadyTime");
 	NETVAR(c_handle<c_base_weapon_world_model>, weapon_world_model, "DT_BaseCombatWeapon", "m_hWeaponWorldModel");
 	NETVAR(int32_t, weapon_mode, "DT_WeaponCSBase", "m_weaponMode");
 	NETVAR(int32_t, zoom_level, "DT_WeaponCSBaseGun", "m_zoomLevel");
 
 
-	c_cs_weapon_info* get_cs_weapondata() {
+	c_cs_weapon_info* get_cs_weapon_data() {
 		return sdk::weapon_system->get_wpn_data(this->item().item_definition_index());
 	}
 
@@ -48,12 +48,12 @@ public:
 	}
 
 	bool is_grenade() {
-		return get_cs_weapondata()->weapon_type == weapon_type_grenade;
+		return get_cs_weapon_data()->weapon_type == weapon_type_grenade;
 	}
 
 	bool is_knife() {
 		if (this->item().item_definition_index() == item_definition_index::taser) return false;
-		return get_cs_weapondata()->weapon_type == weapon_type_knife;
+		return get_cs_weapon_data()->weapon_type == weapon_type_knife;
 	}
 
 	bool is_zeus() {
@@ -62,12 +62,12 @@ public:
 	}
 
 	bool is_reloading() {
-		static auto inReload = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "C6 87 ? ? ? ? ? 8B 06 8B CE FF 90") + 2);
+		static uint32_t inReload = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "C6 87 ? ? ? ? ? 8B 06 8B CE FF 90") + 2);
 		return *(bool*)((uintptr_t)this + inReload);
 	}
 
 	bool is_rifle() {
-		switch (get_cs_weapondata()->weapon_type) {
+		switch (get_cs_weapon_data()->weapon_type) {
 		case weapon_type_rifle: return true;
 		case weapon_type_submachinegun: return true;
 		case weapon_type_shotgun: return true;
@@ -77,24 +77,23 @@ public:
 	}
 
 	bool is_pistol() {
-		switch (get_cs_weapondata()->weapon_type) {
+		switch (get_cs_weapon_data()->weapon_type) {
 		case weapon_type_pistol: return true;
 		default: return false;
 		}
 	}
 
 	bool is_sniper() {
-		switch (get_cs_weapondata()->weapon_type) {
+		switch (get_cs_weapon_data()->weapon_type) {
 		case weapon_type_sniper_rifle: return true;
 		default: return false;
 		}
 	}
 
 	bool is_gun() {
-		switch (get_cs_weapondata()->weapon_type) {
+		switch (get_cs_weapon_data()->weapon_type) {
 		case weapon_type_c4: return false;
 		case weapon_type_grenade: return false;
-		case weapon_type_knife: return false;
 		case weapon_type_unknown: return false;
 		default: return true;
 		}
@@ -113,12 +112,12 @@ public:
 	}
 
 	c_utl_vector<c_ref_counted*>& custom_materials() {
-		static auto inReload = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "83 BE ? ? ? ? ? 7F 67") + 2) - 12;
+		static uint32_t inReload = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "83 BE ? ? ? ? ? 7F 67") + 2) - 12;
 		return *(c_utl_vector<c_ref_counted*>*)((uintptr_t)this + inReload);
 	}
 
 	bool* custom_material_initialized() {
-		static auto currentCommand = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "C6 86 ? ? ? ? ? FF 50 04") + 2);
+		static uint32_t currentCommand = *(uint32_t*)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "C6 86 ? ? ? ? ? FF 50 04") + 2);
 		return (bool*)((uintptr_t)this + currentCommand);
 	}
 
@@ -126,5 +125,4 @@ public:
 		if (!this) return 0;
 		return this->item().item_definition_index();
 	}
-
 };

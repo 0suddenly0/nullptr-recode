@@ -80,6 +80,15 @@
     <Filter Include="sources\helpers\configs_sys">
       <UniqueIdentifier>{87428552-a071-4da7-82fb-748016361a1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\functions\legitbot">
+      <UniqueIdentifier>{031efaf7-b983-4829-b46b-47ad4669e948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\autowall">
+      <UniqueIdentifier>{18e57777-de2d-4efa-96ca-0571304dcd4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\functions\backtrack">
+      <UniqueIdentifier>{7800aa1b-de29-442e-9302-2d003339aaf3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -288,6 +297,15 @@
     </ClCompile>
     <ClCompile Include="hooks\hooks\sequence.cpp">
       <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\legitbot\legitbot.cpp">
+      <Filter>sources\functions\legitbot</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\autowall\autowall.cpp">
+      <Filter>sources\functions\autowall</Filter>
+    </ClCompile>
+    <ClCompile Include="functions\backtrack\backtrack.cpp">
+      <Filter>sources\functions\backtrack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -647,6 +665,15 @@
     </ClInclude>
     <ClInclude Include="functions\visuals\glow.h">
       <Filter>sources\functions\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\legitbot\legitbot.h">
+      <Filter>sources\functions\legitbot</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\autowall\autowall.h">
+      <Filter>sources\functions\autowall</Filter>
+    </ClInclude>
+    <ClInclude Include="functions\backtrack\backtrack.h">
+      <Filter>sources\functions\backtrack</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

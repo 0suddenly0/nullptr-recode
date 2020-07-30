@@ -1,4 +1,5 @@
 #include "menu.h"
+#include "../../functions/legitbot/legitbot.h"
 
 char* tabs[] = { "legit aim", "visuals", "misc", "skins", "profile", "configs", "scripts"};
 int current_tab = 0;
@@ -44,7 +45,9 @@ namespace menu {
 			null_gui::end_window();
 		}
 	}
+
 	void draw_main_window() {
+		if (legitbot::get_settings()) legitbot_settings = legitbot::get_settings();
 		if (!globals::show_menu) return;
 
 		null_gui::deep::set_menu_color(globals::menu_color);

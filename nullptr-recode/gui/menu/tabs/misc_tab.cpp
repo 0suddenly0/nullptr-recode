@@ -129,7 +129,7 @@ namespace menu {
 		}
 		null_gui::end_group();
 
-		null_gui::begin_group("windows", vec2(0, 100)); {
+		null_gui::begin_group("windows", vec2(0, 75)); {
 			null_gui::check_box("bind window", &settings::windows::bind_window.show);
 			null_gui::tooltip_items("##bind window settings", []() {
 				null_gui::slider_int("window alpha##bind window", &settings::windows::bind_window.alpha, 0, 255);

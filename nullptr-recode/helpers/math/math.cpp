@@ -1,8 +1,22 @@
 #include "math.h"
 #include <cmath>
 #include "../../sdk/structures/structures.h"
-
+#include "../../settings/settings.h"
 namespace math {
+	float scale_with_fov(float value) {
+		if (!sdk::local_player || !sdk::local_player->is_alive() || !sdk::engine_client->is_in_game())
+			return value;
+
+		float fov = settings::misc::disable_zoom ? 90 : sdk::local_player->get_fov();
+		vec2 screen_size = utils::get_screen_size();
+		vec2 center = screen_size / 2;
+
+		float ratio = screen_size.x / screen_size.y;
+		float screen_fov = atanf((ratio) * (0.75f) * tan(DEG2RAD(fov * 0.5f)));
+
+		return tanf(DEG2RAD(value)) / tanf(screen_fov) * center.x;
+	}
+
 	void rotate_triangle(std::array<vec2, 3>& points, float rotation) {
 		const auto points_center = (points.at(0) + points.at(1) + points.at(2)) / 3;
 		for (auto& point : points) {
@@ -106,7 +120,7 @@ namespace math {
 
 			auto viewangles = old_angles;
 			auto movedata = vec3(m_Cmd->forwardmove, m_Cmd->sidemove, m_Cmd->upmove);
-			viewangles.Normalize();
+			viewangles.normalize();
 
 			if (!(sdk::local_player->m_flags() & on_ground) && viewangles.roll != 0.f) movedata.y = 0.f;
 
@@ -154,6 +168,10 @@ namespace math {
 		}
 	}
 
+	vec3 cross_product(const vec3& a, const vec3& b) {
+		return vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+	}
+
 	void vector_angles(const vec3& forward, qangle& angles) {
 		float tmp, yaw, pitch;
 
@@ -175,26 +193,23 @@ namespace math {
 		angles[2] = 0;
 	}
 
-	void vector_angles(const vec3& forward, vec3& angles) {
-		float	tmp, yaw, pitch;
+	void vector_angles(const vec3& forward, vec3& up, qangle& angles) {
+		vec3 left = cross_product(up, forward);
+		left.normalized();
 
-		if (forward[1] == 0 && forward[0] == 0) {
-			yaw = 0;
-			if (forward[2] > 0) pitch = 270;
-			else pitch = 90;
+		float forward_dist = forward.length_2d();
+
+		if (forward_dist > 0.001f) {
+			angles.pitch = atan2f(-forward.z, forward_dist) * 180 / M_PI;
+			angles.yaw = atan2f(forward.y, forward.x) * 180 / M_PI;
+
+			float upZ = (left.y * forward.x) - (left.x * forward.y);
+			angles.roll = atan2f(left.z, upZ) * 180 / M_PI;
+		} else {
+			angles.pitch = atan2f(-forward.z, forward_dist) * 180 / M_PI;
+			angles.yaw = atan2f(-left.x, left.y) * 180 / M_PI;
+			angles.roll = 0;
 		}
-		else {
-			yaw = (atan2(forward[1], forward[0]) * 180 / DirectX::XM_PI);
-			if (yaw < 0) yaw += 360;
-
-			tmp = sqrt(forward[0] * forward[0] + forward[1] * forward[1]);
-			pitch = (atan2(-forward[2], tmp) * 180 / DirectX::XM_PI);
-			if (pitch < 0) pitch += 360;
-		}
-
-		angles[0] = pitch;
-		angles[1] = yaw;
-		angles[2] = 0;
 	}
 
 	float normalize_yaw(float yaw) {

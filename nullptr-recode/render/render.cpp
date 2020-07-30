@@ -163,37 +163,42 @@ namespace render {
 			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y + 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
 			draw_list->AddText(default_font, size, ImVec2(pos.x - 1, pos.y - 1), ImGui::GetColorU32(ImVec4(0, 0, 0, clr.a<float>())), text.c_str());
 		}
-		draw_list->AddText(default_font, size, ImVec2(pos.x, pos.y), ImGui::GetColorU32(get_vec4(clr)), text.c_str());
+		draw_list->AddText(default_font, size, math::to_imvec2(pos), ImGui::GetColorU32(get_vec4(clr)), text.c_str());
 
 		draw_list->PopTextureID();
 	}
 
 	void draw_line(vec2 start, vec2 end, color clr, int thickness) {
-		draw_list->AddLine(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)), (float)thickness);
+		draw_list->AddLine(math::to_imvec2(start), math::to_imvec2(end), ImGui::GetColorU32(get_vec4(clr)), (float)thickness);
+	}
+
+	void draw_arc(vec2 pos, float radius, float min_angle, float max_angle, color clr, float thickness) {
+		draw_list->PathArcTo(math::to_imvec2(pos), radius, DEG2RAD(min_angle), DEG2RAD(max_angle), 32);
+		draw_list->PathStroke(ImGui::GetColorU32(get_vec4(clr)), false, thickness);
 	}
 
 	void draw_box(vec2 start, vec2 end, color clr) {
-		draw_list->AddRect(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)));
+		draw_list->AddRect(math::to_imvec2(start), math::to_imvec2(end), ImGui::GetColorU32(get_vec4(clr)));
 	}
 
 	void draw_box_filled(vec2 start,vec2 end, color clr, float round) {
-		draw_list->AddRectFilled(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)), round);
+		draw_list->AddRectFilled(math::to_imvec2(start), math::to_imvec2(end), ImGui::GetColorU32(get_vec4(clr)), round);
 	}
 
 	void draw_box_filled_rounded(vec2 start, vec2 end, color clr, float round, int rounding_side) {
-		draw_list->AddRectFilled(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)), round, rounding_side);
+		draw_list->AddRectFilled(math::to_imvec2(start), math::to_imvec2(end), ImGui::GetColorU32(get_vec4(clr)), round, rounding_side);
 	}
 
 	void draw_circle(vec2 pos, float radius, int points, color clr) {
-		draw_list->AddCircle(ImVec2(pos.x, pos.y), radius, ImGui::GetColorU32(get_vec4(clr)), points);
+		draw_list->AddCircle(math::to_imvec2(pos), radius, ImGui::GetColorU32(get_vec4(clr)), points);
 	}
 
 	void draw_circle_filled(vec2 pos, float radius, int points, color clr) {
-		draw_list->AddCircleFilled(ImVec2(pos.x, pos.y), radius, ImGui::GetColorU32(get_vec4(clr)), points);
+		draw_list->AddCircleFilled(math::to_imvec2(pos), radius, ImGui::GetColorU32(get_vec4(clr)), points);
 	}
 
 	void draw_box_filled_multicolor(vec2 start, vec2 end, color clr, color clr_right) {
-		draw_list->AddRectFilledMultiColor(ImVec2(start.x, start.y), ImVec2(end.x, end.y), ImGui::GetColorU32(get_vec4(clr)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr)));
+		draw_list->AddRectFilledMultiColor(math::to_imvec2(start), math::to_imvec2(end), ImGui::GetColorU32(get_vec4(clr)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr_right)), ImGui::GetColorU32(get_vec4(clr)));
 	}
 
 	void draw_circle_3d(vec3 pos, float points, float radius, color clr) {

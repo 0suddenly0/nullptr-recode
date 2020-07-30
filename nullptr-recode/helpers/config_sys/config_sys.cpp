@@ -46,8 +46,7 @@ namespace config {
         line_t get_line_type(std::string line) {
             if (line.back() == ']') {
                 return line_t::group;
-            }
-            else if (line.back() == ';') {
+            } else if (line.back() == ';') {
                 return line_t::var;
             }
         }
@@ -58,8 +57,96 @@ namespace config {
             _config.clear();
             push_config(&_config);
 
+			std::function<void(legitbot_settings_t& cur_settings)> save_legit = [](legitbot_settings_t& cur_settings) {
+				add_var("enable", cur_settings.enabled);
+				add_var("silent", cur_settings.silent);
+				add_var("autopistol", cur_settings.autopistol);
+				add_group("checks"); {
+					add_var("team", cur_settings.enabled);
+					add_var("smoke", cur_settings.enabled);
+					add_var("flash", cur_settings.enabled);
+				}
+				end_group();
+				add_group("autowall"); {
+					add_var("enable", cur_settings.autowall);
+					add_var("min damage", cur_settings.autowall_min_damage);
+				}
+				add_group("autofire"); {
+					add_var("enable", cur_settings.autofire);
+					add_var("bind", cur_settings.autofire_bind);
+					add_var("chance", cur_settings.autofire_chance);
+				}
+				end_group();
+				add_group("hitboxes"); {
+					for (int i = 0; i < hitboxes_string.size(); i++) {
+						add_var(hitboxes_string[i], cur_settings.hitboxes[i]);
+					}
+				}
+				end_group();
+				add_var("silent fov", cur_settings.silent_fov);
+				add_var("silent chance", cur_settings.enabled);
+				add_var("standart fov", cur_settings.fov);
+				add_var("smooth", cur_settings.smooth);
+				add_var("shot delay", cur_settings.shot_delay);
+				add_var("kill delay", cur_settings.kill_delay);
+				add_group("backtrack"); {
+					add_var("ticks", cur_settings.backtrack_ticks);
+					add_var("aim at backtrack", cur_settings.aim_at_backtrack);
+					add_var("priority", cur_settings.backtrack_priority);
+				}
+				end_group();
+				add_group("rcs"); {
+					add_var("enable", cur_settings.rcs_enabled);
+					add_var("start", cur_settings.rcs_start);
+					add_var("type", cur_settings.rcs_type);
+					add_var("x", cur_settings.rcs_x);
+					add_var("y", cur_settings.rcs_y);
+				}
+			};
+
+			add_group("legitbot"); {
+				add_group("general"); {
+					add_var("auto current", settings::legitbot::auto_current);
+					add_var("using bind", settings::legitbot::using_bind);
+					add_var("bind", settings::legitbot::bind);
+				}
+				end_group();
+
+				add_group("settings groups"); {
+					add_group("all"); {
+						save_legit(settings::legitbot::legitbot_items_all);
+					}
+					end_group();
+
+					add_group("groups"); {
+						for (int i = 0; i < weapon_groups.size(); i++) {
+							add_group(weapon_groups.at(i)); {
+								save_legit(settings::legitbot::legitbot_items_groups[i]);
+							}
+							end_group();
+						}
+					}
+					end_group();
+
+					add_group("on weapon"); {
+						for (int i = 0; i < weapon_names.size(); i++) {
+							add_group(weapon_names.at(i).name); {
+								save_legit(settings::legitbot::legitbot_items[i]);
+							}
+							end_group();
+						}
+					}
+					end_group();
+				}
+				end_group();
+			}
+			end_group();
+
 			add_group("visuals"); {
 				add_group("esp"); {
+					add_var("using bind", settings::visuals::esp::using_bind);
+					add_var("bind", settings::visuals::esp::bind);
+
 					for (int i = 0; i < _countof(player_tabs); i++) {
 						std::string name = player_tabs[i];
 						esp_settings_t& settings_cur = settings::visuals::esp::esp_items[i];
@@ -128,6 +215,9 @@ namespace config {
 				end_group();
 
 				add_group("chams"); {
+					add_var("using bind", settings::visuals::chams::using_bind);
+					add_var("bind", settings::visuals::chams::bind);
+
 					for (int i = 0; i < _countof(player_tabs); i++) {
 						std::string name = player_tabs[i];
 						chams_settings_t& settings_cur = settings::visuals::chams::player_items[i];
@@ -150,6 +240,24 @@ namespace config {
 					}
 
 					add_group("oher chams"); {
+						add_group("backtrack"); {
+							add_var("draw tick", settings::visuals::chams::backtrack_tick_draw);
+
+							for (int layer = 0; layer < _countof(layer_tabs); layer++) {
+								std::string name_layer = layer_tabs[layer];
+								chams_layer_settings_t& cur_layer = settings::visuals::chams::backtrack.layers[layer];
+								add_group(name_layer); {
+									add_var("enable", cur_layer.enable);
+									add_var("type", cur_layer.type);
+									add_var("visible only", cur_layer.only_visible);
+									add_var("visible", cur_layer.visible);
+									add_var("invisible", cur_layer.invisible);
+								}
+								end_group();
+							}
+						}
+						end_group();
+
 						add_group("ragdoll"); {
 							for (int i = 0; i < _countof(ragdoll_tabs); i++) {
 								std::string name = ragdoll_tabs[i];
@@ -216,7 +324,26 @@ namespace config {
 						end_group();
 					}
 					end_group();
+				}
+				end_group();
 
+				add_group("glow"); {
+					add_var("using bind", settings::visuals::glow::using_bind);
+					add_var("bind", settings::visuals::glow::bind);
+
+					for (int i = 0; i < _countof(player_tabs); i++) {
+						std::string name = player_tabs[i];
+						glow_settings_t& settings_cur = settings::visuals::glow::glow_items[i];
+
+						add_group(name); {
+							add_var("enable", settings_cur.enable);
+							add_var("type", settings_cur.type);
+							add_var("visible only", settings_cur.visible_only);
+							add_var("visible", settings_cur.visible);
+							add_var("invisible", settings_cur.invisible);
+						}
+						end_group();
+					}
 				}
 				end_group();
 
@@ -227,6 +354,7 @@ namespace config {
 						add_var("visible check", settings::visuals::ofc::visible_check);
 						add_var("range", settings::visuals::ofc::range);
 						add_var("size", settings::visuals::ofc::size);
+						add_var("type", settings::visuals::ofc::type);
 					}
 					end_group();
 
@@ -255,6 +383,25 @@ namespace config {
 						add_var("hitmarker show type", settings::visuals::hitmarker::type);
 						add_var("hitsound enable", settings::visuals::hitsound::enable);
 						add_var("hitsound volume", settings::visuals::hitsound::volume);
+					}
+					end_group();
+
+					add_group("aimbot fov"); {
+						add_group("standart"); {
+							add_var("outline", settings::visuals::aimbot_fov::standart_outline);
+							add_var("outline color", settings::visuals::aimbot_fov::standart_outline_clr);
+							add_var("filled", settings::visuals::aimbot_fov::standart_filled);
+							add_var("filled color", settings::visuals::aimbot_fov::standart_filled_clr);
+						}
+						end_group();
+
+						add_group("silent"); {
+							add_var("outline", settings::visuals::aimbot_fov::silent_outline);
+							add_var("outline color", settings::visuals::aimbot_fov::silent_outline_clr);
+							add_var("filled", settings::visuals::aimbot_fov::silent_filled);
+							add_var("filled color", settings::visuals::aimbot_fov::silent_filled_clr);
+						}
+						end_group();
 					}
 					end_group();
 
@@ -519,7 +666,7 @@ namespace config {
 
             setup();
 
-            CreateDirectoryA((LPCSTR)utils::snprintf("C:\\nullptr\\%s\\", _config.dir_name).c_str(), NULL);
+            CreateDirectoryA((LPCSTR)utils::snprintf("C:\\nullptr\\%s\\", _config.dir_name.c_str()).c_str(), NULL);
 
             std::ofstream out;
             out.open(utils::snprintf("C:\\nullptr\\%s\\%s.null", _config.dir_name.c_str(), name.c_str()));

@@ -2034,7 +2034,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
             if (flags & ImGuiComboFlags_PopupAlignLeft)
                 popup_window->AutoPosLastDirection = ImGuiDir_Left;
             ImRect r_outer = GetWindowAllowedExtentRect(popup_window);
-            ImVec2 pos = FindBestWindowPosForPopupEx(frame_bb.GetBL(), size_expected, &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox);
+            ImVec2 pos = FindBestWindowPosForPopupEx(frame_bb.GetBL(), ImVec2(frame_bb.Max.x - frame_bb.Min.x, size_expected.y), &popup_window->AutoPosLastDirection, r_outer, frame_bb, ImGuiPopupPositionPolicy_ComboBox);
             SetNextWindowPos(pos);
         }
     SetNextWindowSize(ImVec2(/*window->Size.x - (offset_x * 3) - offset_scroll + 7.f*/frame_bb.Max.x - frame_bb.Min.x, 0.f));

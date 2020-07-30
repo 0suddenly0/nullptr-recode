@@ -81,8 +81,7 @@ public:
 	void set_abs_original(vec3 origin) {
 		using SetAbsOriginFn = void(__thiscall*)(void*, const vec3 & origin);
 		static SetAbsOriginFn set_abs_origin;
-		if (!set_abs_origin)
-		{
+		if (!set_abs_origin) {
 			set_abs_origin = (SetAbsOriginFn)((DWORD)utils::pattern_scan(GetModuleHandleW(L"client.dll"), "55 8B EC 83 E4 F8 51 53 56 57 8B F1 E8"));
 		}
 		set_abs_origin(this, origin);

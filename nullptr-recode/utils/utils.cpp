@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "../hooks/hooks.h"
 #include "../sdk/structures/structures.h"
+#include <codecvt>
 #include <Tlhelp32.h>
 
 HANDLE _out = NULL, _old_out = NULL;
@@ -10,7 +11,6 @@ HANDLE _in = NULL, _old_in = NULL;
 HWND window;
 
 namespace utils {
-
 	vec2 get_screen_size() {
 		int w, h;
 		sdk::engine_client->get_screen_size(w, h);

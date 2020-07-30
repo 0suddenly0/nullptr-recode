@@ -16,6 +16,7 @@
 #define TIME_TO_TICKS( dt )		( (int)( 0.5f + (float)(dt) / TICK_INTERVAL ) )
 
 namespace math {
+	float scale_with_fov(float value);
 	void rotate_triangle(std::array<vec2, 3>& points, float rotation); 
 	vec2 to_vec2(ImVec2 vec);
 	ImVec2 to_imvec2(vec2 vec);
@@ -24,11 +25,12 @@ namespace math {
 	void clamp_angles(qangle& angles);
 	void fix_angles(qangle& angle);
 	qangle calc_angle(const vec3& src, const vec3& dst);
+	vec3 cross_product(const vec3& a, const vec3& b);
 	void angle_vector(const qangle& angles, vec3& forward);
 	void angle_vectors(const qangle& angles, vec3& forward, vec3& right, vec3& up);
 	void movement_fix(c_user_cmd* m_Cmd, qangle wish_angle, qangle old_angles);
 	void vector_angles(const vec3& forward, qangle& angles);
-	void vector_angles(const vec3& forward, vec3& angles);
+	void vector_angles(const vec3& forward, vec3& up, qangle& angles);
 	float normalize_yaw(float yaw);
 	bool screen_transform(const vec3& in, vec2& out);
 	bool world2screen(const vec3& in, vec2& out);

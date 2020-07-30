@@ -109,9 +109,19 @@ namespace null_gui {
     bool text_input(const char* text, std::string* value);
     void image(IDirect3DTexture9* texture, vec2 min, vec2 max);
     bool combo(const char* text, int* value, std::vector<std::string>& items);
+    bool combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count);
     bool functional_combo(const char* text, const char* prev_item, std::function<void()> function);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool>* values);
     bool multi_combo(const char* text, std::vector<std::string> names, std::vector<bool*> values);
+    template<std::size_t SIZE>
+    bool multi_combo(const char* text, std::vector<std::string> names, std::array<bool, SIZE>* values) {
+        std::vector<bool*> _values;
+        for (int i = 0; i < values->size(); i++) {
+            _values.push_back(&values->at(i));
+        }
+
+        return multi_combo(text, names, _values);
+    }
     void tooltip_items(const char* text, std::function<void()> func);
     void tooltip_on_click(const char* text, std::function<void()> func);
     void tooltip(const char* text, ...);
@@ -128,7 +138,7 @@ namespace null_gui {
     void end_window();
 
     void same_line(float x = -1.f);
-    void new_line();
+    void new_line(float y = 0.f);
     void create_columns(int count);
     void set_column_width(int idx, float size);
     void next_column();

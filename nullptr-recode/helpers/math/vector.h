@@ -286,6 +286,9 @@ public:
 	vec3 operator/(float fl) {
 		return vec3(x / fl, y / fl, z / fl);
 	}
+	vec3 operator/(float fl) const {
+		return vec3(x / fl, y / fl, z / fl);
+	}
 	vec3 operator/(const vec3& v) {
 		return vec3(x / v.x, y / v.y, z / v.z);
 	}
@@ -338,6 +341,10 @@ public:
 
 	float length_sqr(void) {
 		return (float)(x * x + y * y + z * z);
+	}
+
+	float length_2d() const {
+		return (float)sqrt(x * x + y * y);
 	}
 
 	void cross_product(const vec3& a, const vec3& b, vec3& result)

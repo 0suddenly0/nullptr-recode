@@ -14,10 +14,11 @@ namespace chams {
 
     void dme(c_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& pInfo, matrix3x4* matrix);
 
-    bool players(std::function<void()> o_dme, c_base_player* player);
-    bool ragdolls(std::function<void()> o_dme, c_base_player* player);
-    bool weapons(std::function<void()> o_dme, c_base_player* player, bool dropped);
-    bool hands(std::function<void()> o_dme);
+    void backtrack(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player);
+    bool players(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player);
+    bool ragdolls(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player);
+    bool weapons(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player, bool dropped);
+    bool hands(std::function<void(matrix3x4 * matrix)> o_dme);
 
     c_material* create_material(const std::string& material_name, const std::string& shader_type, const std::string& material_data);
     void override_mat(bool visible_check, int type, color& clr);

@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "skins.h"
+#include "../../../gui/menu/menu.h"
 #include "../../../settings/settings.h"
 #include "../../../render/render.h"
 #include <d3dx9tex.h>
@@ -13,7 +14,7 @@ struct hud_weapons_t {
 };
 template<class T>
 static T* find_hud_element(const char* name) {
-	static auto pThis = *(DWORD**)(utils::pattern_scan(GetModuleHandleA("client.dll"), "B9 ? ? ? ? E8 ? ? ? ? 8B 5D 08") + 1);
+	static DWORD* pThis = *(DWORD**)(utils::pattern_scan(GetModuleHandleA("client.dll"), "B9 ? ? ? ? E8 ? ? ? ? 8B 5D 08") + 1);
 
 	static auto find_hud_element = (DWORD(__thiscall*)(void*, const char*))(utils::pattern_scan(GetModuleHandleA("client.dll"), "55 8B EC 53 8B 5D 08 56 57 8B F9 33 F6 39 77 28"));
 	return (T*)find_hud_element(pThis, name);

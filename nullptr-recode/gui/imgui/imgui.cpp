@@ -5271,7 +5271,6 @@ static inline void ClampWindowRect(ImGuiWindow* window, const ImRect& rect, cons
     ImVec2 size_for_clamping = (g.IO.ConfigWindowsMoveFromTitleBarOnly && !(window->Flags & ImGuiWindowFlags_NoTitleBar)) ? ImVec2(window->Size.x, window->TitleBarHeight()) : window->Size;
 
     //ImMin(rect.Max - padding, ImMax(window->Pos + size_for_clamping, rect.Min + padding) - size_for_clamping);
-
     window->Pos = ImClamp(window->Pos, ImVec2(0, 0), ImVec2(rect.Max.x - window->Size.x, rect.Max.y - window->Size.y));
 }
 
@@ -5796,7 +5795,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         const bool window_pos_with_pivot = (window->SetWindowPosVal.x != FLT_MAX && window->HiddenFramesCannotSkipItems == 0);
         if (window_pos_with_pivot)
             SetWindowPos(window, window->SetWindowPosVal - window->SizeFull * window->SetWindowPosPivot, 0); // Position given a pivot (e.g. for centering)
-        else if ((flags & ImGuiWindowFlags_ChildMenu) != 0)
+       else if ((flags & ImGuiWindowFlags_ChildMenu) != 0)
             window->Pos = FindBestWindowPosForPopup(window);
         else if ((flags & ImGuiWindowFlags_Popup) != 0 && !window_pos_set_by_api && window_just_appearing_after_hidden_for_resize)
             window->Pos = FindBestWindowPosForPopup(window);
@@ -8360,8 +8359,8 @@ ImRect ImGui::GetWindowAllowedExtentRect(ImGuiWindow* window)
     IM_UNUSED(window);
     ImVec2 padding = GImGui->Style.DisplaySafeAreaPadding;
     ImRect r_screen = GetViewportRect();
-    r_screen.Expand(ImVec2((r_screen.GetWidth() > padding.x * 2) ? -padding.x : 0.0f, (r_screen.GetHeight() > padding.y * 2) ? -padding.y : 0.0f));
-    return r_screen;
+    //r_screen.Expand(ImVec2((r_screen.GetWidth() > padding.x * 2) ? -padding.x : 0.0f, (r_screen.GetHeight() > padding.y * 2) ? -padding.y : 0.0f));
+    return r_screen;//ImRect(ImVec2(-5000, -5000), ImVec2(r_screen.Max.x + 5000, r_screen.Max.y + 5000));
 }
 
 ImVec2 ImGui::FindBestWindowPosForPopup(ImGuiWindow* window)

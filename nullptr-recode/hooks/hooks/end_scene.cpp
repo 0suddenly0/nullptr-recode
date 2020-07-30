@@ -1,4 +1,5 @@
 #include "../hooks.h"
+#include "../../gui/menu/menu.h"
 
 uintptr_t gameoverlay_return_address = 0;
 

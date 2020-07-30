@@ -167,10 +167,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="functions\autowall\autowall.cpp" />
+    <ClCompile Include="functions\backtrack\backtrack.cpp" />
     <ClCompile Include="functions\changers\profile changer\profile_changer.cpp" />
     <ClCompile Include="functions\changers\skin changer\kit_parser.cpp" />
     <ClCompile Include="functions\changers\skin changer\parser.cpp" />
     <ClCompile Include="functions\changers\skin changer\skins.cpp" />
+    <ClCompile Include="functions\legitbot\legitbot.cpp" />
     <ClCompile Include="functions\misc\engine_prediction.cpp" />
     <ClCompile Include="functions\misc\events.cpp" />
     <ClCompile Include="functions\misc\misc.cpp" />
@@ -237,11 +240,14 @@
     <ClCompile Include="utils\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions\autowall\autowall.h" />
+    <ClInclude Include="functions\backtrack\backtrack.h" />
     <ClInclude Include="functions\changers\profile changer\profile_changer.h" />
     <ClInclude Include="functions\changers\skin changer\item_definitions.h" />
     <ClInclude Include="functions\changers\skin changer\kit_parser.h" />
     <ClInclude Include="functions\changers\skin changer\parser.h" />
     <ClInclude Include="functions\changers\skin changer\skins.h" />
+    <ClInclude Include="functions\legitbot\legitbot.h" />
     <ClInclude Include="functions\misc\engine_prediction.h" />
     <ClInclude Include="functions\misc\events.h" />
     <ClInclude Include="functions\misc\misc.h" />

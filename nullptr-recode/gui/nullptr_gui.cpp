@@ -184,6 +184,10 @@ namespace null_gui {
         return ImGui::Combo(text, value, vector_getter, (void*)(&items), items.size());
     }
 
+    bool combo(const char* label, int* current_item, bool(*items_getter)(void* data, int idx, const char** out_text), void* data, int items_count) {
+        return ImGui::Combo(label, current_item, items_getter, data, items_count, -1);
+    }
+
     bool functional_combo(const char* text, const char* prev_item, std::function<void()> function) {
         last_item = last_used_item_t::combo;
 
@@ -289,8 +293,9 @@ namespace null_gui {
         ImGui::SameLine(0, x);
     }
 
-    void new_line() {
-        ImGui::NewLine();
+    void new_line(float y) {
+        if (y == 0) ImGui::NewLine();
+        else ImGui::Dummy(ImVec2(0, y));
     }
 
     void create_columns(int count) {

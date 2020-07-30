@@ -8,6 +8,30 @@
 
 extern std::map<int, std::string> mode_names;
 
+std::vector<std::string> weapon_groups = {
+	"knife",
+	"zeus",
+	"pistols",
+	"semi rifle",
+	"rifle", 
+	"shotgun", 
+	"sniper rifle", 
+	"machine gun" 
+};
+
+std::vector<std::string> hitboxes_string = {
+	"head",
+	"neck",
+	"upper chest",
+	"chest",
+	"lower chest",
+	"stomach",
+	"pelvis",
+	"arms",
+	"legs",
+	"feet" 
+};
+
 struct statrack_setting_t {
 	int definition_index = 1;
 	struct
@@ -57,7 +81,7 @@ struct glow_settings_t {
 	bool visible_only = false;
 
 	color visible = { 0, 0, 0, 255 };
-	color in_visible = { 0, 0, 0, 255 };
+	color invisible = { 0, 0, 0, 255 };
 
 	int type = 0;
 };
@@ -67,6 +91,43 @@ struct window_settings_t {
 	int alpha;
 	vec2 pos;
 	bool show;
+};
+
+struct legitbot_settings_t {
+	bool enabled = false;
+	bool silent = false;
+	bool autopistol = false;
+
+	float fov = 0.f;
+	float silent_fov = 0.f;
+	int silent_chance = 100;
+	float smooth = 1.f;
+
+	std::array<bool, 10> hitboxes = { true, true, true, true, true, true, true, true, true, true };
+
+	bool team_check = true;
+	bool flash_check = true;
+	bool smoke_check = true;
+
+	int shot_delay = 0;
+	int kill_delay = 0;
+
+	int backtrack_ticks = 0;
+	bool aim_at_backtrack = false;
+	int backtrack_priority = 0;
+
+	bool autowall = false;
+	int autowall_min_damage = 0;
+
+	bool autofire = false;
+	key_bind_t autofire_bind = { 0, 0, false };
+	int autofire_chance = 100;
+
+	bool rcs_enabled = false;
+	int rcs_start = 1;
+	int rcs_type = 0;
+	int rcs_x = 100;
+	int rcs_y = 100;
 };
 
 char* player_tabs[] = {
@@ -88,6 +149,12 @@ char* ragdoll_tabs[] = {
 char* weapon_tabs[] = {
 	"in hands",
 	"dropped",
+};
+
+char* legitbot_groups[] = {
+	"all",
+	"groups",
+	"on weapon"
 };
 
 struct esp_settings_t {
@@ -139,7 +206,74 @@ struct esp_settings_t {
 	color ammo_bar_main = color(0, 0, 0, 255);
 };
 
+struct weapon_name_t {
+	constexpr weapon_name_t(int32_t definition_index, const char* name) :
+		definition_index(definition_index),
+		name(name) {
+	}
+
+	int32_t definition_index = 0;
+	const char* name = nullptr;
+};
+
+std::vector< weapon_name_t > weapon_names = {
+{ knife, "knife" },
+{ taser, "zeus" },
+
+{ usp_silencer, "usp-s" },
+{ glock, "glock-18" },
+{ hkp2000, "p2000" },
+{ elite,  "dual berettas" },
+{ p250, "p250" },
+{ cz75a, "cz75 auto" },
+{ fiveseven, "five-seven" },
+{ tec9, "tec-9" },
+{ revolver, "r8 revolver" },
+{ deagle,  "desert eagle" },
+
+{ mp9, "mp9" },
+{ mac10, "mac-10" },
+{ mp7, "mp7" },
+{ mp5, "mp5-sd" },
+{ ump45, "ump-45" },
+{ p90, "p90" },
+{ bizon, "pp-bizon" },
+
+{ galilar, "galil ar" },
+{ famas, "famas" },
+{ ak47,  "ak-47" },
+{ m4a1_silencer, "m4a1-s" },
+{ m4a1, "m4a1" },
+{ aug, "aug" },
+{ ssg08, "ssg 08" },
+{ sg556, "sg 553" },
+{ awp, "awp" },
+{ scar20, "scar-20" },
+{ g3sg1, "g3sg1" },
+
+{ nova, "nova" },
+{ xm1014, "xm1014" },
+{ sawedoff, "sawed-off" },
+{ mag7, "mag-7" },
+{ m249, "m249" },
+{ negev, "negev" },
+};
+
 namespace settings {
+	namespace legitbot {
+		int settings_type = 0;
+		int group_id = 0;
+		int weapon_id = 0;
+		int weapon_id_in_list = 0;
+		bool auto_current = false;
+
+		legitbot_settings_t legitbot_items_all;
+		extern std::map<int, legitbot_settings_t> legitbot_items;
+		extern std::map<int, legitbot_settings_t> legitbot_items_groups;
+
+		key_bind_t bind = { 0, 0, false };
+		bool using_bind = false;
+	}
 	namespace visuals {
 		bool night_mode = false;
 		bool ingame_radar = false;
@@ -160,6 +294,8 @@ namespace settings {
 		}
 
 		namespace chams {
+			int backtrack_tick_draw = 0;
+
 			bool using_bind = false;
 			key_bind_t bind = { 0, 0, false };
 			std::array<chams_settings_t, 3> player_items;
@@ -167,6 +303,7 @@ namespace settings {
 			std::array<chams_settings_t, 2> ragdoll_items;
 			std::array<chams_settings_t, 2> weapon_items;
 			chams_settings_t hands;
+			chams_settings_t backtrack;
 		}
 
 		namespace logs {
@@ -198,6 +335,18 @@ namespace settings {
 		namespace spread_circle {
 			bool enable = false;
 			color clr = color(255, 255, 255, 20);
+		}
+
+		namespace aimbot_fov {
+			bool standart_outline = false;
+			bool standart_filled = false;
+			color standart_outline_clr = color(255, 255, 255, 255);
+			color standart_filled_clr = color(255, 255, 255, 10);
+
+			bool silent_outline = false;
+			bool silent_filled = false;
+			color silent_outline_clr = color(255, 50, 50, 255);
+			color silent_filled_clr = color(255, 50, 50, 10);
 		}
 
 		namespace hitbox {
@@ -251,6 +400,8 @@ namespace settings {
 
 			float range = 26.f;
 			float size = 10.f;
+
+			int type = 0;
 
 			color clr = color(255, 255, 255, 255);
 		}

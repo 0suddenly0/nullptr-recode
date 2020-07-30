@@ -7,6 +7,10 @@ std::map<int, std::string> mode_names = {
 };
 
 namespace settings {
+	namespace legitbot {
+		std::map<int, legitbot_settings_t> legitbot_items = { };
+		std::map<int, legitbot_settings_t> legitbot_items_groups = { };
+	}
 	namespace changers {
 		namespace profile {
 			std::map<int, profile_settings_t> profile_items = { };

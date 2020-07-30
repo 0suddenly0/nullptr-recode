@@ -1,7 +1,6 @@
 #pragma once
 #include "../math/math.h"
 #include "../../utils/utils.h"
-#include "../../gui/menu/menu.h"
 #include "../input.h"
 #include "../../settings/settings.h"
 #include <string>
@@ -64,6 +63,54 @@ namespace config {
             } else if (std::is_same<T, window_settings_t>::value) {
                 type = var_t::_window;
                 var_window = (window_settings_t*)var;
+            }
+        }
+
+        void load(std::string var_value) {
+            switch (type) {
+            case var_t::_float: {
+                *var_float = std::stof(var_value);
+            } break;
+            case var_t::_int: {
+                *var_int = std::stoi(var_value);
+            } break;
+            case var_t::_bool: {
+                *var_bool = var_value == "true" ? true : false;
+            } break;
+            case var_t::_string: {
+                config_utils::del_last_simbols(&var_value, 1);
+                config_utils::del_first_simbols(&var_value, 1);
+                *var_string = var_value;
+            } break;
+            case var_t::_color: {
+                std::string red_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
+                std::string green_string = config_utils::del_first_simbols(var_value, red_string.length() + 1);
+                config_utils::del_last_simbols(&green_string, green_string.length() - green_string.find("-"));
+                std::string blue_string = config_utils::del_first_simbols(var_value, red_string.length() + green_string.length() + 2);
+                config_utils::del_last_simbols(&blue_string, blue_string.length() - blue_string.find("-"));
+                std::string alpha_string = config_utils::del_first_simbols(var_value, red_string.length() + green_string.length() + blue_string.length() + 3);
+
+                *var_color = color(std::stoi(red_string), std::stoi(green_string), std::stoi(blue_string), std::stoi(alpha_string));
+            } break;
+            case var_t::_bind: {
+                std::string key_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
+                std::string type_string = config_utils::del_first_simbols(var_value, key_string.length() + 1);
+                config_utils::del_last_simbols(&type_string, type_string.length() - type_string.find("-"));
+                std::string state_string = config_utils::del_first_simbols(var_value, key_string.length() + type_string.length() + 2);
+
+                *var_bind = key_bind_t{ std::stoi(key_string), std::stoi(type_string), state_string == "true" ? true : false };
+            } break;
+            case var_t::_window: {
+                std::string show_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
+                std::string pos_x_string = config_utils::del_first_simbols(var_value, show_string.length() + 1);
+                config_utils::del_last_simbols(&pos_x_string, pos_x_string.length() - pos_x_string.find("-"));
+                std::string pos_y_string = config_utils::del_first_simbols(var_value, show_string.length() + pos_x_string.length() + 2);
+                config_utils::del_last_simbols(&pos_y_string, pos_y_string.length() - pos_y_string.find("-"));
+                std::string alpha_string = config_utils::del_first_simbols(var_value, show_string.length() + pos_x_string.length() + pos_y_string.length() + 3);
+
+                null_gui::deep::set_window_pos(var_window->name.c_str(), vec2(std::stoi(pos_x_string), std::stoi(pos_y_string)), false);
+                *var_window = window_settings_t{ var_window->name, std::stoi(alpha_string), vec2(std::stoi(pos_x_string), std::stoi(pos_y_string)), show_string == "true" ? true : false };
+            } break;
             }
         }
 
@@ -169,58 +216,20 @@ namespace config {
                             end_var_name = utils::snprintf("%s%s ", end_var_name.c_str(), group.c_str());
                         }
                         end_var_name = utils::snprintf("%s%s", end_var_name.c_str(), config_utils::get_var_name(line).c_str());
-
-                        for (int i = 0; i < local_vars.size(); i++) {
-                            c_var& var = local_vars[i];
+                        if (local_vars.front().name == end_var_name) {
+                            c_var& var = local_vars.front();
                             std::string var_value = config_utils::get_var_value(line);
+                            var.load(var_value);
+                            local_vars.erase(local_vars.begin());
+                        } else {
+                            for (int i = 0; i < local_vars.size(); i++) {
+                                c_var& var = local_vars[i];
+                                std::string var_value = config_utils::get_var_value(line);
 
-                            if (var.name == end_var_name) {
-                                switch (var.type) {
-                                case var_t::_float: {
-                                    *var.var_float = std::stof(var_value);
-                                } break;
-                                case var_t::_int: {
-                                    *var.var_int = std::stoi(var_value);
-                                } break;
-                                case var_t::_bool: {
-                                    *var.var_bool = var_value == "true" ? true : false;
-                                } break;
-                                case var_t::_string: {
-                                    config_utils::del_last_simbols(&var_value, 1);
-                                    config_utils::del_first_simbols(&var_value, 1);
-                                    *var.var_string = var_value;
-                                } break;
-                                case var_t::_color: {
-                                    std::string red_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
-                                    std::string green_string = config_utils::del_first_simbols(var_value, red_string.length() + 1);
-                                    config_utils::del_last_simbols(&green_string, green_string.length() - green_string.find("-"));
-                                    std::string blue_string = config_utils::del_first_simbols(var_value, red_string.length() + green_string.length() + 2);
-                                    config_utils::del_last_simbols(&blue_string, blue_string.length() - blue_string.find("-"));
-                                    std::string alpha_string = config_utils::del_first_simbols(var_value, red_string.length() + green_string.length() + blue_string.length() + 3);
-
-                                    *var.var_color = color(std::stoi(red_string), std::stoi(green_string), std::stoi(blue_string), std::stoi(alpha_string));
-                                } break;
-                                case var_t::_bind: {
-                                    std::string key_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
-                                    std::string type_string = config_utils::del_first_simbols(var_value, key_string.length() + 1);
-                                    config_utils::del_last_simbols(&type_string, type_string.length() - type_string.find("-"));
-                                    std::string state_string = config_utils::del_first_simbols(var_value, key_string.length() + type_string.length() + 2);
-
-                                    *var.var_bind = key_bind_t{ std::stoi(key_string), std::stoi(type_string), state_string == "true" ? true : false };
-                                } break;
-                                case var_t::_window: {
-                                    std::string show_string = config_utils::del_last_simbols(var_value, var_value.length() - var_value.find("-"));
-                                    std::string pos_x_string = config_utils::del_first_simbols(var_value, show_string.length() + 1);
-                                    config_utils::del_last_simbols(&pos_x_string, pos_x_string.length() - pos_x_string.find("-"));
-                                    std::string pos_y_string = config_utils::del_first_simbols(var_value, show_string.length() + pos_x_string.length() + 2);
-                                    config_utils::del_last_simbols(&pos_y_string, pos_y_string.length() - pos_y_string.find("-"));
-                                    std::string alpha_string = config_utils::del_first_simbols(var_value, show_string.length() + pos_x_string.length() + pos_y_string.length() + 3);
-
-                                    null_gui::deep::set_window_pos(var.var_window->name.c_str(), vec2(std::stoi(pos_x_string), std::stoi(pos_y_string)), false);
-                                    *var.var_window = window_settings_t{ var.var_window->name, std::stoi(alpha_string), vec2(std::stoi(pos_x_string), std::stoi(pos_y_string)), show_string == "true" ? true : false };
-                                } break;
+                                if (var.name == end_var_name) {
+                                    var.load(var_value);
+                                    local_vars.erase(local_vars.begin() + i);
                                 }
-                                local_vars.erase(local_vars.begin() + i);
                             }
                         }
                     }

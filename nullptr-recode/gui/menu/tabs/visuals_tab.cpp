@@ -13,6 +13,8 @@ std::array<int, 2> chams_weapon_layer;
 
 int chams_hands_layer = 0;
 
+int chams_backtrack_layer = 0;
+
 namespace menu {
 	void visuals_tab() {
 		null_gui::create_columns(2);
@@ -24,7 +26,7 @@ namespace menu {
 				null_gui::horizontal(esp_player_tab, player_tabs);
 				null_gui::check_box("enable", &settings_cur->enable);
 				null_gui::check_box("use bind", &settings::visuals::esp::using_bind);
-				null_gui::key_bind("##use_bind", &settings::visuals::esp::bind);
+				null_gui::key_bind("##visuals bind", &settings::visuals::esp::bind);
 			}
 			null_gui::end_group();
 
@@ -85,24 +87,41 @@ namespace menu {
 			null_gui::end_group();
 		} break;
 		case 1: {
-			chams_layer_settings_t* settings_cur = &settings::visuals::chams::player_items[chams_player_tab].layers[chams_player_layer[chams_player_tab]];
+			chams_layer_settings_t* settings_cur_player = &settings::visuals::chams::player_items[chams_player_tab].layers[chams_player_layer[chams_player_tab]];
 
 			null_gui::begin_group("general##child", vec2(0, 127)); {
 				null_gui::horizontal(chams_player_tab, player_tabs);
 				null_gui::horizontal(chams_player_layer[chams_player_tab], layer_tabs, tabs_type::spac_child);
-				null_gui::check_box("enable", &settings_cur->enable);
+				null_gui::check_box("enable", &settings_cur_player->enable);
 				null_gui::check_box("use bind", &settings::visuals::chams::using_bind);
-				null_gui::key_bind("##use_bind", &settings::visuals::chams::bind);
+				null_gui::key_bind("##chams bind", &settings::visuals::chams::bind);
 			}
 			null_gui::end_group();
 
 			null_gui::begin_group("settings##players", vec2(0, 0)); {
-				null_gui::check_box("visible only", &settings_cur->only_visible);
+				null_gui::check_box("visible only", &settings_cur_player->only_visible);
 
-				null_gui::combo("type", &settings_cur->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+				null_gui::combo("type", &settings_cur_player->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
 
-				null_gui::color_edit("color visible", &settings_cur->visible);
-				null_gui::color_edit("color invisible", &settings_cur->invisible);
+				null_gui::color_edit("color visible", &settings_cur_player->visible);
+				null_gui::color_edit("color invisible", &settings_cur_player->invisible);
+			}
+			null_gui::end_group();
+
+			null_gui::next_column();
+
+			chams_layer_settings_t* settings_cur_backtrack = &settings::visuals::chams::backtrack.layers[chams_backtrack_layer];
+			null_gui::begin_group("backtrack##child", vec2(0, 223)); {
+				null_gui::horizontal(chams_backtrack_layer, layer_tabs, tabs_type::spac_child);
+				null_gui::check_box("enable", &settings_cur_backtrack->enable);
+				null_gui::check_box("visible only", &settings_cur_backtrack->only_visible);
+
+				null_gui::combo("type", &settings_cur_backtrack->type, std::vector<std::string>{ "regular", "flat", "glow", "warfame" });
+
+				null_gui::color_edit("color visible", &settings_cur_backtrack->visible);
+				null_gui::color_edit("color invisible", &settings_cur_backtrack->invisible);
+
+				null_gui::combo("draw tick##chams", &settings::visuals::chams::backtrack_tick_draw, std::vector<std::string>{ "all", "last" });
 			}
 			null_gui::end_group();
 		} break;
@@ -160,7 +179,7 @@ namespace menu {
 				null_gui::horizontal(glow_player_tab, player_tabs);
 				null_gui::check_box("enable", &settings_cur->enable);
 				null_gui::check_box("use bind", &settings::visuals::glow::using_bind);
-				null_gui::key_bind("##use_bind", &settings::visuals::glow::bind);
+				null_gui::key_bind("##glow bind", &settings::visuals::glow::bind);
 			}
 			null_gui::end_group();
 
@@ -168,7 +187,7 @@ namespace menu {
 				null_gui::check_box("only visible", &settings_cur->visible_only);
 				null_gui::combo("type##glow", &settings_cur->type, std::vector<std::string>{ "standart outline", "glow pulsing", "inner outline", "inner outline pulsing" });
 				null_gui::color_edit("visible color", &settings_cur->visible);
-				null_gui::color_edit("invisible color", &settings_cur->in_visible);
+				null_gui::color_edit("invisible color", &settings_cur->invisible);
 			}
 			null_gui::end_group();
 		} break;
@@ -180,6 +199,7 @@ namespace menu {
 					null_gui::check_box("visible check", &settings::visuals::ofc::visible_check);
 					null_gui::slider_float("range##offscreen", &settings::visuals::ofc::range, 0.f, 100.f, "%.1f");
 					null_gui::slider_float("size##offscreen", &settings::visuals::ofc::size, 0.f, 30.f, "%.1f");
+					null_gui::combo("type##offscreen", &settings::visuals::ofc::type, std::vector<std::string>{"triangle", "arc"});
 					});
 				null_gui::check_box("night mode", &settings::visuals::night_mode);
 				null_gui::check_box("asus props", &settings::visuals::props::enable);
@@ -230,6 +250,18 @@ namespace menu {
 					null_gui::color_edit("color##server impact", &settings::visuals::impacts::server::clr);
 					null_gui::slider_int("show time##server impact", &settings::visuals::impacts::server::show_time, 1, 10);
 					null_gui::slider_int("size##server impact", &settings::visuals::impacts::server::size, 1, 10);
+					});
+				null_gui::tooltip_items("standart aimbot fov", []() {
+					null_gui::check_box("outline##standart fov", &settings::visuals::aimbot_fov::standart_outline);
+					null_gui::color_edit("##outline standart fov color", &settings::visuals::aimbot_fov::standart_outline_clr);
+					null_gui::check_box("filled##standart fov", &settings::visuals::aimbot_fov::standart_filled);
+					null_gui::color_edit("##filled standart fov color", &settings::visuals::aimbot_fov::standart_filled_clr);
+					});
+				null_gui::tooltip_items("silent aimbot fov", []() {
+					null_gui::check_box("outline##silent fov", &settings::visuals::aimbot_fov::silent_outline);
+					null_gui::color_edit("##outline silent fov color", &settings::visuals::aimbot_fov::silent_outline_clr);
+					null_gui::check_box("filled##silent fov", &settings::visuals::aimbot_fov::silent_filled);
+					null_gui::color_edit("##filled silent fov color", &settings::visuals::aimbot_fov::silent_filled_clr);
 					});
 				null_gui::check_box("sniper crosshair", &settings::visuals::sniper_crosshair);
 				null_gui::check_box("spread circle", &settings::visuals::spread_circle::enable);

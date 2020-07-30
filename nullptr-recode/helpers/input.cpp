@@ -1,6 +1,7 @@
 #include "input.h"
 #include "../gui/nullptr_gui.h"
 #include "../settings/settings.h"
+#include "../functions/legitbot/legitbot.h"
 #include "../sdk/sdk.h"
 
 bool is_mouse(int vk) {
@@ -38,8 +39,13 @@ namespace input {
 		create_bind("block bot", settings::misc::block_bot::enable, &settings::misc::block_bot::bind, bind_info_flags_standart);
 		create_bind("edge jump", settings::misc::edge_jump::enable, &settings::misc::edge_jump::bind, bind_info_flags_standart);
 		create_bind("third person", settings::misc::third_person::enable, &settings::misc::third_person::bind, bind_info_flags_standart);
+		if (legitbot::get_settings() && legitbot::get_settings()->enabled) {
+			create_bind("autofire", legitbot::get_settings()->autofire, &legitbot::get_settings()->autofire_bind, bind_info_flags_standart);
+		}
+		create_bind("legitbot", settings::legitbot::using_bind, &settings::legitbot::bind, bind_info_flags_standart);
 		create_bind("esp", settings::visuals::esp::using_bind, &settings::visuals::esp::bind, bind_info_flags_standart);
 		create_bind("chams", settings::visuals::chams::using_bind, &settings::visuals::chams::bind, bind_info_flags_standart);
+		create_bind("glow", settings::visuals::glow::using_bind, &settings::visuals::glow::bind, bind_info_flags_standart);
 	}
 
 	bool process_message(UINT uMsg, WPARAM wParam, LPARAM lParam) {

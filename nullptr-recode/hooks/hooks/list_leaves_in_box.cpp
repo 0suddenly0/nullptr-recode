@@ -23,7 +23,7 @@ struct renderable_info_t {
 namespace hooks {
 	int __fastcall list_leaves_in_box::hook(void* _this, int, vec3& mins, vec3& maxs, unsigned short* pList, int listMax) {
 		static auto o_list_leaves_in_box = bsp_query_vhook.get_original<fn>(indexes::list_leaves_in_box);
-		static auto return_address = utils::pattern_scan(GetModuleHandleW(L"client.dll"), "52 8B 55 0C 8B 01 56 52 FF 50 18 89 44 24 14") + 0xB;
+		static uint8_t* return_address = utils::pattern_scan(GetModuleHandleW(L"client.dll"), "52 8B 55 0C 8B 01 56 52 FF 50 18 89 44 24 14") + 0xB;
 
 		if (_ReturnAddress() != return_address)
 			return o_list_leaves_in_box(_this, mins, maxs, pList, listMax);

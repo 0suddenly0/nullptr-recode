@@ -1,5 +1,6 @@
 #include "chams.h"
 #include "../../sdk/interfaces/key_values.h"
+#include "../legitbot/legitbot.h"
 
 namespace chams {
     void init() {
@@ -54,8 +55,8 @@ namespace chams {
 
     void dme(c_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix3x4* matrix) {
         static auto o_draw_model_execute = hooks::mdl_render_vhook.get_original<hooks::draw_model_execute::fn>(hooks::indexes::draw_model_execute);
-        std::function<void()> o_dme = [ctx, state, info, matrix]() {
-            o_draw_model_execute(sdk::mdl_render, 0, ctx, state, info, matrix);
+        std::function<void(matrix3x4 * _matrix)> o_dme = [ctx, state, info, matrix](matrix3x4* _matrix = nullptr) {
+            o_draw_model_execute(sdk::mdl_render, 0, ctx, state, info, _matrix == nullptr ? matrix : _matrix);
         };
 
         c_base_player* entity = (c_base_player*)sdk::entity_list->get_client_entity(info.entity_index);
@@ -71,6 +72,7 @@ namespace chams {
                 can_draw_original = weapons(o_dme, entity, std::strstr(info.pModel->szName, "models/weapons/w_") && std::strstr(info.pModel->szName, "_dropped.mdl"));
             }
         } else if (entity && strstr(info.pModel->szName, "models/player")) {
+            backtrack(o_dme, entity);
             can_draw_original = entity->is_alive() ? players(o_dme, entity) : ragdolls(o_dme, entity);
         }
 
@@ -78,7 +80,46 @@ namespace chams {
             o_draw_model_execute(sdk::mdl_render, 0, ctx, state, info, matrix);
     }
 
-    bool players(std::function<void()> o_dme, c_base_player* player) {
+    void backtrack(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player) {
+        if (legit_backtrack::data.count(player->ent_index()) > 0) {
+            auto& data = legit_backtrack::data.at(player->ent_index());
+            if (data.size() > 0) {
+                switch (settings::visuals::chams::backtrack_tick_draw) {
+                case 0: {
+                    for (backtrack_data& record : data) {
+                        for (auto& layer : settings::visuals::chams::backtrack.layers) {
+                            if (!layer.enable)
+                                continue;
+
+                            if (!layer.only_visible) {
+                                override_mat(true, layer.type, layer.invisible);
+                                o_dme(record.bone_matrix);
+                            }
+                            override_mat(false, layer.type, layer.visible);
+                            o_dme(record.bone_matrix);
+                        }
+                    }
+                } break;
+                case 1: {
+                    for (auto& layer : settings::visuals::chams::backtrack.layers) {
+                        if (!layer.enable)
+                            continue;
+
+                        if (!layer.only_visible) {
+                            override_mat(true, layer.type, layer.invisible);
+                            o_dme(data.back().bone_matrix);
+                        }
+                        override_mat(false, layer.type, layer.visible);
+                        o_dme(data.back().bone_matrix);
+                    }
+                } break;
+                }
+                override_mat(false, -1, color(255, 255, 255, 255));
+            }
+        }
+    }
+
+    bool players(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player) {
         bool ret = true;
 
         if (!settings::visuals::chams::using_bind || settings::visuals::chams::bind.enable) {
@@ -89,40 +130,40 @@ namespace chams {
 
                     if (!layer.only_visible) {
                         override_mat(true, layer.type, layer.invisible);
-                        o_dme();
+                        o_dme(nullptr);
                     }
                     override_mat(false, layer.type, layer.visible);
-                    o_dme();
+                    o_dme(nullptr);
 
                     ret = false;
                 }
-            }
-            else if (player->team_num() == sdk::local_player->team_num() && player != sdk::local_player) {
+            } else if (player->team_num() == sdk::local_player->team_num() && player != sdk::local_player) {
                 for (auto& layer : settings::visuals::chams::player_items[esp_types::teammates].layers) {
                     if (!layer.enable)
                         continue;
 
                     if (!layer.only_visible) {
                         override_mat(true, layer.type, layer.invisible);
-                        o_dme();
+                        o_dme(nullptr);
                     }
                     override_mat(false, layer.type, layer.visible);
-                    o_dme();
+                    o_dme(nullptr);
 
                     ret = false;
                 }
-            }
-            else if (player == sdk::local_player) {
+            } else if (player == sdk::local_player) {
+                if (sdk::local_player->is_scoped()) sdk::render_view->set_blend(0.4f);
+
                 for (auto& layer : settings::visuals::chams::player_items[esp_types::local_player].layers) {
                     if (!layer.enable)
                         continue;
 
                     if (!layer.only_visible) {
                         override_mat(true, layer.type, layer.invisible);
-                        o_dme();
+                        o_dme(nullptr);
                     }
                     override_mat(false, layer.type, layer.visible);
-                    o_dme();
+                    o_dme(nullptr);
 
                     ret = false;
                 }
@@ -132,7 +173,7 @@ namespace chams {
         return ret;
     }
 
-    bool ragdolls(std::function<void()> o_dme, c_base_player* player) {
+    bool ragdolls(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player) {
         bool ret = true;
         if (player->team_num() != sdk::local_player->team_num()) {
             for (auto& layer : settings::visuals::chams::ragdoll_items[esp_types::enemies].layers) {
@@ -141,10 +182,10 @@ namespace chams {
 
                 if (!layer.only_visible) {
                     override_mat(true, layer.type, layer.invisible);
-                    o_dme();
+                    o_dme(nullptr);
                 }
                 override_mat(false, layer.type, layer.visible);
-                o_dme();
+                o_dme(nullptr);
 
                 ret = false;
             }
@@ -155,10 +196,10 @@ namespace chams {
 
                 if (!layer.only_visible) {
                     override_mat(true, layer.type, layer.invisible);
-                    o_dme();
+                    o_dme(nullptr);
                 }
                 override_mat(false, layer.type, layer.visible);
-                o_dme();
+                o_dme(nullptr);
 
                 ret = false;
             }
@@ -167,7 +208,7 @@ namespace chams {
         return ret;
     }
 
-    bool weapons(std::function<void()> o_dme, c_base_player* player, bool dropped) {
+    bool weapons(std::function<void(matrix3x4 * matrix)> o_dme, c_base_player* player, bool dropped) {
         bool ret = true;
 
         if (!dropped) {
@@ -176,7 +217,7 @@ namespace chams {
                     continue;
 
                 override_mat(false, layer.type, layer.visible);
-                o_dme();
+                o_dme(nullptr);
 
                 ret = false;
             }
@@ -186,7 +227,7 @@ namespace chams {
                     continue;
 
                 override_mat(false, layer.type, layer.visible);
-                o_dme();
+                o_dme(nullptr);
 
                 ret = false;
             }
@@ -195,7 +236,7 @@ namespace chams {
         return ret;
     }
 
-    bool hands(std::function<void()> o_dme) {
+    bool hands(std::function<void(matrix3x4 * matrix)> o_dme) {
         if (!sdk::local_player || !sdk::local_player->is_alive())
             return true;
 
@@ -205,7 +246,7 @@ namespace chams {
                 continue;
 
             override_mat(false, layer.type, layer.visible);
-            o_dme();
+            o_dme(nullptr);
 
             ret = false;
         }
@@ -226,6 +267,7 @@ namespace chams {
         c_material* material = nullptr;
 
         switch (type) {
+        case -1: sdk::studio_render->forced_material_override(material); return; break;
         case 0: material = materials::regular; break;
         case 1: material = materials::flat; break;
         case 2: material = materials::glow; break;
@@ -233,7 +275,7 @@ namespace chams {
         }
 
         if (!material)
-            return; 
+            return;
 
         material->alpha_modulate(clr.a<float>());
         material->color_modulate(clr.r<float>(), clr.g<float>(), clr.b<float>());

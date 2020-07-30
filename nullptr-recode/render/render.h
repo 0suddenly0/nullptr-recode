@@ -83,6 +83,12 @@ namespace render {
 	void draw_line(vec2 start, vec2 end, color clr, int thickness = 1);
 
 	template <typename T>
+	void draw_arc(T x, T y, float radius, float min_angle, float max_angle, color clr, float thickness = 1.f) {
+		draw_arc(vec2(x, y), radius, start, end, clr, thickness);
+	}
+	void draw_arc(vec2 pos, float radius, float min_angle, float max_angle, color clr, float thickness);
+
+	template <typename T>
 	void draw_box(T x_start, T y_start, T x_end, T y_end, color clr) {
 		draw_box(vec2(x_start, y_start), vec2(x_end, y_end), clr);
 	}

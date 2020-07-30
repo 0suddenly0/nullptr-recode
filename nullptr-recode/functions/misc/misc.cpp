@@ -14,8 +14,8 @@ namespace misc {
 
 		static float ready_time;
 		if (settings::misc::prepare_revolver::bind.enable) {
-			c_base_combat_weapon* active_weapon = sdk::local_player->active_weapon();
-			if (active_weapon && active_weapon->get_item_definition_index() == item_definition_index::revolver) {
+			c_base_combat_weapon* active_weapon = sdk::local_player->active_weapon().get();
+			if (active_weapon && active_weapon->item().item_definition_index() == item_definition_index::revolver) {
 				if (!ready_time) ready_time = utils::get_curtime(cmd) + revolver_prepare_time;
 
 				auto ticks_to_ready = TIME_TO_TICKS(ready_time - utils::get_curtime(cmd) - sdk::engine_client->get_net_channel_info()->get_latency(FLOW_OUTGOING));
@@ -623,13 +623,11 @@ namespace misc {
 	}
 
 	void fake_latency(c_net_channel* net_channel) {
-		if (!sdk::local_player->is_alive()) return;
-
 		static int32_t old_seq = 0;
 
 		if (old_seq == net_channel->in_sequence_nr) return;
 		old_seq = net_channel->in_sequence_nr;
 
-		net_channel->in_sequence_nr += (64 - 1) * 2 - (uint32_t)((64 - 1) * (settings::misc::fake_latency::amount / 1000.f));
+		net_channel->in_sequence_nr += 63 * 2 - (uint32_t)(63 * (settings::misc::fake_latency::amount / 1000.f));
 	}
 }

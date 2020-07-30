@@ -1,5 +1,4 @@
 #pragma once
-#include "../gui/menu/menu.h"
 #include "../sdk/structures/structures.h"
 
 struct bullet_impact_t {
