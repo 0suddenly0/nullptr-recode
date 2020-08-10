@@ -89,8 +89,8 @@ public:
 		}
 	}
 
-	void set_module_index(int index) {
-		return call_vfunction<void(__thiscall*)(void*, int)>(this, 75)(this, index);
+	void set_model_index(int index) {
+		return call_vfunction<void(__thiscall*)(c_base_entity*, int)>(this, 75)(this, index);
 	}
 
 	void set_abs_angles(vec3 angle) {
@@ -202,8 +202,7 @@ public:
 			push 0
 		}
 
-		__asm
-		{
+		__asm {
 			mov ecx, state
 
 			movss xmm1, dword ptr[angle + 4]
@@ -260,6 +259,7 @@ public:
 		static auto fnHasC4 = (bool(__thiscall*)(void*))(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "56 8B F1 85 F6 74 31"));
 		return fnHasC4(this);
 	}
+
 	vec3 get_hitbox_pos(int hitbox_id) {
 		matrix3x4 boneMatrix[MAXSTUDIOBONES];
 

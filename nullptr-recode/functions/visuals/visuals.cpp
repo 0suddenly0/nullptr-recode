@@ -48,6 +48,7 @@ std::map<int, std::string> fixed_weapon_names_by_id = {
 		{ item_definition_index::incgrenade, "inc" },
 		{ item_definition_index::decoy, "decoy" },
 		{ item_definition_index::hegrenade, "hae" },
+		{ item_definition_index::tagrenade, "sensor" },
 
 		{ item_definition_index::c4, "c4" },
 		{ item_definition_index::knife, "knife" },
@@ -433,7 +434,7 @@ namespace visuals {
 		vec2 main_end_position   = vec2(screen_size.x - offsets.x                                         , offsets.y + watermark_text_size.y + bar_size + offsets_text.y);
 
 		render::draw_box_filled_rounded(bar_start_position, bar_end_position, color(globals::menu_color, 255), rounding, 3);  // draw top line
-		render::draw_box_filled_rounded(main_start_position, main_end_position, color(50, 50, 50, 100), rounding, 12); // draw watermark body
+		render::draw_box_filled_rounded(main_start_position, main_end_position, color(15, 15, 15, 100), rounding, 12); // draw watermark body
 
 		render::draw_text(watermark_text, main_start_position + vec2(offsets_text.x / 2, offsets_text.y / 2), color(255,255,255,255), false);
 	}
@@ -471,27 +472,29 @@ namespace visuals {
 				studiohdr_t* hdr = sdk::mdl_info->get_studiomodel(model);
 				if (hdr) {
 					std::string hdrName = hdr->szName;
-					if (hdrName.find("thrown") != std::string::npos) {
-						if (hdrName.find("flashbang") != std::string::npos) {
+					bool thrown = hdrName.find("thrown") != std::string::npos;
+					bool dropped = hdrName.find("dropped") != std::string::npos;
+					if (thrown || dropped) {
+						if (hdrName.find("flashbang") != std::string::npos && entity->owner_entity().is_valid()) {
 							name = "flash";
 							clr = settings::visuals::grenades::color_flash;
-						} else if (hdrName.find("fraggrenade") != std::string::npos) {
+						} else if (hdrName.find("fraggrenade") != std::string::npos && entity->owner_entity().is_valid()) {
 							name = "frag";
 							clr = settings::visuals::grenades::color_frag;
-						} else if (hdrName.find("molotov") != std::string::npos) {
+						} else if (hdrName.find("molotov") != std::string::npos && entity->owner_entity().is_valid()) {
 							name = "molotov";
 							clr = settings::visuals::grenades::color_molotov;
-						} else if (hdrName.find("incendiarygrenade") != std::string::npos) {
+						} else if (hdrName.find("incendiarygrenade") != std::string::npos && entity->owner_entity().is_valid()) {
 							name = "incendiary";
 							clr = settings::visuals::grenades::color_molotov;
-						} else if (hdrName.find("decoy") != std::string::npos) {
+						} else if (hdrName.find("decoy") != std::string::npos && entity->owner_entity().is_valid()) {
 							name = "decoy";
 							clr = settings::visuals::grenades::color_decoy;
-						} else if (hdrName.find("smoke") != std::string::npos) {
+						} else if (hdrName.find("smoke") != std::string::npos && !dropped) {
 							name = "smoke";
 							clr = settings::visuals::grenades::color_smoke;
-						} else if (hdrName.find("sensor") != std::string::npos) {
-							name = hdrName;
+						} else if (hdrName.find("sensor") != std::string::npos && !dropped) {
+							name = "sensor";
 							clr = settings::visuals::grenades::color_tactical;
 						}
 					}
@@ -787,7 +790,7 @@ namespace visuals {
 	void night_mode() {
 		static bool night_mode_done = false;
 
-		if (!sdk::engine_client->is_in_game() || !sdk::local_player) {
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player || !sdk::mat_system) {
 			night_mode_done = false;
 			return;
 		}
@@ -825,7 +828,7 @@ namespace visuals {
 	}
 
 	void asus_props() {
-		if (!sdk::engine_client->is_in_game() || !sdk::local_player) return;
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player || !sdk::mat_system) return;
 
 		static int old_alpha = 255;
 		static convar* r_drawstaticprops = sdk::cvar->find_var("r_drawstaticprops");

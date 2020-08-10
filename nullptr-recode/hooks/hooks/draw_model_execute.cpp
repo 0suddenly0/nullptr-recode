@@ -7,8 +7,8 @@ namespace hooks {
 
 		bool shadow_depth = (info.flags & STUDIO_SHADOWDEPTHTEXTURE) != 0;
 
-		if (!sdk::studio_render->is_forced_material_override() && !shadow_depth) {
-			if (sdk::local_player && sdk::local_player->is_alive()) {
+		if (!sdk::studio_render->is_forced_material_override() && !shadow_depth && sdk::engine_client->is_in_game() && sdk::local_player) {
+			if (sdk::local_player->is_alive()) {
 				c_material* xblur_mat = sdk::mat_system->find_material("dev/blurfilterx_nohdr", TEXTURE_GROUP_OTHER, true);
 				c_material* yblur_mat = sdk::mat_system->find_material("dev/blurfiltery_nohdr", TEXTURE_GROUP_OTHER, true);
 				c_material* scope = sdk::mat_system->find_material("dev/scope_bluroverlay", TEXTURE_GROUP_OTHER, true);
@@ -20,7 +20,7 @@ namespace hooks {
 
 			chams::dme(ctx, state, info, boneo_matrix);
 
-			sdk::mdl_render->forced_material_override(nullptr);
+			sdk::studio_render->forced_material_override(nullptr);
 		}
 		else
 			return o_draw_model_execute(_this, edx, ctx, state, info, boneo_matrix);

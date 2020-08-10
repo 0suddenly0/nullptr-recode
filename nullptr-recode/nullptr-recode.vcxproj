@@ -210,6 +210,7 @@
     <ClCompile Include="hooks\hooks\draw_set_color.cpp" />
     <ClCompile Include="hooks\hooks\emit_sound.cpp" />
     <ClCompile Include="hooks\hooks\end_scene.cpp" />
+    <ClCompile Include="hooks\hooks\fire_event_client_side.cpp" />
     <ClCompile Include="hooks\hooks\frame_stage_notify.cpp" />
     <ClCompile Include="hooks\hooks\is_connected.cpp" />
     <ClCompile Include="hooks\hooks\is_playing_demo.cpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="sdk\interfaces\model_info_client.h" />
     <ClInclude Include="sdk\interfaces\model_render.h" />
     <ClInclude Include="sdk\interfaces\move_helper.h" />
+    <ClInclude Include="sdk\interfaces\network_string_table.h" />
     <ClInclude Include="sdk\interfaces\net_message.h" />
     <ClInclude Include="sdk\interfaces\panel.h" />
     <ClInclude Include="sdk\interfaces\physics.h" />

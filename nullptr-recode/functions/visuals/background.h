@@ -22,7 +22,7 @@ public:
 			float Dist = Pos.dist_to((*i)->relative_position);
 			if (Dist < 200) {
 				vec2 Dir = ((*i)->relative_position - relative_position).normalized();
-				render::draw_line(Pos.x, Pos.y, (Pos + Dir * Dist).x, (Pos + Dir * Dist).y, color(255, 255, 255, 255));
+				render::draw_line(Pos, (Pos + Dir * Dist), color(255, 255, 255, 255));
 			}
 		}
 	}

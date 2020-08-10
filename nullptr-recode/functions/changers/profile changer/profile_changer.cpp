@@ -29,17 +29,11 @@ std::string change_main(void* pubDest, uint32_t* pcubMsgSize) {
 	if (settings::changers::profile::ban_type != 0 && settings::changers::profile::ban_time != 0) {
 		msg.penalty_reason().set(settings::changers::profile::ban_type);
 		static int num;
-		if (settings::changers::profile::ban_time_type == 0) {
-			num = settings::changers::profile::ban_time;
-		}
-		else if (settings::changers::profile::ban_time_type == 1) {
-			num = settings::changers::profile::ban_time * 60;
-		}
-		else if (settings::changers::profile::ban_time_type == 2) {
-			num = settings::changers::profile::ban_time * 3600;
-		}
-		else if (settings::changers::profile::ban_time_type == 3) {
-			num = settings::changers::profile::ban_time * 86400;
+		switch (settings::changers::profile::ban_time_type) {
+		case 0: num = settings::changers::profile::ban_time; break;
+		case 1: num = settings::changers::profile::ban_time * 60; break;
+		case 2: num = settings::changers::profile::ban_time * 3600; break;
+		case 3: num = settings::changers::profile::ban_time * 86400; break;
 		}
 		msg.penalty_seconds().set(num);
 	}

@@ -3,6 +3,7 @@
 #include "../../sdk/sdk.h"
 
 namespace misc {
+	void agent_changer(frame_stage_t stage);
 	void prepare_revolver(c_user_cmd* cmd);
 	void moon_walk(c_user_cmd* cmd);
 	void fast_duck(c_user_cmd* cmd);

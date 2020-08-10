@@ -66,6 +66,20 @@ namespace config {
             }
         }
 
+        static bool find_var(std::vector<c_var>* var_list, std::string line, std::string full_var_name) {
+            for (int i = 0; i < var_list->size(); i++) {
+                c_var& var = var_list->at(i);
+                std::string var_value = config_utils::get_var_value(line);
+
+                if (var.name == full_var_name) {
+                    var.load(var_value);
+                    var_list->erase(var_list->begin() + i);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         void load(std::string var_value) {
             switch (type) {
             case var_t::_float: {
@@ -142,14 +156,16 @@ namespace config {
         }
 
         void clear() {
-            config.clear();
+            cur_group = 0;
+            config_text.clear();
             vars.clear();
+            last_groups.clear();
         }
 
         void add_space() {
             for (int i = 0; i < cur_group; i++) {
-                if (i == cur_group - 1) config.push_back("|- ");
-                else config.push_back("|  ");
+                if (i == cur_group - 1) config_text += "|- ";
+                else config_text += "|  ";
             }
         }
 
@@ -159,31 +175,31 @@ namespace config {
             vars.push_back(_var);
             switch (vars.back().type) {
             case var_t::_float:
-                config.push_back(utils::snprintf("%s = %.3f;\n", name.c_str(), *_var.var_float));
+                config_text += utils::snprintf("%s = %.3f;\n", name.c_str(), *_var.var_float);
                 break;
             case var_t::_int:
-                config.push_back(utils::snprintf("%s = %d;\n", name.c_str(), *_var.var_int));
+                config_text += utils::snprintf("%s = %d;\n", name.c_str(), *_var.var_int);
                 break;
             case var_t::_bool:
-                config.push_back(utils::snprintf("%s = %s;\n", name.c_str(), *_var.var_bool == true ? "true" : "false"));
+                config_text += utils::snprintf("%s = %s;\n", name.c_str(), *_var.var_bool == true ? "true" : "false");
                 break;
             case var_t::_string:
-                config.push_back(utils::snprintf("%s = '%s';\n", name.c_str(), _var.var_string->c_str()));
+                config_text += utils::snprintf("%s = '%s';\n", name.c_str(), _var.var_string->c_str());
                 break;
             case var_t::_color:
-                config.push_back(utils::snprintf("%s = %d-%d-%d-%d;\n", name.c_str(), _var.var_color->r(), _var.var_color->g(), _var.var_color->b(), _var.var_color->a()));
+                config_text += utils::snprintf("%s = %d-%d-%d-%d;\n", name.c_str(), _var.var_color->r(), _var.var_color->g(), _var.var_color->b(), _var.var_color->a());
                 break;
             case var_t::_bind:
-                config.push_back(utils::snprintf("%s = %d-%d-%s;\n", name.c_str(), _var.var_bind->key_id, _var.var_bind->bind_type, _var.var_bind->enable ? "true" : "false"));
+                config_text += utils::snprintf("%s = %d-%d-%s;\n", name.c_str(), _var.var_bind->key_id, _var.var_bind->bind_type, _var.var_bind->enable ? "true" : "false");
                 break;
             case var_t::_window:
-                config.push_back(utils::snprintf("%s = %s-%.0f-%.0f-%d;\n", name.c_str(), _var.var_window->show ? "true" : "false", _var.var_window->pos.x, _var.var_window->pos.y, _var.var_window->alpha));
+                config_text += utils::snprintf("%s = %s-%.0f-%.0f-%d;\n", name.c_str(), _var.var_window->show ? "true" : "false", _var.var_window->pos.x, _var.var_window->pos.y, _var.var_window->alpha);
                 break;
             }
         }
 
         void add_group(std::string name) {
-            config.push_back(utils::snprintf("[ %s ]\n", name.c_str()));
+            config_text += utils::snprintf("[ %s ]\n", name.c_str());
             last_groups.push_back(utils::snprintf("[ %s ] ", name.c_str()));
             cur_group++;
         }
@@ -192,7 +208,7 @@ namespace config {
             last_groups.pop_back();
             cur_group--;
             add_space();
-            config.push_back("[ end ]\n");
+            config_text += "[ end ]\n";
         }
 
         bool load(std::string name) {
@@ -209,28 +225,20 @@ namespace config {
                 while (getline(in, line)) {
                     if (config_utils::get_line_type(line) == line_t::group) {
                         config_utils::load_group(last_groups, line);
-                    } else {
+                    } else if(local_vars.size() > 0){
                         std::string becup = line;
                         std::string end_var_name;
                         for (std::string group : last_groups) {
                             end_var_name = utils::snprintf("%s%s ", end_var_name.c_str(), group.c_str());
                         }
                         end_var_name = utils::snprintf("%s%s", end_var_name.c_str(), config_utils::get_var_name(line).c_str());
+                        std::string var_value = config_utils::get_var_value(line);
                         if (local_vars.front().name == end_var_name) {
                             c_var& var = local_vars.front();
-                            std::string var_value = config_utils::get_var_value(line);
                             var.load(var_value);
                             local_vars.erase(local_vars.begin());
                         } else {
-                            for (int i = 0; i < local_vars.size(); i++) {
-                                c_var& var = local_vars[i];
-                                std::string var_value = config_utils::get_var_value(line);
-
-                                if (var.name == end_var_name) {
-                                    var.load(var_value);
-                                    local_vars.erase(local_vars.begin() + i);
-                                }
-                            }
+                            c_var::find_var(&local_vars, line, end_var_name);
                         }
                     }
                 }
@@ -242,7 +250,7 @@ namespace config {
         std::string dir_name;
 
         std::vector<std::string> last_groups;
-        std::vector<std::string> config;
+        std::string config_text;
         std::vector<c_var> vars;
 
         int cur_group = 0;

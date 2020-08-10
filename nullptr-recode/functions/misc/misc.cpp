@@ -6,7 +6,88 @@
 #include "../../helpers/input.h"
 #include "../../helpers/math/math.h"
 
-namespace misc {	
+namespace misc {
+	void agent_changer(frame_stage_t stage) {
+		if (!sdk::engine_client->is_in_game() || (stage != frame_stage_t::render_start && stage != frame_stage_t::render_end)) return;
+
+		static const auto get_player_viewmodel_arm_config_for_player_model = (const char**(__fastcall*)(const char*))(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "E8 ? ? ? ? 89 87 ? ? ? ? 6A 00"));
+		static int original_model = 0;
+
+		if (!sdk::local_player) {
+			original_model = 0;
+			return;
+		}
+
+		constexpr auto get_model = [](int team) constexpr noexcept -> const char* {
+			constexpr std::array models{
+			"models/player/custom_player/legacy/ctm_fbi_variantb.mdl",
+			"models/player/custom_player/legacy/ctm_fbi_variantf.mdl",
+			"models/player/custom_player/legacy/ctm_fbi_variantg.mdl",
+			"models/player/custom_player/legacy/ctm_fbi_varianth.mdl",
+			"models/player/custom_player/legacy/ctm_sas_variantf.mdl",
+			"models/player/custom_player/legacy/ctm_st6_variante.mdl",
+			"models/player/custom_player/legacy/ctm_st6_variantg.mdl",
+			"models/player/custom_player/legacy/ctm_st6_varianti.mdl",
+			"models/player/custom_player/legacy/ctm_st6_variantk.mdl",
+			"models/player/custom_player/legacy/ctm_st6_variantm.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantf.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantg.mdl",
+			"models/player/custom_player/legacy/tm_balkan_varianth.mdl",
+			"models/player/custom_player/legacy/tm_balkan_varianti.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantj.mdl",
+			"models/player/custom_player/legacy/tm_leet_variantf.mdl",
+			"models/player/custom_player/legacy/tm_leet_variantg.mdl",
+			"models/player/custom_player/legacy/tm_leet_varianth.mdl",
+			"models/player/custom_player/legacy/tm_leet_varianti.mdl",
+			"models/player/custom_player/legacy/tm_phoenix_variantf.mdl",
+			"models/player/custom_player/legacy/tm_phoenix_variantg.mdl",
+			"models/player/custom_player/legacy/tm_phoenix_varianth.mdl",
+
+			"models/player/custom_player/legacy/tm_pirate.mdl",
+			"models/player/custom_player/legacy/tm_pirate_varianta.mdl",
+			"models/player/custom_player/legacy/tm_pirate_variantb.mdl",
+			"models/player/custom_player/legacy/tm_pirate_variantc.mdl",
+			"models/player/custom_player/legacy/tm_pirate_variantd.mdl",
+			"models/player/custom_player/legacy/tm_anarchist.mdl",
+			"models/player/custom_player/legacy/tm_anarchist_varianta.mdl",
+			"models/player/custom_player/legacy/tm_anarchist_variantb.mdl",
+			"models/player/custom_player/legacy/tm_anarchist_variantc.mdl",
+			"models/player/custom_player/legacy/tm_anarchist_variantd.mdl",
+			"models/player/custom_player/legacy/tm_balkan_varianta.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantb.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantc.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variantd.mdl",
+			"models/player/custom_player/legacy/tm_balkan_variante.mdl",
+			"models/player/custom_player/legacy/tm_jumpsuit_varianta.mdl",
+			"models/player/custom_player/legacy/tm_jumpsuit_variantb.mdl",
+			"models/player/custom_player/legacy/tm_jumpsuit_variantc.mdl"
+			};
+
+			switch (team) {
+			case 2: return static_cast<std::size_t>(settings::visuals::agent_changer::model_t - 1) < models.size() ? models[settings::visuals::agent_changer::model_t - 1] : nullptr;
+			case 3: return static_cast<std::size_t>(settings::visuals::agent_changer::model_ct - 1) < models.size() ? models[settings::visuals::agent_changer::model_ct - 1] : nullptr;
+			default: return nullptr;
+			}
+		};
+
+		const char* model = get_model(sdk::local_player->team_num());
+		if (model) {
+			if (stage == frame_stage_t::render_start) {
+				original_model = sdk::local_player->model_index();
+				c_network_string_table* modelprecache = sdk::network_string_table->find_table("modelprecache");
+				if (modelprecache) {
+					modelprecache->add_string(false, model);
+				}
+			}
+
+			const auto idx = stage == frame_stage_t::render_end && original_model ? original_model : sdk::mdl_info->get_model_index(model);
+
+			sdk::local_player->set_model_index(idx);
+			if (c_base_player* ragdoll = (c_base_player*)sdk::entity_list->get_client_entity_from_handle(sdk::local_player->ragdoll()))
+				ragdoll->set_model_index(idx);
+		}
+	}
+
 	void prepare_revolver(c_user_cmd* cmd) {
 		if (!sdk::local_player || !sdk::engine_client->is_connected() || !sdk::local_player->active_weapon() || !sdk::local_player->is_alive()) return;
 
@@ -150,7 +231,7 @@ namespace misc {
 
 			fog_enable->set_value(settings::visuals::fog::enable);
 			fog_override->set_value(settings::visuals::fog::enable);
-			fog_color->set_value(utils::snprintf("%d %d %d", clr.r(), clr.g(), clr.b()).c_str()); //fog color
+			fog_color->set_value(utils::snprintf("%d %d %d", clr.r(), clr.g(), clr.b()).c_str());
 			fog_start->set_value(settings::visuals::fog::start_dist);
 			fog_end->set_value(settings::visuals::fog::end_dist);
 			fog_destiny->set_value(settings::visuals::fog::clr.a());
@@ -174,6 +255,8 @@ namespace misc {
 	void no_smoke() {
 		static DWORD smoke_count;
 		static uint8_t* offset;
+		if (!sdk::engine_client->is_in_game() || !sdk::local_player || !sdk::mat_system)
+			return;
 
 		if (!offset) offset = utils::pattern_scan(GetModuleHandleW(L"client.dll"), "55 8B EC 83 EC 08 8B 15 ? ? ? ? 0F 57 C0");
 		if (!smoke_count) smoke_count = *(DWORD*)(offset + 0x8);
@@ -457,6 +540,8 @@ namespace misc {
 		void auto_strafe(c_user_cmd* cmd, qangle va) {
 			if (settings::misc::bhop::strafe_type == 0) return;
 
+			static auto cl_sidespeed = sdk::cvar->find_var("cl_sidespeed");
+
 			if (settings::misc::bhop::strafe_type == 1) {
 				if (!sdk::local_player || !sdk::local_player->is_alive() || sdk::local_player->move_type() != move_type::walk) return;
 
@@ -475,8 +560,6 @@ namespace misc {
 				auto ideal_strafe = math::clamp(RAD2DEG(atan(15.f / speed)), 0.0f, 90.0f);
 
 				if (cmd->forwardmove > 0.0f) cmd->forwardmove = 0.0f;
-
-				static auto cl_sidespeed = sdk::cvar->find_var("cl_sidespeed");
 
 				static float old_yaw = 0.f;
 				auto yaw_delta = std::remainderf(wish_angle.yaw - old_yaw, 360.0f);
@@ -508,116 +591,115 @@ namespace misc {
 					cmd->sidemove = cl_sidespeed->get_float();
 				}
 			} else if (settings::misc::bhop::strafe_type == 2) {
-				static bool is_bhopping;
-				static float calculated_direction;
-				static bool in_transition;
-				static float true_direction;
-				static float wish_direction;
-				static float step;
-				static float rough_direction;
+				static auto old_yaw = 0.0f;
 
-				enum directions {
-					FORWARDS = 0,
-					FORWARDS_RIGHT = -45,
-					FORWARDS_LEFT = 45,
-					BACKWARDS = 180,
-					BACKWARDS_RIGHT = -135,
-					BACKWARDS_LEFT = 135,
-					LEFT = 90,
-					RIGHT = -90
+				auto get_velocity_degree = [](float velocity)
+				{
+					auto tmp = RAD2DEG(atan(30.0f / velocity));
+
+					if (CHECK_IF_NON_VALID_NUMBER(tmp) || tmp > 90.0f)
+						return 90.0f;
+
+					else if (tmp < 0.0f)
+						return 0.0f;
+					else
+						return tmp;
 				};
+				if (!sdk::local_player || !sdk::local_player->is_alive() || sdk::local_player->move_type() != move_type::walk || (sdk::local_player->m_flags() & entity_flags::on_ground) && !(cmd->buttons & IN_JUMP)) return;
 
-				is_bhopping = cmd->buttons & IN_JUMP;
-				if (!is_bhopping && sdk::local_player->m_flags() & entity_flags::on_ground) {
-					calculated_direction = directions::FORWARDS;
-					in_transition = false;
+				auto velocity = sdk::local_player->velocity();
+				velocity.z = 0.0f;
+
+				auto forwardmove = cmd->forwardmove;
+				auto sidemove = cmd->sidemove;
+
+				if (velocity.length_2d() < 5.0f && !forwardmove && !sidemove)
 					return;
+
+				static auto flip = false;
+				flip = !flip;
+
+				auto turn_direction_modifier = flip ? 1.0f : -1.0f;
+				auto viewangles = cmd->viewangles;
+
+				if (forwardmove || sidemove)
+				{
+					cmd->forwardmove = 0.0f;
+					cmd->sidemove = 0.0f;
+
+					auto turn_angle = atan2(-sidemove, forwardmove);
+					viewangles.yaw += turn_angle * M_RADPI;
 				}
+				else if (forwardmove) //-V550
+					cmd->forwardmove = 0.0f;
 
-				qangle base{ };
-				sdk::engine_client->get_view_angles(&base);
+				auto strafe_angle = RAD2DEG(atan(15.0f / velocity.length_2d()));
 
-				auto get_rough_direction = [&](float true_direction) -> float {
-					std::array< float, 8 > minimum = { directions::FORWARDS, FORWARDS_RIGHT, FORWARDS_LEFT, directions::BACKWARDS, BACKWARDS_RIGHT, BACKWARDS_LEFT, directions::LEFT, directions::RIGHT };
-					float best_angle, best_delta = 181.f;
+				if (strafe_angle > 90.0f)
+					strafe_angle = 90.0f;
+				else if (strafe_angle < 0.0f)
+					strafe_angle = 0.0f;
 
-					for (size_t i = 0; i < minimum.size(); ++i) {
-						float rough_direction = base.yaw + minimum.at(i);
-						float delta = fabsf(math::normalize_yaw(true_direction - rough_direction));
+				auto temp = vec3(0.0f, viewangles.yaw - old_yaw, 0.0f);
+				temp.y = math::normalize_yaw(temp.y);
 
-						if (delta < best_delta) {
-							best_angle = rough_direction;
-							best_delta = delta;
+				auto yaw_delta = temp.y;
+				old_yaw = viewangles.yaw;
+
+				auto abs_yaw_delta = fabs(yaw_delta);
+
+				if (abs_yaw_delta <= strafe_angle || abs_yaw_delta >= 30.0f)
+				{
+					qangle velocity_angles;
+					math::vector_angles(velocity, velocity_angles);
+
+					temp = vec3(0.0f, viewangles.yaw - velocity_angles.yaw, 0.0f);
+					temp.y = math::normalize_yaw(temp.y);
+
+					auto velocityangle_yawdelta = temp.y;
+					auto velocity_degree = get_velocity_degree(velocity.length_2d()) * 0.01f;
+
+					if (velocityangle_yawdelta <= velocity_degree || velocity.length_2d() <= 15.0f)
+					{
+						if (-velocity_degree <= velocityangle_yawdelta || velocity.length_2d() <= 15.0f)
+						{
+							viewangles.yaw += strafe_angle * turn_direction_modifier;
+							cmd->sidemove = cl_sidespeed->get_float() * turn_direction_modifier;
+						}
+						else
+						{
+							viewangles.yaw = velocity_angles.yaw - velocity_degree;
+							cmd->sidemove = cl_sidespeed->get_float();
 						}
 					}
-
-					return best_angle;
-				};
-
-				true_direction = sdk::local_player->velocity().angle().y;
-
-				if (cmd->buttons & IN_FORWARD) {
-					wish_direction = base.yaw + directions::FORWARDS;
-					if (cmd->buttons & IN_MOVELEFT) wish_direction = base.yaw + directions::FORWARDS_LEFT;
-					if (cmd->buttons & IN_MOVERIGHT) wish_direction = base.yaw + directions::FORWARDS_RIGHT;
-				} else if (cmd->buttons & IN_BACK) {
-					wish_direction = base.yaw + directions::BACKWARDS;
-					if (cmd->buttons & IN_MOVELEFT) wish_direction = base.yaw + directions::BACKWARDS_LEFT;
-					if (cmd->buttons & IN_MOVERIGHT) wish_direction = base.yaw + directions::BACKWARDS_RIGHT;
-				} else if (cmd->buttons & IN_MOVELEFT) {
-					wish_direction = base.yaw + directions::LEFT;
-					if (cmd->buttons & IN_FORWARD) wish_direction = base.yaw + directions::FORWARDS_LEFT;
-					if (cmd->buttons & IN_BACK) wish_direction = base.yaw + directions::BACKWARDS_LEFT;
-				} else if (cmd->buttons & IN_MOVERIGHT) {
-					wish_direction = base.yaw + directions::RIGHT;
-					if (cmd->buttons & IN_FORWARD) wish_direction = base.yaw + directions::FORWARDS_RIGHT;
-					if (cmd->buttons & IN_BACK) wish_direction = base.yaw + directions::BACKWARDS_RIGHT;
-				} else {
-					cmd->buttons |= IN_FORWARD;
-					wish_direction = base.yaw + directions::FORWARDS;
-				}
-
-				float speed_rotation = std::min(RAD2DEG(std::asinf(30.f / sdk::local_player->velocity().length())) * 0.5f, 45.f);
-				if (in_transition) {
-					float ideal_step = speed_rotation + calculated_direction;
-					step = fabsf(math::normalize_yaw(calculated_direction - ideal_step));
-
-					if (fabsf(math::normalize_yaw(wish_direction - calculated_direction)) > step) {
-						float add = math::normalize_yaw(calculated_direction + step);
-						float sub = math::normalize_yaw(calculated_direction - step);
-
-						if (fabsf(math::normalize_yaw(wish_direction - add)) >= fabsf(math::normalize_yaw(wish_direction - sub))) {
-							calculated_direction -= step;
-						} else {
-							calculated_direction += step;
-						}
-					} else {
-						in_transition = false;
-					}
-				} else {
-					rough_direction = get_rough_direction(true_direction);
-					calculated_direction = rough_direction;
-
-					if (rough_direction != wish_direction) {
-						in_transition = true;
+					else
+					{
+						viewangles.yaw = velocity_angles.yaw + velocity_degree;
+						cmd->sidemove = -cl_sidespeed->get_float();
 					}
 				}
+				else if (yaw_delta > 0.0f)
+					cmd->sidemove = -cl_sidespeed->get_float();
+				else if (yaw_delta < 0.0f)
+					cmd->sidemove = cl_sidespeed->get_float();
 
-				cmd->forwardmove = 0.f;
-				cmd->sidemove = cmd->command_number % 2 ? 450.f : -450.f;
+				auto move = vec3(cmd->forwardmove, cmd->sidemove, 0.0f);
+				auto speed = move.length();
 
-				float direction = (cmd->command_number % 2 ? speed_rotation : -speed_rotation) + calculated_direction;
+				qangle angles_move;
+				math::vector_angles(move, angles_move);
 
-				float rotation = DEG2RAD(base.yaw - direction);
+				auto normalized_x = fmod(cmd->viewangles.pitch + 180.0f, 360.0f) - 180.0f;
+				auto normalized_y = fmod(cmd->viewangles.yaw + 180.0f, 360.0f) - 180.0f;
 
-				float cos_rot = cos(rotation);
-				float sin_rot = sin(rotation);
+				auto yaw = DEG2RAD((normalized_y - viewangles.yaw) + angles_move.yaw);
 
-				float forwardmove = (cos_rot * cmd->forwardmove) - (sin_rot * cmd->sidemove);
-				float sidemove = (sin_rot * cmd->forwardmove) + (cos_rot * cmd->sidemove);
+				if (normalized_x >= 90.0f || normalized_x <= -90.0f || cmd->viewangles.pitch >= 90.0f && cmd->viewangles.pitch <= 200.0f || cmd->viewangles.pitch <= -90.0f && cmd->viewangles.pitch <= 200.0f) //-V648
+					cmd->forwardmove = -cos(yaw) * speed;
+				else
+					cmd->forwardmove = cos(yaw) * speed;
 
-				cmd->forwardmove = forwardmove;
-				cmd->sidemove = sidemove;
+				cmd->sidemove = sin(yaw) * speed;
 			}
 		}
 	}

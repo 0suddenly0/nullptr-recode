@@ -32,8 +32,6 @@ DWORD WINAPI attach(LPVOID base) {
 		sdk::print();
 		utils::console_print("[-] sdk initialized\n");
 		
-		chams::init();
-
 		utils::console_print("[-] initialization netvars...\n");
 		netvar::initialize();
 		utils::console_print("[-] netvars initialized\n");
@@ -41,6 +39,8 @@ DWORD WINAPI attach(LPVOID base) {
 		utils::console_print("[-] initialization render...\n");
 		render::initialize();
 		utils::console_print("[-] render initialized\n");
+
+		chams::init();
 
 		utils::console_print("[-] waiting hooks...\n");
 		hooks::initialize();

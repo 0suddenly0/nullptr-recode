@@ -10,23 +10,19 @@ namespace engine_prediction {
 	int32_t* _prediction_seed = nullptr;
 	c_base_player*** _prediction_player = nullptr;
 
-	void begin(c_user_cmd* cmd)
-	{
+	void begin(c_user_cmd* cmd) {
 		_curtime_backup = sdk::global_vars->curtime;
 		_frametime_backup = sdk::global_vars->frametime;
 
 		if (!_prevcmd || _prevcmd->hasbeenpredicted) {
 			_fixedtick = sdk::local_player->tick_base();
-		}
-		else {
+		} else {
 			_fixedtick++;
 		}
 
 		if (!_prediction_seed || !_prediction_player) {
-			auto client = GetModuleHandle(TEXT("client.dll"));
-
-			_prediction_seed = *(int32_t**)(utils::pattern_scan(client, "8B 0D ? ? ? ? BA ? ? ? ? E8 ? ? ? ? 83 C4 04") + 0x2);
-			_prediction_player = (c_base_player***)(utils::pattern_scan(client, "89 35 ? ? ? ? F3 0F 10 48 20") + 0x2);
+			_prediction_seed = *(int32_t**)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "8B 0D ? ? ? ? BA ? ? ? ? E8 ? ? ? ? 83 C4 04") + 0x2);
+			_prediction_player = (c_base_player***)(utils::pattern_scan(GetModuleHandleW(L"client.dll"), "89 35 ? ? ? ? F3 0F 10 48 20") + 0x2);
 		}
 
 		if (_prediction_seed) {

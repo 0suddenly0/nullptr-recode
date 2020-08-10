@@ -10,6 +10,6 @@ namespace hooks {
 		if ((_ReturnAddress() == return_to_scope_arc || _ReturnAddress() == return_to_scope_lens) && settings::misc::disable_zoom_border)
 			a = 0;
 
-		o_draw_set_color(sdk::vgui_surface, r, g, b, a);
+		return o_draw_set_color(sdk::vgui_surface, r, g, b, a);
 	}
 }

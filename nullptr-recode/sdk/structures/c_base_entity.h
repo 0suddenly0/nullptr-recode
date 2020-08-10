@@ -78,6 +78,10 @@ public:
 		return call_vfunction<vec3 & (__thiscall*)(void*)>(this, 10)(this);
 	}
 
+	void set_model_index(int idx) {
+		return call_vfunction<void(__thiscall*)(void*, int)>(this, 75)(this, idx);
+	}
+
 	void set_abs_original(vec3 origin) {
 		using SetAbsOriginFn = void(__thiscall*)(void*, const vec3 & origin);
 		static SetAbsOriginFn set_abs_origin;

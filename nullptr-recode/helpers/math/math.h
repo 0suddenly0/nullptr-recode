@@ -10,6 +10,8 @@
 #define RAD2DEG(x) DirectX::XMConvertToDegrees(x)
 #define DEG2RAD(x) DirectX::XMConvertToRadians(x)
 #define M_PI 3.14159265358979323846
+#define M_RADPI 57.295779513082f
+#define CHECK_IF_NON_VALID_NUMBER(x) (fpclassify(x) == FP_INFINITE || fpclassify(x) == FP_NAN || fpclassify(x) == FP_SUBNORMAL)
 
 #define TICK_INTERVAL			(sdk::global_vars->interval_per_tick)
 #define TICKS_TO_TIME(t) (sdk::global_vars->interval_per_tick * (t) )

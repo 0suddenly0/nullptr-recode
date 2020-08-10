@@ -15,6 +15,8 @@ int chams_hands_layer = 0;
 
 int chams_backtrack_layer = 0;
 
+std::vector<std::string> models = { "default", "Special Agent Ava | FBI", "Operator | FBI SWAT", "Markus Delrow | FBI HRT", "Michael Syfers | FBI Sniper", "B Squadron Officer | SAS", "Seal Team 6 Soldier | NSWC SEAL", "Buckshot | NSWC SEAL", "Lt. Commander Ricksaw | NSWC SEAL", "Third Commando Company | KSK", "'Two Times' McCoy | USAF TACP", "Dragomir | Sabre", "Rezan The Ready | Sabre", "'The Doctor' Romanov | Sabre", "Maximus | Sabre", "Blackwolf | Sabre", "The Elite Mr. Muhlik | Elite Crew", "Ground Rebel | Elite Crew", "Osiris | Elite Crew", "Prof. Shahmat | Elite Crew", "Enforcer | Phoenix", "Slingshot | Phoenix", "Soldier | Phoenix", "Pirate", "Pirate Variant A", "Pirate Variant B", "Pirate Variant C", "Pirate Variant D", "Anarchist", "Anarchist Variant A", "Anarchist Variant B", "Anarchist Variant C", "Anarchist Variant D", "Balkan Variant A", "Balkan Variant B", "Balkan Variant C", "Balkan Variant D", "Balkan Variant E", "Jumpsuit Variant A", "Jumpsuit Variant B", "Jumpsuit Variant C" };
+
 namespace menu {
 	void visuals_tab() {
 		null_gui::create_columns(2);
@@ -228,6 +230,8 @@ namespace menu {
 					});
 				null_gui::check_box("hitsound", &settings::visuals::hitsound::enable);
 				null_gui::slider_float("hitsound volume", &settings::visuals::hitsound::volume, 0.1f, 1.f);
+				null_gui::combo("localplayer model ct", &settings::visuals::agent_changer::model_ct, models);
+				null_gui::combo("localplayer model t", &settings::visuals::agent_changer::model_t, models);
 				null_gui::check_box("grenade prediction", &settings::visuals::grenade_prediction::enable);
 				null_gui::tooltip_items("##grenade prediction settings", []() {
 					null_gui::check_box("radius##genpred", &settings::visuals::grenade_prediction::radius);

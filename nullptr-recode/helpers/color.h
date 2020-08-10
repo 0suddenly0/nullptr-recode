@@ -1,13 +1,6 @@
 #pragma once
 #include <algorithm>
 
-enum class return_color{
-    r = 0,
-    g = 1,
-    b = 2,
-    a = 3
-};
-
 class color {
 public:
     color() {
@@ -118,6 +111,5 @@ public:
     }
 
     unsigned char color_char[4];
-    //int color_int[4];
     float color_float[4];
 };

@@ -2,10 +2,8 @@
 #include "../functions/changers/profile changer/profile_changer.h"
 #include "../functions/misc/events.h"
 
-__declspec(naked) void __fastcall create_move_hook_proxy(void* _this, int, int sequence_number, float input_sample_frametime, bool active)
-{
-	__asm
-	{
+__declspec(naked) void __fastcall create_move_hook_proxy(void* _this, int, int sequence_number, float input_sample_frametime, bool active){
+	__asm {
 		push ebp
 		mov  ebp, esp
 		push ebx; not sure if we need this
@@ -35,6 +33,7 @@ namespace hooks {
 	vfunc_hook draw_model_stats_overlay_vhook;
 	vfunc_hook mdl_render_vhook;
 	vfunc_hook bsp_query_vhook;
+	vfunc_hook game_event_vhook;
 	recv_prop_hook* spotted_vhook;
 	recv_prop_hook* sequence_vhook;
 
@@ -54,7 +53,7 @@ namespace hooks {
 
 		client_vhook.setup(sdk::chl_client);
 		client_vhook.hook_index(indexes::frame_stage_notify, frame_stage_notify::hook);
-		client_vhook.hook_index(indexes::create_move,        create_move_hook_proxy);
+		client_vhook.hook_index(indexes::create_move,        create_move_hook_proxy);//crash
 
 		client_mode_vhook.setup(sdk::client_mode);
 		client_mode_vhook.hook_index(indexes::do_post_screen_space_effects, do_post_screen_space_effects::hook);
@@ -86,6 +85,9 @@ namespace hooks {
 		draw_model_stats_overlay_vhook.setup(sdk::cvar->find_var("r_drawmodelstatsoverlay"));
 		draw_model_stats_overlay_vhook.hook_index(indexes::cvar_get_bool, draw_model_stats_overlay::hook);
 
+		game_event_vhook.setup(sdk::game_events);
+		game_event_vhook.hook_index(indexes::fire_event_client_side, fire_event_client_side::hook);
+
 		spotted_vhook = new recv_prop_hook(c_base_entity::spotted(), spotted::hook);
 		sequence_vhook = new recv_prop_hook(c_base_view_model::sequence(), sequence::hook);
 
@@ -93,11 +95,11 @@ namespace hooks {
 	}
 
 	void unhook() {
-		net_channel_vhook.unhook_all();
+		//net_channel_vhook.unhook_all();
 		d3d9device_vhook.unhook_all();
 		panel_vhook.unhook_all();
 		surface_vhook.unhook_all();
-		client_vhook.unhook_all();
+		//client_vhook.unhook_all();
 		client_mode_vhook.unhook_all();
 		sound_vhook.unhook_all();
 		engine_vhook.unhook_all();
@@ -107,11 +109,12 @@ namespace hooks {
 		draw_model_stats_overlay_vhook.unhook_all();
 		mdl_render_vhook.unhook_all();
 		bsp_query_vhook.unhook_all();
+		game_event_vhook.unhook_all();
 		spotted_vhook->~recv_prop_hook();
 		sequence_vhook->~recv_prop_hook();
 
 		event_manager::shutdown();
-		profile_changer::send_update_messages();
+		profile_changer::send_update_messages();//
 
 		SetWindowLongPtr(sdk::game_hwnd, GWL_WNDPROC, (LONG_PTR)wndproc::o_wnd_proc);
 	}

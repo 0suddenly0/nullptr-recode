@@ -255,6 +255,7 @@ namespace chams {
     }
 
 	c_material* create_material(const std::string& material_name, const std::string& shader_type, const std::string& material_data) {
+        if (!sdk::mem_alloc) return nullptr;
 		const auto key_values = (c_key_values*)(sdk::mem_alloc->alloc(36u));
 
 		key_values->init_key(shader_type.c_str());
@@ -283,11 +284,8 @@ namespace chams {
         if (const auto alpha = material->find_var("$alpha", nullptr, false)) alpha->set_value(clr.a<float>());
         if (const auto envmaptint = material->find_var("$envmaptint", nullptr, false)) envmaptint->set_value(vec3(clr.r<float>(), clr.g<float>(), clr.b<float>()));
 
-        //ya byl bukhoy kogda pisal eto, khz pochemu, no menya porvalo s etoy khuyni
-
         material->set_material_var_flag(MATERIAL_VAR_IGNOREZ, visible_check);
 
-        material->increment_reference_count();
         sdk::studio_render->forced_material_override(material);
     }
 }

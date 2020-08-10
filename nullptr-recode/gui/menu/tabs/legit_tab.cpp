@@ -47,6 +47,7 @@ namespace menu {
 			null_gui::key_bind("##autofirebind", &legitbot_settings->autofire_bind);
 			if (legitbot_settings->autofire) {
 				null_gui::slider_int("chance##autofire", &legitbot_settings->autofire_chance, 0, 100, "%d%%");
+				null_gui::check_box("auto-stop", &legitbot_settings->auto_stop);
 			}
 		}
 		null_gui::end_group();

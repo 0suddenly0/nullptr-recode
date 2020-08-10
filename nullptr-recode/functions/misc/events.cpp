@@ -65,17 +65,29 @@ private:
 
 				if(impact_id != 0) impacts.erase(impacts.begin() + impact_id);
 
-				items = {
-					render::multicolor_t{ "you hurt ", color(255, 255, 255, 255) },
-					render::multicolor_t{ userid_info.szName, clr },
-					render::multicolor_t{ " in the ", color(255, 255, 255, 255) },
-					render::multicolor_t{ event_manager::hitbox_to_string[event->get_int("hitgroup")], clr },
-					render::multicolor_t{ " for ", color(255, 255, 255, 255) },
-					render::multicolor_t{ event->get_int("dmg_health"), clr },
-					render::multicolor_t{ " (", color(255, 255, 255, 255) },
-					render::multicolor_t{ event->get_int("health"), clr },
-					render::multicolor_t{ " health remaining)", color(255, 255, 255, 255) }
-				};
+				if (event->get_int("hitgroup") > 0) {
+					items = {
+						render::multicolor_t{ "you hurt ", color(255, 255, 255, 255) },
+						render::multicolor_t{ userid_info.szName, clr },
+						render::multicolor_t{ " in the ", color(255, 255, 255, 255) },
+						render::multicolor_t{ event_manager::hitbox_to_string[event->get_int("hitgroup")], clr },
+						render::multicolor_t{ " for ", color(255, 255, 255, 255) },
+						render::multicolor_t{ event->get_int("dmg_health"), clr },
+						render::multicolor_t{ " (", color(255, 255, 255, 255) },
+						render::multicolor_t{ event->get_int("health"), clr },
+						render::multicolor_t{ " health remaining)", color(255, 255, 255, 255) }
+					};
+				} else {
+					items = {
+						render::multicolor_t{ "you hurt ", color(255, 255, 255, 255) },
+						render::multicolor_t{ userid_info.szName, clr },
+						render::multicolor_t{ " for ", color(255, 255, 255, 255) },
+						render::multicolor_t{ event->get_int("dmg_health"), clr },
+						render::multicolor_t{ " (", color(255, 255, 255, 255) },
+						render::multicolor_t{ event->get_int("health"), clr },
+						render::multicolor_t{ " health remaining)", color(255, 255, 255, 255) }
+					};
+				}
 				can_show = true;
 			} else if (userid == sdk::local_player && attacker != sdk::local_player) {
 				items = {
@@ -94,16 +106,6 @@ private:
 
 			if (can_show) {
 				notify::add("damage", items, settings::visuals::logs::hurt);
-			}
-		}
-
-		if (strstr(event->get_name(), "player_death")) {
-			if (sdk::engine_client->get_player_for_user_id(event->get_int("attacker")) == sdk::engine_client->get_local_player()) {
-				const auto icon_override = skin_changer::get_icon_override(event->get_string("weapon"));
-
-				if (icon_override) {
-					event->set_string("weapon", icon_override);
-				}
 			}
 		}
 
@@ -143,12 +145,11 @@ private:
 			float dist_to_b = player->vec_origin().dist_to((*sdk::player_resource)->b_side_center());
 			float dist_to_a = player->vec_origin().dist_to((*sdk::player_resource)->a_side_center());
 
-			std::string side = dist_to_a < dist_to_b ? "A" : "B";
 			color clr = notify::get_log_color(settings::visuals::logs::planting);
 			std::vector<render::multicolor_t> items = {
 				render::multicolor_t{ userid_info.szName, clr },
 				render::multicolor_t{ " has begin planting the bomb at site ", color(255, 255, 255, 255) },
-				render::multicolor_t{ side, clr }
+				render::multicolor_t{ dist_to_a < dist_to_b ? "A" : "B", clr }
 			};
 
 			notify::add("info", items, settings::visuals::logs::planting);
@@ -190,11 +191,12 @@ private:
 			auto player = (c_base_player*)(sdk::entity_list->get_client_entity(userid_id));
 			if (!player || player == sdk::local_player) return;
 
-			std::string kit = event->get_bool("haskit") ? " has began defusing the bomb with defuse kit" : " has began defusing the bomb without defuse kit";
 			color clr = notify::get_log_color(settings::visuals::logs::defusing);
 			std::vector<render::multicolor_t> items = {
 				render::multicolor_t{ userid_info.szName, clr },
-				render::multicolor_t{ kit, color(255, 255, 255, 255) },
+				render::multicolor_t{ " has began defusing the bomb " , color(255, 255, 255, 255)},
+				render::multicolor_t{ event->get_bool("haskit") ? "with" : "without", clr },
+				render::multicolor_t{ " defuse kit" , color(255, 255, 255, 255)},
 			};
 
 			notify::add("info", items, settings::visuals::logs::defusing);

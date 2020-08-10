@@ -122,6 +122,7 @@ struct legitbot_settings_t {
 	bool autofire = false;
 	key_bind_t autofire_bind = { 0, 0, false };
 	int autofire_chance = 100;
+	bool auto_stop = true;
 
 	bool rcs_enabled = false;
 	int rcs_start = 1;
@@ -367,6 +368,11 @@ namespace settings {
 			float offset_hit = 0.f;
 
 			color kill_color = color(255, 50, 50, 255);
+		}
+
+		namespace agent_changer {
+			int model_t = 0;
+			int model_ct = 0;
 		}
 
 		namespace hitmarker {

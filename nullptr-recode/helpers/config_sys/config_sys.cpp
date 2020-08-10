@@ -1,3 +1,4 @@
+#include <numeric>
 #include "config_sys.h"
 #include "../../settings/settings.h"
 #include "../../gui/imgui/imgui_internal.h"
@@ -62,15 +63,16 @@ namespace config {
 				add_var("silent", cur_settings.silent);
 				add_var("autopistol", cur_settings.autopistol);
 				add_group("checks"); {
-					add_var("team", cur_settings.enabled);
-					add_var("smoke", cur_settings.enabled);
-					add_var("flash", cur_settings.enabled);
+					add_var("team", cur_settings.team_check);
+					add_var("smoke", cur_settings.smoke_check);
+					add_var("flash", cur_settings.flash_check);
 				}
 				end_group();
 				add_group("autowall"); {
 					add_var("enable", cur_settings.autowall);
 					add_var("min damage", cur_settings.autowall_min_damage);
 				}
+				end_group();
 				add_group("autofire"); {
 					add_var("enable", cur_settings.autofire);
 					add_var("bind", cur_settings.autofire_bind);
@@ -84,7 +86,7 @@ namespace config {
 				}
 				end_group();
 				add_var("silent fov", cur_settings.silent_fov);
-				add_var("silent chance", cur_settings.enabled);
+				add_var("silent chance", cur_settings.silent_chance);
 				add_var("standart fov", cur_settings.fov);
 				add_var("smooth", cur_settings.smooth);
 				add_var("shot delay", cur_settings.shot_delay);
@@ -102,10 +104,12 @@ namespace config {
 					add_var("x", cur_settings.rcs_x);
 					add_var("y", cur_settings.rcs_y);
 				}
+				end_group();
 			};
 
 			add_group("legitbot"); {
 				add_group("general"); {
+					add_var("selected tab", settings::legitbot::settings_type);
 					add_var("auto current", settings::legitbot::auto_current);
 					add_var("using bind", settings::legitbot::using_bind);
 					add_var("bind", settings::legitbot::bind);
@@ -190,7 +194,7 @@ namespace config {
 
 							add_group("ammo"); {
 								add_var("enable", settings_cur.weapon_ammo);
-								add_var("text in bar", settings_cur.weapon_ammo);
+								add_var("text in bar", settings_cur.ammo_in_bar);
 								add_var("bar color", settings_cur.ammo_bar_main);
 								add_var("bar outline color", settings_cur.ammo_bar_outline);
 								add_var("bar backgroud color", settings_cur.ammo_bar_background);
@@ -383,6 +387,12 @@ namespace config {
 						add_var("hitmarker show type", settings::visuals::hitmarker::type);
 						add_var("hitsound enable", settings::visuals::hitsound::enable);
 						add_var("hitsound volume", settings::visuals::hitsound::volume);
+					}
+					end_group();
+
+					add_group("agent changer"); {
+						add_var("skin for ct side", settings::visuals::agent_changer::model_ct);
+						add_var("skin for t side", settings::visuals::agent_changer::model_t);
 					}
 					end_group();
 
@@ -671,9 +681,7 @@ namespace config {
             std::ofstream out;
             out.open(utils::snprintf("C:\\nullptr\\%s\\%s.null", _config.dir_name.c_str(), name.c_str()));
             if (out.is_open()) {
-                for (int i = 0; i < _config.config.size(); i++) {
-                    out << _config.config[i];
-                }
+				out << _config.config_text;
             }
             out.close();
 
@@ -780,11 +788,9 @@ namespace config {
 
             std::ofstream out;
             out.open(utils::snprintf("C:\\nullptr\\%s\\%s.null", _config.dir_name.c_str(), name.c_str()));
-            if (out.is_open()) {
-                for (int i = 0; i < _config.config.size(); i++) {
-                    out << _config.config[i];
-                }
-            }
+			if (out.is_open()) {
+				out << _config.config_text;
+			}
             out.close();
 
             return true;

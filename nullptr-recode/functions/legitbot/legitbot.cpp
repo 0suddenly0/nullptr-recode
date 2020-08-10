@@ -104,6 +104,40 @@ namespace legitbot {
 		return false;
 	}
 
+	void auto_stop(c_user_cmd* cmd) {
+		constexpr bool is_hexagone_godlike = true;
+		if (sdk::local_player->move_type() != move_type::walk || !(sdk::local_player->m_flags() & entity_flags::on_ground) || cmd->buttons & IN_JUMP)
+			return;
+
+		vec3 hvel = sdk::local_player->velocity();
+		hvel.z = 0;
+		float speed = hvel.length_2d();
+
+		if (speed < 1.f) {
+			cmd->forwardmove = 0.f;
+			cmd->sidemove = 0.f;
+			return;
+		}
+
+		static convar* sv_accelerate = sdk::cvar->find_var("sv_accelerate");
+		static convar* sv_maxspeed = sdk::cvar->find_var("sv_maxspeed");
+		
+		float max_accelspeed = sv_accelerate->get_float() * sdk::global_vars->interval_per_tick * sv_maxspeed->get_float();
+		float wishspeed = 0.f;
+
+		if (speed - max_accelspeed <= -1.f) wishspeed = max_accelspeed / (speed / (sv_accelerate->get_float() * sdk::global_vars->interval_per_tick));
+		else wishspeed = max_accelspeed;
+
+		qangle ndir_angle;
+		math::vector_angles(hvel * -1.f, ndir_angle);
+		ndir_angle.yaw -= cmd->viewangles.yaw;
+		vec3 ndir_vec;
+		math::angle_vector(ndir_angle, ndir_vec);
+
+		cmd->forwardmove = ndir_vec.x * wishspeed;
+		cmd->sidemove = ndir_vec.y * wishspeed;
+	}
+
 	float get_fov_to_player(qangle view_angle, qangle aim_angle) {
 		qangle delta = aim_angle - view_angle;
 		math::fix_angles(delta);
@@ -120,11 +154,11 @@ namespace legitbot {
 		if (!sdk::engine_client->is_in_game() || !sdk::local_player || !sdk::local_player->is_alive() || (settings::legitbot::using_bind && !settings::legitbot::bind.enable)) return false;
 
 		c_base_combat_weapon* weapon = sdk::local_player->active_weapon().get();
-		if (!weapon || !weapon->is_gun() || !get_settings()) return false;
+		if (!weapon || !weapon->is_gun() || !get_settings() || (!weapon->has_bullets() && !weapon->is_knife())) return false;
 
 		settings = *get_settings();
 
-		if (!settings.enabled || (!weapon->has_bullets() && !weapon->is_knife())) return false;
+		if (!settings.enabled) return false;
 
 		return cmd->buttons & IN_ATTACK || ((weapon->item().item_definition_index() == revolver || weapon->is_knife()) && cmd->buttons & IN_ATTACK2) || (settings.autofire_bind.enable);
 	}
@@ -319,7 +353,10 @@ namespace legitbot {
 			if (shot_delay && shot_delay_time <= int(GetTickCount())) shot_delay = false;
 			if (shot_delay) cmd->buttons &= ~IN_ATTACK;
 
-			if (settings.autofire_bind.enable && hit_chance(angles, target, settings.autofire_chance)) cmd->buttons |= IN_ATTACK;
+			if (settings.autofire_bind.enable) {
+				if (hit_chance(angles, target, settings.autofire_chance)) cmd->buttons |= IN_ATTACK;
+				else if(settings.auto_stop && weapon->next_primary_attack() < sdk::global_vars->curtime && sdk::local_player->next_attack() < sdk::global_vars->curtime) auto_stop(cmd);
+			}
 		}
 
 		if (cmd->buttons & IN_ATTACK || cmd->buttons & IN_ATTACK2) {

@@ -15,7 +15,7 @@ namespace hooks {
 		int old_flags = sdk::local_player->m_flags();
 
 		if (!net_channel_vhook.class_base && sdk::client_state) {
-			auto net_channel = sdk::client_state->net_channel;
+			c_net_channel* net_channel = sdk::client_state->net_channel;
 			if (net_channel) {
 				net_channel_vhook.setup(net_channel);
 				net_channel_vhook.hook_index(indexes::send_datagram, send_datagram::hook);

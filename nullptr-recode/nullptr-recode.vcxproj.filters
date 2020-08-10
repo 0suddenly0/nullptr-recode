@@ -307,6 +307,9 @@
     <ClCompile Include="functions\backtrack\backtrack.cpp">
       <Filter>sources\functions\backtrack</Filter>
     </ClCompile>
+    <ClCompile Include="hooks\hooks\fire_event_client_side.cpp">
+      <Filter>sources\hooks\hooks</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\utils.h">
@@ -674,6 +677,9 @@
     </ClInclude>
     <ClInclude Include="functions\backtrack\backtrack.h">
       <Filter>sources\functions\backtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\interfaces\network_string_table.h">
+      <Filter>sources\sdk\interfaces</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

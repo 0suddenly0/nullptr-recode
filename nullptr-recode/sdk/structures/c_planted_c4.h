@@ -38,7 +38,7 @@ public:
 	static float get_bomb_damage() {
 		c_base_player* bomb = get_bomb_player();
 
-		if (!bomb)
+		if (!bomb || !c_base_player::get_spectating_player())
 			return 0.f;
 
 		float armor = c_base_player::get_spectating_player()->armor_value();
@@ -52,13 +52,11 @@ public:
 
 		float dmg = damage;
 
-		if (armor > 0)
-		{
+		if (armor > 0) {
 			float _new = dmg * 0.5f;
 			float armor = (dmg - _new) * 0.5f;
 
-			if (armor > (float)(armor))
-			{
+			if (armor > (float)(armor)) {
 				armor = float(armor) * (1.f / 0.5f);
 				_new = dmg - armor;
 			}

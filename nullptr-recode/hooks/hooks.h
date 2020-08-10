@@ -27,6 +27,7 @@ namespace hooks {
 	extern vfunc_hook draw_model_stats_overlay_vhook;
 	extern vfunc_hook mdl_render_vhook;
 	extern vfunc_hook bsp_query_vhook;
+	extern vfunc_hook game_event_vhook;
 	extern recv_prop_hook* spotted_vhook;
 	extern recv_prop_hook* sequence_vhook;
 
@@ -50,6 +51,7 @@ namespace hooks {
 		int draw_model_execute = 21;
 		int do_post_screen_space_effects = 44;
 		int list_leaves_in_box = 6;
+		int fire_event_client_side = 9;
 	}
 
 	void initialize();
@@ -166,6 +168,11 @@ namespace hooks {
 
 	namespace sequence {
 		void hook(const c_recv_proxy_data* data, void* ent, void* out);
+	}
+
+	namespace fire_event_client_side {
+		using fn = bool(__thiscall*)(void*, c_game_event*);
+		bool __fastcall hook(void* ecx, void* edx, c_game_event* event);
 	}
 
 	namespace wndproc {
